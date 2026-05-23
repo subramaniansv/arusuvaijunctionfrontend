@@ -139,7 +139,7 @@ export function useRazorpayCheckout() {
         order_id: init.razorpayOrderId,
         amount: init.amount,
         currency: init.currency || 'INR',
-        name: 'Arusuvai',
+        name: 'Arusuvai Junction',
         description: 'Order #' + String(init.orderId).slice(0, 8).toUpperCase(),
         prefill: {
           name: prefill.name || '',

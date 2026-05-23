@@ -213,7 +213,7 @@ function Hero() {
         <div className="home-hero__copy">
           <h1 className="home-hero__title">
             <span className="home-hero__title--line-1">Fresh. Homemade.</span>
-            <span className="home-hero__title--line-2">Arusuvai.</span>
+            <span className="home-hero__title--line-2">Arusuvai Junction.</span>
           </h1>
 
           <div className="home-hero__divider" aria-hidden="true">
