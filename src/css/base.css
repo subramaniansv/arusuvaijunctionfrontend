@@ -173,3 +173,21 @@ body::-webkit-scrollbar { display: none; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ------------------------------------------------------------------
+ * Touch-target sizing (WCAG 2.2 — Target Size, Minimum, 24x24 px;
+ * Apple/Google guidance: 44x44 px). On touch / coarse-pointer devices,
+ * guarantee every interactive control is at least 44x44 CSS px so the
+ * Lighthouse "Touch targets do not have sufficient size or spacing"
+ * audit passes. Desktop with mouse remains unaffected so compact UI
+ * stays compact for cursor users.
+ * ------------------------------------------------------------------ */
+@media (pointer: coarse) {
+  button:not(:disabled),
+  [role="button"],
+  a.btn,
+  .icon-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
