@@ -43,8 +43,11 @@ import {
   faqLd,
   BRAND,
 } from '../lib/seo'
-import heroBackground from '../assets/image.png'
 import './Home.css'
+
+// Public asset - served from /public/hero.jpg without bundling, so the
+// same URL can be preloaded from index.html for an instant LCP.
+const heroBackground = '/hero.jpg'
 
 /* ---------------- Dummy data (replace with API later) ----------- */
 
