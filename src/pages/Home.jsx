@@ -485,7 +485,7 @@ function ReviewsPeek({ reviews }) {
               role="tab"
               aria-selected={i === index}
               aria-label={`Go to review ${i + 1}`}
-              className={`home-reviews-peek__dot ${i === index ? 'is-active' : ''}`}
+              className={`home-reviews-peek__dot no-touch-min ${i === index ? 'is-active' : ''}`}
               onClick={() => setIndex(i)}
             />
           ))}

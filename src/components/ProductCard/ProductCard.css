@@ -56,11 +56,14 @@
 .ui-product__share:hover { background: #fff; transform: scale(1.05); }
 .ui-product__share:active { transform: scale(0.95); }
 
-/* Wishlist heart sits below the share button on the right edge. */
+/* Wishlist heart sits on the LEFT edge of the media; the share button
+ * lives on the RIGHT edge. Splitting the two icons avoids overlap on
+ * narrow tiles where the share + heart used to stack on the same
+ * column and visually intersect. */
 .ui-product__wish {
   position: absolute;
-  top: calc(var(--space-2) + 36px);
-  right: var(--space-2);
+  top: var(--space-2);
+  left: var(--space-2);
   z-index: 2;
 }
 
