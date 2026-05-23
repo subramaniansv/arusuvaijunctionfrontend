@@ -50,7 +50,6 @@ import {
   Checkbox,
   IconButton,
   Input,
-  Select,
   Skeleton,
   Textarea,
 } from '../../components'
@@ -253,18 +252,21 @@ export default function AdminProductEdit() {
             {...register('name')}
             error={errors.name?.message}
           />
-          <Select
-            label="Category"
-            {...register('category')}
-            error={errors.category?.message}
-          >
-            <option value="">Select a category…</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </Select>
+          <div>
+            <Input
+              label="Category"
+              list="category-suggestions-edit"
+              placeholder="Pick existing or type a new one"
+              autoComplete="off"
+              {...register('category')}
+              error={errors.category?.message}
+            />
+            <datalist id="category-suggestions-edit">
+              {categories.map((c) => (
+                <option key={c} value={c} />
+              ))}
+            </datalist>
+          </div>
           <Input
             label="Price (₹)"
             type="number"
