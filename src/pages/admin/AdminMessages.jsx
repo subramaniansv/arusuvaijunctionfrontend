@@ -61,7 +61,7 @@ function MessageRow({ msg }) {
     }
   }
 
-  const created = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : '—'
+  const created = msg.createdAt ? new Date(msg.createdAt).toLocaleString() : '-'
 
   return (
     <div className="admin-msg">

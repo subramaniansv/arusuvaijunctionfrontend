@@ -257,7 +257,7 @@ export default function ProductDetail() {
   return (
     <div className="pd">
       <Seo
-        title={`${product.name} — buy online`}
+        title={`${product.name} - buy online`}
         description={(product.description || '').slice(0, 158) || `Buy ${product.name} online from Arusuvai Junction.`}
         path={`/products/${product.id ?? product.productId}`}
         image={product.primaryImageUrl || (Array.isArray(product.images) && (product.images[0]?.imageUrl || product.images[0]?.url))}

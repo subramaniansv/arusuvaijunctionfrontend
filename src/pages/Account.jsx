@@ -44,7 +44,7 @@ const pwSchema = z
   })
 
 function formatDate(value) {
-  if (!value) return '—'
+  if (!value) return '-'
   try {
     return new Date(value).toLocaleDateString(undefined, {
       year: 'numeric', month: 'long', day: 'numeric',
@@ -58,7 +58,7 @@ function fullName(profile) {
   const fn = (profile?.firstName || '').trim()
   const ln = (profile?.lastName || '').trim()
   const combined = `${fn} ${ln}`.trim()
-  return combined || '—'
+  return combined || '-'
 }
 
 function initials(profile) {
@@ -157,7 +157,7 @@ export default function Account() {
             <h2 className="account-card__name">{fullName(profile)}</h2>
             <p className="account-card__email">
               <Mail size={14} aria-hidden="true" />
-              <span>{profile?.email || '—'}</span>
+              <span>{profile?.email || '-'}</span>
             </p>
           </div>
           <div className="account-card__badges">
@@ -183,7 +183,7 @@ export default function Account() {
           </div>
           <div className="account-meta__row">
             <dt><Mail size={14} aria-hidden="true" />Email</dt>
-            <dd>{profile?.email || '—'}</dd>
+            <dd>{profile?.email || '-'}</dd>
           </div>
           <div className="account-meta__row">
             <dt><ShieldCheck size={14} aria-hidden="true" />Status</dt>

@@ -159,7 +159,7 @@ export default function Home() {
     <div className="home">
       <Seo
         title={null /* uses brand default */}
-        description={`${BRAND.description} Shop sugar-free traditional Indian snacks online — murukku, laddoos, mixture, sweets — made with nuts, seeds and millets.`}
+        description={`${BRAND.description} Shop sugar-free traditional Indian snacks online - murukku, laddoos, mixture, sweets - made with nuts, seeds and millets.`}
         path="/"
         keywords={BRAND.defaultKeywords}
         jsonLd={[
@@ -173,7 +173,7 @@ export default function Home() {
             },
             {
               q: 'What makes your snacks high in protein?',
-              a: 'We use generous amounts of nuts (almonds, cashews, peanuts), seeds (sesame, flax, sunflower) and millets — all naturally protein-rich.',
+              a: 'We use generous amounts of nuts (almonds, cashews, peanuts), seeds (sesame, flax, sunflower) and millets - all naturally protein-rich.',
             },
             {
               q: 'Do you ship pan-India?',
@@ -185,7 +185,7 @@ export default function Home() {
             },
             {
               q: 'Are the snacks made with preservatives?',
-              a: 'Never. Our snacks contain zero artificial preservatives, colours or flavours — just traditional ingredients.',
+              a: 'Never. Our snacks contain zero artificial preservatives, colours or flavours - just traditional ingredients.',
             },
           ]),
         ]}
@@ -206,7 +206,7 @@ function Hero() {
     <section
       className="home-hero"
       style={{ backgroundImage: `url(${heroBackground})` }}
-      aria-label="Arusuvai Junction — fresh, homemade traditional South Indian foods"
+      aria-label="Arusuvai Junction - fresh, homemade traditional South Indian foods"
     >
       <div className="home-hero__veil" aria-hidden="true" />
       <Container size="xl" className="home-hero__inner">
@@ -372,7 +372,7 @@ function Reviews() {
 
         {!isLoading && !isError && data && data.length === 0 && (
           <p className="home-reviews__empty">
-            Be the first to leave a review — every purchased product has a review form.
+            Be the first to leave a review - every purchased product has a review form.
           </p>
         )}
         </Section>
@@ -382,7 +382,7 @@ function Reviews() {
 }
 
 /**
- * ReviewsPeek — responsive multi-card carousel.
+ * ReviewsPeek - responsive multi-card carousel.
  *
  * Shows N reviews side by side, all at full opacity:
  *   >= 1024px → 3 cards
@@ -461,7 +461,7 @@ function ReviewsPeek({ reviews }) {
               {review.body ? `“${review.body}”` : ''}
             </p>
             <div className="home-review-simple__name">
-              — {review.user?.name || 'Customer'}
+              - {review.user?.name || 'Customer'}
             </div>
           </article>
         ))}
@@ -514,7 +514,7 @@ function ContactStrip() {
             <h3 className="home-contact__heading">Get in touch</h3>
             <p className="home-contact__sub">
               Have a question about an order, ingredients, or a bulk gift
-              request? Reach us on WhatsApp or email — we usually reply
+              request? Reach us on WhatsApp or email - we usually reply
               within a few hours, Mon–Sat.
             </p>
             <ul className="home-contact__list">

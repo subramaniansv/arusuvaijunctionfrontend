@@ -285,7 +285,7 @@ export default function Checkout() {
     } else if (pinStatus === 'found') {
       pinStatusNode = (
         <span className="checkout__pin-status checkout__pin-status--ok">
-          <Check size={14} aria-hidden="true" /> Found — state and city auto-filled
+          <Check size={14} aria-hidden="true" /> Found - state and city auto-filled
         </span>
       )
     }
@@ -300,7 +300,7 @@ export default function Checkout() {
         </h1>
         <p className="checkout__sub">
           {buyNow
-            ? 'Single-item express checkout — your cart is not affected.'
+            ? 'Single-item express checkout - your cart is not affected.'
             : 'Review your order and add shipping details.'}
         </p>
       </header>

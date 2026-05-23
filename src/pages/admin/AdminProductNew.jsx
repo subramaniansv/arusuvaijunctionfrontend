@@ -121,7 +121,7 @@ export default function AdminProductNew() {
         images: files,
       })
       // Best-effort: push each draft variant. Failures here don't roll
-      // back the product — the admin can finish on the edit page.
+      // back the product - the admin can finish on the edit page.
       const productId = created?.id
       if (productId && variants.length > 0) {
         for (const [i, v] of variants.entries()) {

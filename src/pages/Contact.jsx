@@ -1,5 +1,5 @@
 /**
- * Contact page — info strip on the left, message form on the right.
+ * Contact page - info strip on the left, message form on the right.
  *
  * Form posts to POST /api/contact (public). Admin sees submissions
  * in /admin/messages.
@@ -67,7 +67,7 @@ export default function Contact() {
   return (
     <div className="staticpage">
       <Seo
-        title="Contact Arusuvai Junction — Tirunelveli, Tamil Nadu"
+        title="Contact Arusuvai Junction - Tirunelveli, Tamil Nadu"
         description="Get in touch with Arusuvai Junction for orders, bulk enquiries or feedback. Based in Tirunelveli, Tamil Nadu. We reply within one working day."
         path="/contact"
         jsonLd={[
@@ -83,7 +83,7 @@ export default function Contact() {
         <h1 className="staticpage__title">We&apos;d love to hear from you</h1>
         <p className="staticpage__lead">
           Questions about an order, bulk requests for a wedding or office, or just want to say
-          hi — we&apos;re a message away. We try to reply within one working day.
+          hi - we&apos;re a message away. We try to reply within one working day.
         </p>
       </header>
 
@@ -91,7 +91,7 @@ export default function Contact() {
         <form className="contactform" onSubmit={handleSubmit(onSubmit)} noValidate>
           {submitted && (
             <Alert variant="success" icon={<CheckCircle2 size={18} />}>
-              Thanks! Your message is with us — we&apos;ll be in touch shortly.
+              Thanks! Your message is with us - we&apos;ll be in touch shortly.
             </Alert>
           )}
           {serverError && <Alert variant="danger">{serverError}</Alert>}

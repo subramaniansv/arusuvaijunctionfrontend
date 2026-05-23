@@ -110,7 +110,7 @@ export default function AdminUsers() {
           {users.map((u) => {
             const isSelf = u.id === currentUserId
             const name =
-              [u.firstName, u.lastName].filter(Boolean).join(' ') || '—'
+              [u.firstName, u.lastName].filter(Boolean).join(' ') || '-'
             return (
               <div key={u.id} className="admin-table__row">
                 <div className="admin-product-cell">
