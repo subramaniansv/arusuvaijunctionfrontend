@@ -322,6 +322,9 @@ export default function ProductDetail() {
               <Tag className="pd__category">{formatCategory(product.category)}</Tag>
             )}
             <h1 className="pd__name">{product.name}</h1>
+            {product.nameTamil && (
+              <p className="pd__name-tamil" lang="ta">{product.nameTamil}</p>
+            )}
 
             <div className="pd__rating-row">
               <RatingStars value={product.averageRating || 0} size="md" />
@@ -447,6 +450,11 @@ export default function ProductDetail() {
             <article className="pd__panel">
               <h2 className="pd__panel-title">About this product</h2>
               <p className="pd__panel-body">{product.description}</p>
+              {product.descriptionTamil && (
+                <p className="pd__panel-body pd__panel-body--tamil" lang="ta">
+                  {product.descriptionTamil}
+                </p>
+              )}
             </article>
           )}
 

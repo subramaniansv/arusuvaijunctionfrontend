@@ -60,6 +60,9 @@ const schema = z.object({
   description: z.string().min(5, 'Description is required'),
   category: z.string().min(1, 'Pick or type a category'),
   ingredients: z.string().optional(),
+  nameTamil: z.string().optional(),
+  descriptionTamil: z.string().optional(),
+  ingredientsTamil: z.string().optional(),
   price: z.coerce.number().positive('Price must be > 0'),
   stockQuantity: z.coerce.number().int().min(0, 'Stock cannot be negative'),
   active: z.boolean().optional(),
@@ -94,6 +97,9 @@ export default function AdminProductEdit() {
       description: '',
       category: '',
       ingredients: '',
+      nameTamil: '',
+      descriptionTamil: '',
+      ingredientsTamil: '',
       price: 0,
       stockQuantity: 0,
       active: true,
@@ -108,6 +114,9 @@ export default function AdminProductEdit() {
       description: product.description || '',
       category: product.category || '',
       ingredients: product.ingredients || '',
+      nameTamil: product.nameTamil || '',
+      descriptionTamil: product.descriptionTamil || '',
+      ingredientsTamil: product.ingredientsTamil || '',
       price: product.price ?? 0,
       stockQuantity: product.stockQuantity ?? 0,
       active: !!product.active,
@@ -125,6 +134,9 @@ export default function AdminProductEdit() {
         description: values.description.trim(),
         category: values.category.trim(),
         ingredients: values.ingredients?.trim() || '',
+        nameTamil: values.nameTamil?.trim() || '',
+        descriptionTamil: values.descriptionTamil?.trim() || '',
+        ingredientsTamil: values.ingredientsTamil?.trim() || '',
         price: Number(values.price),
         stockQuantity: Number(values.stockQuantity),
         active: !!values.active,
@@ -281,6 +293,29 @@ export default function AdminProductEdit() {
           rows={2}
           {...register('ingredients')}
           error={errors.ingredients?.message}
+        />
+
+        {/* Tamil-language copy (optional). Renders as a small subtitle on
+            product cards + detail page. Leaving these blank hides them. */}
+        <Input
+          label="Name in Tamil (optional)"
+          lang="ta"
+          {...register('nameTamil')}
+          error={errors.nameTamil?.message}
+        />
+        <Textarea
+          label="Description in Tamil (optional)"
+          rows={3}
+          lang="ta"
+          {...register('descriptionTamil')}
+          error={errors.descriptionTamil?.message}
+        />
+        <Textarea
+          label="Ingredients in Tamil (optional)"
+          rows={2}
+          lang="ta"
+          {...register('ingredientsTamil')}
+          error={errors.ingredientsTamil?.message}
         />
 
         <Checkbox label="Active (visible to customers)" {...register('active')} />
