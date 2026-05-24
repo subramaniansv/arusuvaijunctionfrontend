@@ -30,6 +30,7 @@ import {
 import { useCart } from '../lib/cart'
 import { useRazorpayCheckout } from '../lib/payment'
 import { useMyProfile } from '../lib/me'
+import { calcShipping, getZoneLabel, FREE_ABOVE_INR } from '../lib/shipping'
 import './Checkout.css'
 
 const PLACEHOLDER =
@@ -168,6 +169,15 @@ export default function Checkout() {
   const country = watch('country')
   const pincode = watch('pincode')
 
+  // Shipping fee derived from the watched pincode (India only).
+  // For non-IN countries we show 0 and let the admin handle it separately.
+  const totalQty = items.reduce((s, it) => s + (it.quantity || 1), 0)
+  const shippingFee = country === 'IN'
+    ? calcShipping(pincode, totalQty, subtotal)
+    : 0
+  const shippingZoneLabel = country === 'IN' ? getZoneLabel(pincode) : null
+  const total = subtotal + shippingFee
+
   // PIN lookup state (India only)
   const [pinStatus, setPinStatus] = useState('idle') // idle | loading | found | invalid | error
   const lastLookupRef = useRef('')
@@ -228,6 +238,7 @@ export default function Checkout() {
     const payload = {
       shippingAddress: buildShippingAddress(values),
       phone: values.phone,
+      shippingFee,
     }
     if (buyNow) {
       payload.item = {
@@ -461,13 +472,24 @@ export default function Checkout() {
               <PriceTag amount={subtotal} size="md" />
             </div>
             <div className="checkout__sum-line">
-              <span>Shipping</span>
-              <span className="checkout__free">Free</span>
+              <span>
+                Shipping
+                {shippingZoneLabel && (
+                  <span className="checkout__shipping-zone"> – {shippingZoneLabel}</span>
+                )}
+              </span>
+              {shippingFee === 0 ? (
+                <span className="checkout__free">
+                  {subtotal >= FREE_ABOVE_INR ? 'Free' : 'TBD'}
+                </span>
+              ) : (
+                <PriceTag amount={shippingFee} size="md" />
+              )}
             </div>
             <Divider />
             <div className="checkout__sum-line checkout__sum-line--strong">
               <span>Total</span>
-              <PriceTag amount={subtotal} size="lg" />
+              <PriceTag amount={total} size="lg" />
             </div>
 
             <Button
@@ -478,7 +500,7 @@ export default function Checkout() {
               loading={isSubmitting || paying}
               className="checkout__place"
             >
-              {`Pay ₹${Number(subtotal).toLocaleString('en-IN')}`}
+              {`Pay ₹${Number(total).toLocaleString('en-IN')}`}
             </Button>
 
             <p className="checkout__secure">
