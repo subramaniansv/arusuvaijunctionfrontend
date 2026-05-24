@@ -22,7 +22,7 @@ import './StaticPage.css'
 const schema = z.object({
   name:    z.string().min(2, 'Please tell us your name').max(120),
   email:   z.string().email('Please enter a valid email'),
-  phone:   z.string().max(40).optional().or(z.literal('')),
+  phone:   z.string().regex(/^[0-9+\-\s()]*$/, 'Phone number must contain only digits').max(15, 'Max 15 digits').optional().or(z.literal('')),
   subject: z.string().max(200).optional().or(z.literal('')),
   message: z.string().min(10, 'Please add a bit more detail').max(5000),
 })
@@ -120,7 +120,11 @@ export default function Contact() {
               type="tel"
               placeholder="+91 ..."
               autoComplete="tel"
+              inputMode="numeric"
               error={errors.phone?.message}
+              onInput={(e) => {
+                e.target.value = e.target.value.replace(/[^0-9+\-\s()]/g, '')
+              }}
               {...register('phone')}
             />
             <Input
