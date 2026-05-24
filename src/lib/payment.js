@@ -57,8 +57,9 @@ function loadRazorpayScript() {
  * ------------------------------------------------------------------ */
 export function usePaymentInitiate() {
   return useMutation({
-    mutationFn: async ({ shippingAddress, phone, item }) => {
+    mutationFn: async ({ shippingAddress, phone, shippingFee, item }) => {
       const body = { shippingAddress, phone }
+      if (shippingFee != null && shippingFee > 0) body.shippingFee = shippingFee
       if (item && item.productId) {
         body.item = {
           productId: item.productId,
