@@ -22,7 +22,7 @@ import {
   LogOut, LogIn, X, UserCircle, Heart, Menu, MailWarning, Loader2,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
-
+import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
 import { useAuthStore } from '../stores/authStore'
 import { useCartItemCount } from '../lib/cart'
 import { useMyProfile, useResendVerification } from '../lib/me'
@@ -263,7 +263,7 @@ export default function RootLayout() {
 
             {/* logo */}
             <Link to="/" className="nav__logo" aria-label="Arusuvai Junction home">
-              <span className="nav__logo-mark" aria-hidden="true">A</span>
+              <span className="nav__logo-mark" aria-hidden="true"><img src={Arusuvaijunction} alt="Arusuvai Junction logo" /></span>
               <span className="nav__logo-text">Arusuvai Junction</span>
             </Link>
 
