@@ -11,19 +11,39 @@
  * backend endpoint exists.
  */
 import { Link } from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react'
 import {
   Leaf,
   Clock,
   Heart,
-  Shield,
+  Home as HomeIcon,
   ChevronLeft,
   ChevronRight,
   Phone,
   Mail,
-  MapPin,
-  MessageCircle,
 } from 'lucide-react'
+import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
+
+/* Simple Instagram SVG - lucide-react 1.x ships without it */
+function InstagramIcon({ size = 18 }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
 
 import {
   Container,
@@ -31,10 +51,7 @@ import {
   Button,
   ProductCard,
   RatingStars,
-  Skeleton,
-  Alert,
 } from '../components'
-import { useHomeReviews } from '../lib/reviews'
 import Seo from '../components/Seo'
 import {
   organizationLd,
@@ -53,104 +70,105 @@ import './Home.css'
 /* ---------------- Dummy data (replace with API later) ----------- */
 
 const CATEGORIES = [
-  { name: 'Murukku',   tamil: 'முறுக்கு',  image: 'https://images.unsplash.com/photo-1610508500445-a4592435e27e?w=400', color: 'var(--brand-green-light)' },
-  { name: 'Seedai',    tamil: 'சீடை',      image: 'https://images.unsplash.com/photo-1605276277265-84f97980a425?w=400', color: 'var(--brand-yellow-light)' },
-  { name: 'Sweets',    tamil: 'இனிப்புகள்', image: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=400', color: 'var(--brand-green-light)' },
-  { name: 'Mixture',   tamil: 'மிக்சர்',    image: 'https://images.unsplash.com/photo-1765360024331-25b63e85272e?w=400', color: 'var(--brand-yellow-light)' },
-  { name: 'Chips',     tamil: 'சிப்ஸ்',     image: 'https://images.unsplash.com/photo-1762884601729-0eeeafbdfb8a?w=400', color: 'var(--brand-green-light)' },
-  { name: 'Athirasam', tamil: 'அதிரசம்',   image: 'https://images.unsplash.com/photo-1610550246952-0c906d3aca7a?w=400', color: 'var(--brand-yellow-light)' },
+  { name: 'Podi',      tamil: 'பொடி',         image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=800' },
+  { name: 'Ladoo',     tamil: 'லட்டு',        image: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=800' },
+  { name: 'Nuts',      tamil: 'நட்ஸ்',         image: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=800' },
+  { name: 'Ready Mix', tamil: 'ரெடி மிக்ஸ்',  image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800' },
+  { name: 'Pickles',   tamil: 'ஊறுகாய்',      image: 'https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?w=800' },
 ]
 
 const FEATURED_PRODUCTS = [
   {
     productId: 'p1',
-    name: 'Traditional Murukku',
-    price: 180,
-    mrp: 220,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1610508500445-a4592435e27e?w=600',
+    name: 'Idi Sambar Podi',
+    nameTamil: 'இடி சாம்பார் பொடி',
+    category: 'Podi',
+    price: 100,
+    primaryImageUrl: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600',
     stockQuantity: 25,
-    averageRating: 4.8,
-    reviewCount: 142,
-    isOrganic: true,
+    averageRating: 4.0,
+    reviewCount: 500,
   },
   {
     productId: 'p2',
-    name: 'Sweet Ladoo',
-    price: 220,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=600',
+    name: 'Garlic Masala Nuts',
+    nameTamil: 'பூண்டு மசாலா நட்ஸ்',
+    category: 'Nuts',
+    price: 60,
+    primaryImageUrl: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=600',
     stockQuantity: 18,
-    averageRating: 4.9,
-    reviewCount: 96,
+    averageRating: 4.5,
+    reviewCount: 500,
   },
   {
     productId: 'p3',
-    name: 'Spicy Mixture',
-    price: 160,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1765360024331-25b63e85272e?w=600',
+    name: 'Protein Chocolate Ladoo',
+    nameTamil: 'சாக்லேட் லட்டு',
+    category: 'Ladoo',
+    price: 80,
+    primaryImageUrl: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=600',
     stockQuantity: 40,
-    averageRating: 4.6,
-    reviewCount: 58,
-    isVeg: true,
+    averageRating: 4.5,
+    reviewCount: 500,
   },
   {
     productId: 'p4',
-    name: 'Banana Chips',
-    price: 140,
-    mrp: 160,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1762884601729-0eeeafbdfb8a?w=600',
+    name: 'Vathal Kuzhambu Mix',
+    nameTamil: 'வத்தக்குழம்பு மிக்ஸ்',
+    category: 'Ready Mix',
+    price: 90,
+    mrp: 110,
+    primaryImageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600',
     stockQuantity: 30,
-    averageRating: 4.7,
-    reviewCount: 81,
+    averageRating: 4.5,
+    reviewCount: 500,
   },
 ]
 
+const FOOTER_CATEGORIES = [
+  { label: 'Pickles',   to: '/products?category=pickles' },
+  { label: 'Podi',      to: '/products?category=podi' },
+  { label: 'Ladoo',     to: '/products?category=ladoo' },
+  { label: 'Nuts',      to: '/products?category=nuts' },
+  { label: 'Ready Mix', to: '/products?category=ready+mix' },
+]
 const FEATURES = [
-  { icon: Leaf,   title: 'Homemade',         description: 'Traditional recipes prepared fresh in our kitchen.' },
-  { icon: Shield, title: 'No Preservatives', description: '100% natural ingredients, no artificial additives.' },
-  { icon: Clock,  title: 'Freshly Prepared', description: 'Made fresh daily to ensure the best taste.' },
-  { icon: Heart,  title: 'Made with Love',   description: 'Every batch is crafted with care and tradition.' },
+  { icon: HomeIcon, title: 'Homemade',         description: 'Traditional recipes prepared fresh in our kitchen.' },
+  { icon: Leaf,     title: 'No Preservatives', description: '100% natural ingredients, no artificial additives.' },
+  { icon: Clock,    title: 'Freshly Prepared', description: 'Made fresh daily to ensure the best taste.' },
+  { icon: Heart,    title: 'Made with Love',   description: 'Every batch is crafted with care and tradition.' },
 ]
 
 /* Placeholder contact info / quick links - replace with real data later */
 const QUICK_LINKS = [
-  { label: 'About us',                  to: '/about' },
-  { label: 'All products',              to: '/products' },
-  { label: 'Track an order',            to: '/orders' },
-  { label: 'Bulk / corporate orders',   to: '/contact' },
-  { label: 'Return policy',             to: '/policy/returns' },
-  { label: 'Privacy policy',            to: '/policy/privacy' },
+  { label: 'About us',                 to: '/about' },
+  { label: 'Track an Order',           to: '/orders' },
+  { label: 'Return Policy',            to: '/policy/returns' },
+  { label: 'Bulk / Corporate Orders',  to: '/contact' },
+  { label: 'Privacy Policy',           to: '/policy/privacy' },
 ]
 
-const CONTACTS = [
+const STATIC_REVIEWS = [
   {
-    icon: Phone,
-    label: 'Call us',
-    value: '+91 95974 51463',
-    href: 'tel:+919597451463',
+    id: 'r1',
+    name: 'Priya Venkatesh',
+    city: 'Chennai',
+    rating: 5,
+    body: 'The Idi Sambar Podi is incredible! Tastes exactly like what my grandmother used to make. Already ordered 3 bags!',
   },
   {
-    icon: MessageCircle,
-    label: 'WhatsApp',
-    value: '+91 95974 51463',
-    href: 'https://wa.me/919597451463',
+    id: 'r2',
+    name: 'Karthik Sundaram',
+    city: 'Bangalore',
+    rating: 4,
+    body: 'Garlic Masala Nuts are perfectly spiced — great crunchy snack for the office. Family loves them too.',
   },
   {
-    icon: Mail,
-    label: 'Email support',
-    value: 'support@arusuvaijunction.com',
-    href: 'mailto:support@arusuvaijunction.com',
-  },
-  {
-    icon: MapPin,
-    label: 'Visit us',
-    value: (
-      <>
-        6/A, Matha Middle Street,<br />
-        Tirunelveli Town,<br />
-        Tamil Nadu 627006
-      </>
-    ),
-    href: 'https://www.google.com/maps/search/?api=1&query=Arusuvai+Junction+Tirunelveli',
+    id: 'r3',
+    name: 'Meera Rajesh',
+    city: 'Coimbatore',
+    rating: 5,
+    body: 'Protein Chocolate Ladoo is a guilt-free treat. Kids absolutely love it and there\'s no refined sugar — total win!',
   },
 ]
 
@@ -196,7 +214,7 @@ export default function Home() {
       <Featured />
       <WhyChooseUs />
       <Reviews />
-      <ContactStrip />
+      <Footer />
     </div>
   )
 }
@@ -244,7 +262,7 @@ function Hero() {
 /* ----- Categories --------------------------------------------- */
 function Categories() {
   return (
-    <section className="home-section">
+    <section className="home-section home-section--cats">
       <Container size="xl">
         <Section
           title="Shop by Category"
@@ -258,7 +276,7 @@ function Categories() {
                 to={`/products?category=${encodeURIComponent(c.name.toLowerCase())}`}
                 className="home-cat"
               >
-                <div className="home-cat__media" style={{ background: c.color }}>
+                <div className="home-cat__media">
                   <img src={c.image} alt={c.name} loading="lazy" decoding="async" />
                 </div>
                 <h3 className="home-cat__name">{c.name}</h3>
@@ -332,243 +350,113 @@ function WhyChooseUs() {
   )
 }
 
-/* ----- Reviews (peek carousel, backed by useHomeReviews) ----- */
+/* ----- Reviews (3 static cards) ----- */
 function Reviews() {
-  const { data, isLoading, isError } = useHomeReviews()
-
   return (
-    <section className="home-section">
+    <section className="home-section home-section--cream">
       <Container size="xl">
         <Section
           title="What our customers say"
           subtitle="Verified reviews from across India"
           spacing="md"
         >
-        {isLoading && (
-          <div className="home-reviews__skeletons">
-            {[0, 1, 2].map((i) => (
-              <div className="home-review-skeleton" key={i}>
-                <Skeleton width="100%" height={20} />
-                <Skeleton width="80%" height={14} />
-                <Skeleton width="100%" height={60} />
-                <div className="home-review-skeleton__foot">
-                  <Skeleton width={36} height={36} radius="pill" />
-                  <Skeleton width={120} height={14} />
+          <div className="home-reviews-grid">
+            {STATIC_REVIEWS.map((r) => (
+              <article key={r.id} className="home-review-simple">
+                <div className="home-review-simple__top">
+                  <RatingStars value={r.rating} size="md" />
+                  <span className="home-review-simple__quote" aria-hidden="true">&#10077;</span>
                 </div>
-              </div>
+                <p className="home-review-simple__body">"{r.body}"</p>
+                <div className="home-review-simple__author">
+                  <div className="home-review-simple__avatar" aria-hidden="true">
+                    {r.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="home-review-simple__name">{r.name}</div>
+                    <div className="home-review-simple__city">{r.city}</div>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
-        )}
-
-        {isError && (
-          <Alert variant="warning" title="Couldn't load reviews">
-            Please try again in a moment.
-          </Alert>
-        )}
-
-        {!isLoading && !isError && data && data.length > 0 && (
-          <ReviewsPeek reviews={data} />
-        )}
-
-        {!isLoading && !isError && data && data.length === 0 && (
-          <p className="home-reviews__empty">
-            Be the first to leave a review - every purchased product has a review form.
-          </p>
-        )}
         </Section>
       </Container>
     </section>
   )
 }
 
-/**
- * ReviewsPeek - responsive multi-card carousel.
- *
- * Shows N reviews side by side, all at full opacity:
- *   >= 1024px → 3 cards
- *   >= 640px  → 2 cards
- *   < 640px   → 1 card
- *
- * Arrows + dot pagination sit BELOW the row. Auto-advances every 6s;
- * pauses on hover/focus. The dots count corresponds to how many
- * "pages" of `visible` cards the reviews divide into.
- */
-function useVisibleCount() {
-  const get = () => {
-    if (typeof window === 'undefined') return 3
-    if (window.matchMedia('(min-width: 1024px)').matches) return 3
-    if (window.matchMedia('(min-width: 640px)').matches) return 2
-    return 1
-  }
-  const [n, setN] = useState(get)
-  useEffect(() => {
-    const onResize = () => setN(get())
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-  return n
-}
-
-function ReviewsPeek({ reviews }) {
-  const count = reviews.length
-  const visible = Math.min(useVisibleCount(), count)
-  const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-
-  // Clamp index when visible count changes (e.g. resize).
-  useEffect(() => { setIndex(0) }, [visible, count])
-
-  const next = useCallback(
-    () => setIndex((i) => (i + 1) % count),
-    [count],
-  )
-  const prev = useCallback(
-    () => setIndex((i) => (i - 1 + count) % count),
-    [count],
-  )
-
-  useEffect(() => {
-    if (paused || count <= visible) return undefined
-    const t = setInterval(next, 6000)
-    return () => clearInterval(t)
-  }, [paused, next, count, visible])
-
-  // Build the visible slice with wrap-around so the carousel can loop.
-  const slots = Array.from({ length: visible }, (_, k) => {
-    const r = reviews[(index + k) % count]
-    return { key: `${index}-${k}-${r.reviewId}`, review: r }
-  })
-
+/* ----- Footer ------------------------------------------------- */
+function Footer() {
   return (
-    <div
-      className="home-reviews-peek"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
-      role="region"
-      aria-roledescription="carousel"
-      aria-label="Customer reviews"
-    >
-      <div
-        className="home-reviews-peek__row"
-        style={{ '--peek-visible': visible }}
-      >
-        {slots.map(({ key, review }) => (
-          <article key={key} className="home-review-simple">
-            <RatingStars value={review.rating} size="md" />
-            <p className="home-review-simple__body">
-              {review.body ? `“${review.body}”` : ''}
-            </p>
-            <div className="home-review-simple__name">
-              - {review.user?.name || 'Customer'}
-            </div>
-          </article>
-        ))}
-      </div>
-
-      <div className="home-reviews-peek__controls" aria-label="Carousel navigation">
-        <button
-          type="button"
-          className="home-reviews-peek__arrow"
-          onClick={prev}
-          aria-label="Previous review"
-        >
-          <ChevronLeft size={20} />
-        </button>
-
-        <div className="home-reviews-peek__dots" role="tablist">
-          {reviews.map((r, i) => (
-            <button
-              key={r.reviewId}
-              type="button"
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`Go to review ${i + 1}`}
-              className={`home-reviews-peek__dot no-touch-min ${i === index ? 'is-active' : ''}`}
-              onClick={() => setIndex(i)}
-            />
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="home-reviews-peek__arrow"
-          onClick={next}
-          aria-label="Next review"
-        >
-          <ChevronRight size={20} />
-        </button>
-      </div>
-    </div>
-  )
-}
-
-/* ----- Contact + Quick links strip ---------------------------- */
-function ContactStrip() {
-  return (
-    <section className="home-contact">
+    <footer className="home-footer">
       <Container size="xl">
-        <div className="home-contact__grid">
-          <div>
-            <h3 className="home-contact__heading">Get in touch</h3>
-            <p className="home-contact__sub">
-              Have a question about an order, ingredients, or a bulk gift
-              request? Reach us on WhatsApp or email - we usually reply
-              within a few hours, Mon–Sat.
+        <div className="home-footer__grid">
+          {/* Brand column */}
+          <div className="home-footer__brand">
+            <Link to="/" className="home-footer__logo-link">
+              <img
+                src={Arusuvaijunction}
+                alt="Arusuvai Junction logo"
+                className="home-footer__logo"
+              />
+              <div className="home-footer__brand-text">
+                <span className="home-footer__brand-name">Arusuvai Junction</span>
+                <span className="home-footer__brand-tamil" lang="ta">அறுசுவை ஜங்ஷன்</span>
+              </div>
+            </Link>
+            <p className="home-footer__tagline">
+              Traditional South Indian homemade foods crafted with heritage
+              recipes and fresh ingredients.
             </p>
-            <ul className="home-contact__list">
-              {CONTACTS.map((c) => {
-                const Icon = c.icon
-                const isExternal = c.href && /^(https?:|mailto:|tel:)/.test(c.href)
-                const inner = (
-                  <>
-                    <span className="home-contact__icon">
-                      <Icon size={18} />
-                    </span>
-                    <div>
-                      <div className="home-contact__label">{c.label}</div>
-                      <div className="home-contact__value">{c.value}</div>
-                    </div>
-                  </>
-                )
-                return (
-                  <li key={c.label} className="home-contact__item">
-                    {c.href ? (
-                      <a
-                        href={c.href}
-                        className="home-contact__link"
-                        {...(isExternal && c.href.startsWith('http')
-                          ? { target: '_blank', rel: 'noopener noreferrer' }
-                          : {})}
-                      >
-                        {inner}
-                      </a>
-                    ) : (
-                      inner
-                    )}
-                  </li>
-                )
-              })}
+            <div className="home-footer__socials">
+              <a
+                href="https://www.instagram.com/arusuvaijunction"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow us on Instagram"
+                className="home-footer__social"
+              >
+                <InstagramIcon size={18} />
+              </a>
+              <a href="tel:+919597451463" aria-label="Call us" className="home-footer__social">
+                <Phone size={18} />
+              </a>
+              <a
+                href="mailto:support@arusuvaijunction.com"
+                aria-label="Email support"
+                className="home-footer__social"
+              >
+                <Mail size={18} />
+              </a>
+            </div>
+          </div>
+
+          {/* Quick links */}
+          <div className="home-footer__col">
+            <h4 className="home-footer__col-title">Quick Links</h4>
+            <ul className="home-footer__links">
+              {QUICK_LINKS.map((q) => (
+                <li key={q.to}>
+                  <Link to={q.to} className="home-footer__link">{q.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div>
-            <h3 className="home-contact__heading">Quick links</h3>
-            <p className="home-contact__sub">Jump straight to where you need.</p>
-            <ul className="home-quick-links">
-              {QUICK_LINKS.map((q) => (
-                <li key={q.to}>
-                  <Link to={q.to} className="home-quick-links__a">
-                    <ChevronRight size={14} />
-                    <span>{q.label}</span>
-                  </Link>
+          {/* Categories */}
+          <div className="home-footer__col">
+            <h4 className="home-footer__col-title">Categories</h4>
+            <ul className="home-footer__links">
+              {FOOTER_CATEGORIES.map((c) => (
+                <li key={c.to}>
+                  <Link to={c.to} className="home-footer__link">{c.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
         </div>
       </Container>
-    </section>
+    </footer>
   )
 }

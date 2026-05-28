@@ -17,7 +17,7 @@
  * ------------------------------------------------------------------ */
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Share2 } from 'lucide-react'
+import { Share2, ShoppingCart } from 'lucide-react'
 import clsx from 'clsx'
 import Card from '../Card/Card.jsx'
 import Badge from '../Badge/Badge.jsx'
@@ -42,6 +42,7 @@ export default function ProductCard({
     productId,
     name,
     nameTamil,
+    category,
     price,
     primaryImageUrl,
     stockQuantity,
@@ -89,18 +90,10 @@ export default function ProductCard({
           onError={(e) => { e.currentTarget.src = PLACEHOLDER }}
         />
         <div className="ui-product__media-badges">
-          {isOrganic && <Badge variant="success">Organic</Badge>}
-          {isVeg && <Badge variant="primary">Veg</Badge>}
+          {category && <Badge variant="neutral" className="ui-product__cat-badge">{category}</Badge>}
+          {!category && isOrganic && <Badge variant="success">Organic</Badge>}
+          {!category && isVeg && <Badge variant="primary">Veg</Badge>}
         </div>
-        <button
-          type="button"
-          className="ui-product__share"
-          onClick={handleShare}
-          aria-label={`Share ${name}`}
-          title="Share"
-        >
-          <Share2 size={16} />
-        </button>
         <WishlistButton
           product={product}
           className="ui-product__wish"
@@ -113,7 +106,18 @@ export default function ProductCard({
       </div>
 
       <div className="ui-product__body">
-        <h3 className="ui-product__name" title={name}>{name}</h3>
+        <div className="ui-product__name-row">
+          <h3 className="ui-product__name" title={name}>{name}</h3>
+          <button
+            type="button"
+            className="ui-product__share"
+            onClick={handleShare}
+            aria-label={`Share ${name}`}
+            title="Share"
+          >
+            <Share2 size={15} />
+          </button>
+        </div>
         {nameTamil && (
           <p className="ui-product__name-tamil" lang="ta" aria-hidden="true">
             {nameTamil}
@@ -139,7 +143,7 @@ export default function ProductCard({
               className="ui-product__add"
               fullWidth
             >
-              {outOfStock ? 'Sold out' : 'Add to cart'}
+              {outOfStock ? 'Sold out' : <><ShoppingCart size={15} style={{ marginRight: '0.3rem' }} /> Add</>}
             </Button>
           )}
         </div>

@@ -18,26 +18,22 @@
 
 :root {
   /* 1. Brand palette --------------------------------------------- */
-  /* Anchored to the watercolor hero (src/assets/image.png).
-     The hero established two leads — a deep olive headline and a
-     warm brown body — and we extend that palette site-wide so every
-     page feels like it came from the same painting. */
-  --brand-green:        #4f6a32;   /* hero "Fresh. Homemade." olive       */
-  --brand-green-dark:   #3d5b2a;   /* deeper olive for hover/active       */
-  --brand-green-light:  #eef0d8;   /* sage tint for fills + chip bg       */
-  --brand-yellow:       #c08842;   /* warm amber CTA                      */
-  --brand-yellow-dark:  #a85a1a;   /* hero "Arusuvai." warm brown         */
-  --brand-yellow-light: #fff8ec;   /* cream amber fill                    */
-  --brand-cream:        #fdf6df;   /* watercolor background cream         */
+  --brand-green:        #2c5c1a;   /* Figma primary — dark forest green   */
+  --brand-green-dark:   #1e4010;   /* darker forest for hover/active      */
+  --brand-green-light:  #e4f0de;   /* sage tint for fills + chip bg       */
+  --brand-yellow:       #e9a820;   /* golden amber — stars, accents       */
+  --brand-yellow-dark:  #b87d10;   /* deeper amber for hover              */
+  --brand-yellow-light: #fef8e8;   /* cream fill for search bar / inputs  */
+  --brand-cream:        #fdf6df;   /* watercolor hero background          */
 
   /* 2. Semantic colors ------------------------------------------- */
-  --color-bg:               var(--brand-cream);
-  --color-bg-surface:       #ffffff;          /* cards, popovers   */
-  --color-bg-muted:         #f5f1e2;          /* subtle warm fill  */
-  --color-bg-secondary:     var(--brand-yellow-light);
+  --color-bg:               #ffffff;          /* white page background     */
+  --color-bg-surface:       #ffffff;          /* cards, popovers           */
+  --color-bg-muted:         #f5f5f0;          /* subtle neutral fill       */
+  --color-bg-secondary:     var(--brand-yellow-light);  /* search / input bg */
 
-  --color-text:             #2a2f1a;          /* warm near-black   */
-  --color-text-muted:       #5a513f;          /* warm muted ink (AA contrast on cream + white) */
+  --color-text:             #1a1a1a;          /* near-black                */
+  --color-text-muted:       #6b6b6b;          /* medium gray               */
   --color-text-on-primary:  #ffffff;
   --color-text-on-accent:   #ffffff;
 
@@ -46,14 +42,14 @@
   --color-accent:           var(--brand-yellow);
   --color-accent-hover:     var(--brand-yellow-dark);
 
-  --color-success:          #4f6a32;
+  --color-success:          #2c5c1a;
   --color-warning:          var(--brand-yellow);
   --color-danger:           #c2410c;
-  --color-info:             #6b5b3a;
+  --color-info:             #4a6b8a;
 
-  --color-border:           rgba(79, 106, 50, 0.14);
-  --color-border-strong:    rgba(79, 106, 50, 0.28);
-  --color-ring:             var(--brand-yellow-dark);  /* focus ring */
+  --color-border:           rgba(0, 0, 0, 0.08);
+  --color-border-strong:    rgba(0, 0, 0, 0.16);
+  --color-ring:             var(--brand-green);  /* focus ring */
 
   /* 3. Typography ------------------------------------------------ */
   --font-display: 'Fraunces', Georgia, serif;
@@ -111,16 +107,16 @@
 
   /* 6. Shadows --------------------------------------------------- */
   --shadow-sm:
-    0 1px 2px rgba(60, 50, 20, 0.05);
+    0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md:
-    0 1px 3px rgba(60, 50, 20, 0.06),
-    0 4px 12px rgba(60, 50, 20, 0.10);
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg:
-    0 4px 8px rgba(60, 50, 20, 0.10),
-    0 12px 24px rgba(60, 50, 20, 0.14);
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 12px 24px rgba(0, 0, 0, 0.12);
   --shadow-xl:
-    0 10px 20px rgba(60, 50, 20, 0.12),
-    0 20px 48px rgba(60, 50, 20, 0.18);
+    0 10px 20px rgba(0, 0, 0, 0.10),
+    0 20px 48px rgba(0, 0, 0, 0.16);
 
   /* 7. Transitions ----------------------------------------------- */
   --ease-out:     cubic-bezier(0.4, 0, 0.2, 1);

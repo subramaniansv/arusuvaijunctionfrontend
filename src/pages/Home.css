@@ -20,6 +20,10 @@
   background: var(--color-bg-surface);
 }
 
+.home-section--cream {
+  background: var(--brand-cream);
+}
+
 /* Center-align every Section header inside the home page. Stacks the
  * title above any `action` slot so layouts like Featured Products
  * still read clearly on narrow screens. */
@@ -110,14 +114,13 @@
 }
 
 .home-hero__title--line-1 {
-  color: #3d5b2a;                 /* deep olive — matches design */
+  color: #1a1a1a;                 /* near-black — Figma */
   font-size: clamp(2.25rem, 5vw, 3.5rem);
 }
 
 .home-hero__title--line-2 {
-  color: #a85a1a;                 /* warm brown — matches design */
+  color: #2c5c1a;                 /* dark forest green — Figma */
   font-size: clamp(2.5rem, 6vw, 4.25rem);
-  font-style: italic;
 }
 
 .home-hero__divider {
@@ -125,7 +128,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  color: #a85a1a;
+  color: #2c5c1a;
   margin-block: var(--space-1) var(--space-2);
   width: 100%;
   max-width: 220px;
@@ -133,7 +136,7 @@
 .home-hero__divider span {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(168, 90, 26, 0.45), transparent);
+  background: linear-gradient(90deg, transparent, rgba(44, 92, 26, 0.40), transparent);
 }
 
 .home-hero__lead {
@@ -170,35 +173,38 @@
   border: 1px solid transparent;
 }
 
-/* Primary — olive green → lifts to a warmer, brighter olive on hover. */
+/* Primary — dark forest green solid */
 .home-hero__btn--primary {
-  background: #4f6a32;
+  background: #2c5c1a;
   color: #fff;
+  border-color: #2c5c1a;
 }
 .home-hero__btn--primary:hover,
 .home-hero__btn--primary:focus-visible {
-  background: #6a8a42;
+  background: #1e4010;
+  border-color: #1e4010;
   color: #fff;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(79, 106, 50, 0.32);
+  box-shadow: 0 6px 16px rgba(44, 92, 26, 0.30);
 }
-.home-hero__btn--primary:active { transform: translateY(0); background: #46612d; }
+.home-hero__btn--primary:active { transform: translateY(0); background: #1a3a0c; }
 
-/* Secondary — warm amber → hovers to an inverted outlined look so the two
-   buttons feel like a pair instead of two solids competing. */
+/* Secondary — outlined forest green (transparent bg, green border) */
 .home-hero__btn--secondary {
-  background: #c08842;
-  color: #fff;
+  background: transparent;
+  color: #2c5c1a;
+  border: 1.5px solid #2c5c1a;
+  box-shadow: none;
 }
 .home-hero__btn--secondary:hover,
 .home-hero__btn--secondary:focus-visible {
-  background: #fff8ec;
-  color: #a85a1a;
-  border-color: #c08842;
+  background: #ffffff;
+  color: #2c5c1a;
+  border-color: #2c5c1a;
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(168, 90, 26, 0.22);
+  box-shadow: 0 6px 16px rgba(44, 92, 26, 0.12);
 }
-.home-hero__btn--secondary:active { transform: translateY(0); background: #f3e7d0; }
+.home-hero__btn--secondary:active { transform: translateY(0); background: #f0f7ed; }
 
 .home-hero__btn:focus-visible {
   outline: 2px solid #fff;
@@ -210,13 +216,17 @@
 }
 
 /* ---------------- Categories --------------------------------- */
+.home-section--cats {
+  background: #fefcf5;
+}
+
 .home-cats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
 @media (min-width: 640px)  { .home-cats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); } }
-@media (min-width: 1024px) { .home-cats { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-6); } }
+@media (min-width: 1024px) { .home-cats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-6); } }
 
 .home-cat {
   display: flex;
@@ -235,6 +245,7 @@
   overflow: hidden;
   position: relative;
   margin-bottom: var(--space-1);
+  background: var(--color-bg-muted);
 }
 
 .home-cat__media img {
@@ -282,7 +293,8 @@
 
 /* ---------------- Why choose us ------------------------------ */
 .home-why {
-  background: linear-gradient(135deg, var(--brand-green-light) 0%, var(--color-bg) 100%);
+  background: var(--brand-cream);
+  padding-block: var(--space-16);
 }
 
 .home-features {
@@ -309,7 +321,7 @@
   background: var(--color-bg-surface);
   color: var(--color-primary);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 2px 8px rgba(79, 106, 50, 0.12);
   margin-bottom: var(--space-2);
 }
 
@@ -318,7 +330,7 @@
   font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .home-feature__desc {
@@ -328,262 +340,188 @@
   line-height: var(--line-height-normal);
 }
 
-/* ---------------- Reviews peek carousel ---------------------- */
-/*
- * Three review cards sit on stage: prev, active, next.
- * Active is full opacity, scaled to 1; the side cards hint at
- * more content to come/past at reduced opacity + slight scale-down.
- * Arrows + dot pagination sit BELOW the cards.
- */
-.home-reviews-peek {
-  position: relative;
-  padding-block: var(--space-2) 0;
-}
-
-/* N visible review cards in a row, fully opaque, equal width.
-   `--peek-visible` is set inline by the JSX (1, 2 or 3 by screen). */
-.home-reviews-peek__row {
+/* ---------------- Reviews grid (3 static cards) -------------- */
+.home-reviews-grid {
   display: grid;
-  grid-template-columns: repeat(var(--peek-visible, 3), minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-5);
-  align-items: stretch;
 }
+@media (min-width: 640px)  { .home-reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .home-reviews-grid { grid-template-columns: repeat(3, 1fr); } }
 
-.home-reviews-peek__controls {
-  margin-top: var(--space-6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-4);
-}
-
-.home-reviews-peek__arrow {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--color-border-strong);
-  background: var(--color-bg-surface);
-  color: var(--brand-green-dark);
-  cursor: pointer;
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-}
-.home-reviews-peek__arrow:hover,
-.home-reviews-peek__arrow:focus-visible {
-  background: var(--brand-green);
-  border-color: var(--brand-green);
-  color: #ffffff;
-  transform: translateY(-1px);
-  outline: none;
-}
-.home-reviews-peek__arrow:active { transform: translateY(0); }
-
-.home-reviews-peek__dots {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.home-reviews-peek__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: 0;
-  padding: 0;
-  background: rgba(79, 106, 50, 0.25);
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease, width 0.2s ease;
-}
-.home-reviews-peek__dot:hover { background: rgba(79, 106, 50, 0.5); }
-.home-reviews-peek__dot.is-active {
-  background: var(--brand-yellow-dark);
-  width: 22px;
-  border-radius: var(--radius-pill);
-}
-
-.home-reviews__empty {
-  text-align: center;
-  color: var(--color-text-muted);
-  padding-block: var(--space-8);
-}
-
-/* Simple inline review card used inside the peek carousel.
-   Layout (top -> bottom): star rating, the review body in
-   pull-quote style, then the reviewer's display name.       */
+/* Simple review card - quote mark + star + avatar */
 .home-review-simple {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
   gap: var(--space-4);
-  padding: var(--space-7) var(--space-6);
+  padding: var(--space-6);
   background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  min-height: 220px;
-  justify-content: center;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.home-review-simple__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.home-review-simple__quote {
+  font-size: 2.25rem;
+  line-height: 1;
+  color: rgba(233, 168, 32, 0.30);
+  font-family: Georgia, serif;
+  user-select: none;
 }
 
 .home-review-simple__body {
-  font-size: 1.0625rem;
-  line-height: 1.55;
-  color: var(--color-text);
+  font-size: var(--text-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-muted);
   margin: 0;
-  font-style: italic;
-  max-width: 38ch;
+  flex: 1;
 }
 
-.home-review-simple__name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--brand-yellow-dark);
-  letter-spacing: 0.02em;
-}
-
-.home-reviews__skeletons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: var(--space-5);
-}
-
-.home-review-skeleton {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-5);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-bg-surface);
-}
-
-.home-review-skeleton__foot {
+.home-review-simple__author {
   display: flex;
   align-items: center;
   gap: var(--space-3);
   margin-top: auto;
 }
 
-/* ---------------- Contact + quick links (footer strip) -------
- * Dark-green panel that anchors the bottom of the page. Text +
- * icons are recolored for contrast on green. */
-.home-contact {
+.home-review-simple__avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: var(--brand-green);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-bold);
+  flex-shrink: 0;
+}
+
+.home-review-simple__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.home-review-simple__city {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* ---------------- Footer ------------------------------------- */
+.home-footer {
   background: var(--brand-green-dark);
   color: #ffffff;
-  border-top: 0;
   padding-block: var(--space-16) var(--space-12);
 }
 
-.home-contact__grid {
+.home-footer__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-12);
+  gap: var(--space-10);
 }
-@media (min-width: 768px) {
-  .home-contact__grid {
-    grid-template-columns: 1.2fr 1fr;
-    gap: var(--space-16);
-  }
+@media (min-width: 640px)  { .home-footer__grid { grid-template-columns: 1fr 1fr; gap: var(--space-10); } }
+@media (min-width: 1024px) { .home-footer__grid { grid-template-columns: 1.8fr 1fr 1fr; gap: var(--space-12); } }
+
+/* Brand column */
+.home-footer__logo-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  margin-bottom: var(--space-4);
 }
 
-.home-contact__heading {
-  margin: 0 0 var(--space-2);
+.home-footer__logo {
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px;
+}
+
+.home-footer__brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-footer__brand-name {
   font-family: var(--font-display);
-  font-size: var(--text-2xl);
+  font-size: var(--text-lg);
   font-weight: var(--font-weight-semibold);
   color: #ffffff;
+  line-height: 1.2;
 }
 
-.home-contact__sub {
-  margin: 0 0 var(--space-6);
+.home-footer__brand-tamil {
+  font-family: var(--font-tamil);
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.72);
 }
 
-.home-contact__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: var(--space-5);
+.home-footer__tagline {
+  margin: 0 0 var(--space-5);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 28rem;
 }
 
-.home-contact__item {
+.home-footer__socials {
   display: flex;
-  align-items: flex-start;
   gap: var(--space-3);
 }
 
-.home-contact__link {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  text-decoration: none;
-  color: inherit;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-}
-.home-contact__link:hover { opacity: 0.85; transform: translateX(2px); }
-.home-contact__link:hover .home-contact__icon {
-  background: rgba(255, 255, 255, 0.18);
-}
-
-.home-contact__icon {
+.home-footer__social {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-accent);
-  border-radius: var(--radius-md);
-  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: border-color 0.18s ease, color 0.18s ease, background-color 0.18s ease;
+}
+.home-footer__social:hover {
+  border-color: var(--brand-yellow);
+  color: var(--brand-yellow);
+  background: rgba(192, 136, 66, 0.12);
 }
 
-.home-contact__label {
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 2px;
-}
-
-.home-contact__value {
+/* Links columns */
+.home-footer__col-title {
+  margin: 0 0 var(--space-5);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--font-weight-semibold);
   color: #ffffff;
+  letter-spacing: 0.01em;
 }
 
-.home-quick-links {
+.home-footer__links {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
-.home-quick-links__a {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: rgba(255, 255, 255, 0.85);
+.home-footer__link {
+  color: rgba(255, 255, 255, 0.72);
   text-decoration: none;
   font-size: var(--text-sm);
-  padding: var(--space-1) 0;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    gap var(--duration-fast) var(--ease-out);
+  transition: color 0.18s ease;
 }
-.home-quick-links__a:hover {
-  color: var(--color-accent);
-  gap: var(--space-3);
-  text-decoration: none;
-}
-.home-quick-links__a > svg { color: var(--color-accent); flex-shrink: 0; }
+.home-footer__link:hover { color: #ffffff; }
