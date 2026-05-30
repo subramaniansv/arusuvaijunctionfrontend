@@ -257,11 +257,6 @@ function Featured() {
         <Section
           title="Featured Products"
           subtitle="Handpicked favorites from our kitchen"
-          action={
-            <Link to="/products" className="home-link">
-              View All <ChevronRight size={16} />
-            </Link>
-          }
           spacing="md"
         >
           <div className="home-grid-4">
@@ -272,6 +267,11 @@ function Featured() {
                 onAddToCart={(id) => console.log('add', id)}
               />
             ))}
+          </div>
+          <div className="home-featured__more">
+            <Link to="/products" className="home-link">
+              View All <ChevronRight size={16} />
+            </Link>
           </div>
         </Section>
       </Container>

@@ -465,6 +465,20 @@
   cursor: pointer;
 }
 
+/* The global `.form-field input` rule stretches inputs to full width with
+ * padding/border — that mangles the checkbox. Reset it back to a normal
+ * checkbox and align it with its label text. */
+.addr-form__checkbox input[type="checkbox"] {
+  width: 1.05rem;
+  height: 1.05rem;
+  padding: 0;
+  margin: 0;
+  flex: 0 0 auto;
+  border-radius: 4px;
+  accent-color: var(--color-primary, #e76f51);
+  cursor: pointer;
+}
+
 .addr-form__actions {
   display: flex;
   justify-content: flex-end;

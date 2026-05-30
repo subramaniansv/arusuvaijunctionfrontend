@@ -106,6 +106,65 @@ export function useCheckout() {
 }
 
 /* ------------------------------------------------------------------
+ * Reorder. Re-adds every line item of a past order back into the
+ * cart (reusing the existing add-to-cart endpoint, so no new backend
+ * work) and lets the caller route into the normal checkout flow.
+ *
+ * Fault-tolerant: the cart endpoint rejects items that are now out of
+ * stock or inactive. We add each line independently and collect the
+ * outcome instead of aborting the whole reorder on the first failure,
+ * so the user still gets every still-available item in their cart.
+ * ------------------------------------------------------------------ */
+export function useReorder() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (order) => {
+      const items = order?.orderItems || []
+      let added = 0
+      const failed = []
+
+      for (const it of items) {
+        const body = {
+          productId: it.productId,
+          quantity: it.quantity > 0 ? it.quantity : 1,
+        }
+        if (it.variantId) body.variantId = it.variantId
+        try {
+          // Sequential so the server applies each line cleanly.
+          // eslint-disable-next-line no-await-in-loop
+          await api.post('/api/cart', body)
+          added += 1
+        } catch {
+          failed.push(it.productName || 'an item')
+        }
+      }
+
+      return { added, failed, total: items.length }
+    },
+    onSuccess: ({ added, failed }) => {
+      qc.invalidateQueries({ queryKey: ['cart'] })
+
+      if (added === 0) {
+        toast.error(
+          failed.length
+            ? 'Those items are no longer available'
+            : 'This order has no items to reorder',
+        )
+        return
+      }
+
+      toast.success(`${added} item${added === 1 ? '' : 's'} added to your cart`)
+      if (failed.length) {
+        toast(`${failed.length} item${failed.length === 1 ? '' : 's'} skipped (unavailable)`)
+      }
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || 'Could not reorder')
+    },
+  })
+}
+
+/* ------------------------------------------------------------------
  * Helpers (status badge + date format).
  * ------------------------------------------------------------------ */
 export const ORDER_STATUS_VARIANT = {

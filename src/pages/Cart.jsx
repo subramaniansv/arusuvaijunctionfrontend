@@ -33,6 +33,7 @@ import {
   Skeleton,
   Alert,
   Divider,
+  ConfirmModal,
 } from '../components'
 import {
   useCart,
@@ -84,7 +85,6 @@ export default function Cart() {
   if (items.length === 0) {
     return (
       <Container size="lg" className="cart">
-        <PageHeader />
         <EmptyState
           image={cartEmptyImg}
           imageAlt="An empty shopping cart"
@@ -102,8 +102,6 @@ export default function Cart() {
 
   return (
     <Container size="xl" className="cart">
-      <PageHeader itemCount={items.length} />
-
       <div className="cart__layout">
         {/* -------- items column -------- */}
         <section className="cart__items" aria-label="Cart items">
@@ -168,7 +166,6 @@ export default function Cart() {
             <ul className="cart__perks">
               <li><Truck size={14} /> Free shipping over ₹{FREE_ABOVE_INR}</li>
               <li><ShieldCheck size={14} /> Secure checkout</li>
-              <li><TagIcon size={14} /> Coupons applied at checkout</li>
             </ul>
           </Card>
         </aside>
@@ -180,21 +177,6 @@ export default function Cart() {
 /* ============================================================
  * Sub components
  * ============================================================ */
-
-function PageHeader({ itemCount }) {
-  return (
-    <header className="cart__header">
-      <div>
-        <h1 className="cart__title">Your Cart</h1>
-        {itemCount > 0 && (
-          <p className="cart__subtitle">
-            {itemCount} item{itemCount === 1 ? '' : 's'} in your bag
-          </p>
-        )}
-      </div>
-    </header>
-  )
-}
 
 function CartRow({ item, onQtyChange, onRemove, busy }) {
   return (
@@ -269,8 +251,8 @@ function SummaryLine({ label, value, strong, free, estimate }) {
 
 function ClearCartButton({ onClear, loading }) {
   const [confirming, setConfirming] = useState(false)
-  if (!confirming) {
-    return (
+  return (
+    <>
       <Button
         variant="ghost"
         onClick={() => setConfirming(true)}
@@ -279,23 +261,18 @@ function ClearCartButton({ onClear, loading }) {
       >
         Clear cart
       </Button>
-    )
-  }
-  return (
-    <div className="cart__confirm" role="group">
-      <span className="cart__confirm-text">Remove all items?</span>
-      <Button
-        variant="danger"
-        size="sm"
-        onClick={() => { onClear(); setConfirming(false) }}
+      <ConfirmModal
+        open={confirming}
+        onClose={() => setConfirming(false)}
+        onConfirm={() => { onClear(); setConfirming(false) }}
+        title="Clear your cart?"
+        message="This removes all items from your cart. This action can't be undone."
+        confirmLabel="Yes, clear cart"
+        confirmVariant="danger"
+        hideCancel
         loading={loading}
-      >
-        Yes, clear
-      </Button>
-      <Button variant="ghost" size="sm" onClick={() => setConfirming(false)}>
-        Cancel
-      </Button>
-    </div>
+      />
+    </>
   )
 }
 
@@ -303,9 +280,6 @@ function ClearCartButton({ onClear, loading }) {
 function CartSkeleton() {
   return (
     <Container size="xl" className="cart">
-      <header className="cart__header">
-        <Skeleton width={200} height={32} />
-      </header>
       <div className="cart__layout">
         <div className="cart__items">
           {[1, 2, 3].map((i) => (

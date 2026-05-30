@@ -10,6 +10,11 @@
   margin-inline: auto;
   padding-inline: var(--container-pad);
 }
+/* Tighter side padding on phones so product cards keep their width
+ * and don't collapse into cramped, broken tiles. */
+@media (max-width: 640px) {
+  .container { padding-inline: var(--space-3); }
+}
 
 /* Stack / cluster spacing helpers ----------------------------- */
 .stack > * + * { margin-top: var(--space-4); }

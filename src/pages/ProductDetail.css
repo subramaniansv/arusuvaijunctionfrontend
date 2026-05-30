@@ -24,14 +24,25 @@
 .pd__back {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  font-size: var(--text-sm);
+  align-self: flex-start;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-bold);
   color: var(--color-text-muted);
   text-decoration: none;
-  padding: var(--space-1) 0;
-  transition: color var(--transition-fast);
+  padding: var(--space-2) var(--space-3);
+  margin-left: calc(-1 * var(--space-3));
+  border-radius: var(--radius-btn);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
 }
-.pd__back:hover { color: var(--color-primary); }
+.pd__back:hover {
+  color: var(--color-primary);
+  background: var(--color-surface-alt, #f5f5f0);
+}
 .pd__back svg { flex-shrink: 0; }
 
 /* ---------------- hero ---------------- */
@@ -179,6 +190,18 @@
 .pd__wish { flex: 0 0 auto; }
 .pd__share { flex: 0 0 auto; }
 
+/* Quantity stepper sized to sit flush with the lg "Add to cart" button:
+   square +/- keys, taller control, a touch wider value field. */
+.pd__cart .pd__qty {
+  --qty-h: 52px;
+  --qty-w: 52px;
+  border-radius: var(--radius-btn);
+}
+.pd__cart .pd__qty .ui-qty__value {
+  width: 3.25rem;
+  font-size: var(--text-base);
+}
+
 .pd__perks {
   list-style: none;
   margin: 0;
@@ -289,13 +312,71 @@
 /* Spacing between the reviews list and the composer form that
    now sits below it. */
 .pd__reviews .pd__review-composer { margin-top: var(--space-8); }
+
+/* Two-column reviews: scrollable list on the left, add-review on the
+   right. Collapses to a single column on small screens. */
+.pd__reviews-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-6);
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .pd__reviews-layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+.pd__reviews-list { min-width: 0; }
+@media (min-width: 900px) {
+  .pd__reviews-list {
+    max-height: 32rem;
+    overflow-y: auto;
+    /* room for the scrollbar so cards aren't clipped */
+    padding-right: var(--space-3);
+    scrollbar-gutter: stable;
+  }
+}
+
 .pd__reviews-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-4);
 }
-@media (min-width: 760px) {
-  .pd__reviews-grid { grid-template-columns: 1fr 1fr; }
+@media (min-width: 900px) {
+  .pd__reviews-aside {
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-4));
+  }
+}
+
+.pd__reviews-aside { min-width: 0; }
+
+/* Guest (logged-out) reviews: single full-width column, no scroll cap,
+   with a sign-in link below the list. */
+.pd__reviews-single .pd__reviews-list {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+.pd__reviews-login {
+  margin: var(--space-5) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+.pd__reviews-login a {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+}
+.pd__reviews-login a:hover { text-decoration: underline; }
+/* Inside the two-column layout the composer no longer needs the
+   top margin that separated it from the list. */
+.pd__reviews-aside .pd__review-composer {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .pd__see-all {
@@ -393,12 +474,13 @@
 .pd__review-composer {
   display: flex;
   flex-direction: column;
-  gap: .85rem;
-  padding: 1.1rem 1.25rem;
+  gap: 1.25rem;
+  padding: 0;
   border: 1px solid var(--color-border, #e5e7eb);
   border-radius: var(--radius-lg, 14px);
   background: var(--color-surface, #fff);
   margin-bottom: 1.25rem;
+  overflow: hidden;
 }
 .pd__review-composer--prompt {
   flex-direction: row;
@@ -406,13 +488,77 @@
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+  padding: 1.1rem 1.25rem;
 }
 .pd__review-composer--prompt p { margin: 0; }
 .pd__review-composer-title {
   margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
+  padding: 1.1rem 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
 }
+
+/* Inner padding for the body fields (title spans full width above). */
+.pd__review-field,
+.pd__review-box,
+.pd__review-composer-actions {
+  margin-inline: 1.5rem;
+}
+.pd__review-composer-actions:last-child {
+  margin-bottom: 1.5rem;
+}
+
+/* Star-rating row */
+.pd__review-field {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.pd__review-field-label {
+  font-size: .95rem;
+  font-weight: 500;
+  color: var(--color-text-muted, #6b7280);
+}
+.pd__review-req { color: #e11d48; font-weight: 600; }
+
+/* Boxed input/textarea with the label sitting inside the top-left. */
+.pd__review-box {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: .85rem 1rem;
+  border: 1px solid var(--color-border-strong, #d4d4d8);
+  border-radius: var(--radius-md, 10px);
+  background: var(--color-bg, #fff);
+  transition: border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+.pd__review-box:focus-within {
+  border-color: var(--color-primary, #16a34a);
+  box-shadow: 0 0 0 3px rgba(44, 92, 26, .15);
+}
+.pd__review-box-label {
+  font-size: .95rem;
+  font-weight: 600;
+  color: var(--color-text, #1a1a1a);
+}
+.pd__review-box-input {
+  width: 100%;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  background: transparent;
+  color: var(--color-text, #1a1a1a);
+  outline: none;
+}
+.pd__review-box-input::placeholder { color: var(--color-text-muted, #9ca3af); }
+.pd__review-box-textarea {
+  resize: vertical;
+  min-height: 8rem;
+  line-height: 1.5;
+}
+
 .pd__review-composer-row {
   display: flex;
   align-items: center;
@@ -444,7 +590,7 @@
 }
 .pd__review-composer-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 .pd__review-warn {
   display: flex;
@@ -476,8 +622,20 @@
   .pd__sticky-bar .pd__sticky-buy {
     flex: 1 1 0;
   }
+  /* The sticky bar already provides these actions on mobile, so hide
+     the inline duplicates (keep the quantity stepper + wishlist). */
+  .pd__add,
+  .pd__buy {
+    display: none;
+  }
   /* Keep page content clear of the fixed bar. */
   .pd {
     padding-bottom: 84px;
+  }
+  /* Inline add/buy are hidden on mobile, so the stepper no longer needs
+     to match their height — bring it back to a comfortable touch size. */
+  .pd__cart .pd__qty {
+    --qty-h: 40px;
+    --qty-w: 40px;
   }
 }

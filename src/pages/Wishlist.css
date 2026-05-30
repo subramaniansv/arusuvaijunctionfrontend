@@ -25,6 +25,19 @@
 }
 .wishlist__back:hover { color: var(--color-text); }
 
+.wishlist__header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.wishlist__sort {
+  min-width: 200px;
+}
+
 .wishlist__title {
   margin: 0;
   font-size: 1.6rem;

@@ -64,7 +64,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  padding: var(--space-3);
+  padding: var(--space-4);
   flex: 1;
   min-width: 0;
 }
@@ -156,7 +156,34 @@
   padding-top: var(--space-2);
 }
 
-.ui-product__add { flex-shrink: 0; width: auto; }
+.ui-product__add {
+  flex-shrink: 0;
+  width: auto;
+  padding-inline: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.ui-product__add-icon {
+  margin-right: 0.3rem;
+}
+
+/* Mobile: shrink the price and tighten the footer gap so the Add
+   button keeps breathing room beside the price. */
+@media (max-width: 639px) {
+  .ui-product__footer {
+    gap: var(--space-2);
+  }
+  .ui-product__footer .ui-price__amount {
+    font-size: var(--text-base);
+  }
+  .ui-product__add{
+    max-height: 32px;
+  }
+  /* Drop the cart icon on mobile so the Add button stays compact. */
+  .ui-product__add-icon {
+    display: none;
+  }
+}
 
 /* Compact variant for recommendation strips */
 .ui-product--compact .ui-product__body { padding: var(--space-3); gap: var(--space-2); }

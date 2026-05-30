@@ -5,17 +5,14 @@
  * (backend already orders by orderedAt DESC).
  */
 import { Link } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
 
 import {
   Container,
   Card,
   Button,
-  Badge,
   Skeleton,
   Alert,
   EmptyState,
-  PriceTag,
 } from '../components'
 import {
   useOrders,
@@ -90,7 +87,6 @@ function PageHeader({ count }) {
   return (
     <header className="orders__header">
       <div>
-        <h1 className="orders__title">My Orders</h1>
         {count > 0 && (
           <p className="orders__sub">
             {count} order{count === 1 ? '' : 's'}
@@ -103,25 +99,51 @@ function PageHeader({ count }) {
 
 function OrderRow({ order }) {
   const items = order.orderItems || []
-  const preview = items.slice(0, 4)
-  const remaining = Math.max(0, items.length - preview.length)
+  const statusVariant = ORDER_STATUS_VARIANT[order.status] || 'neutral'
 
   return (
-    <Card padding="md" interactive className="orders__row" as={Link} to={`/orders/${order.orderId}`}>
-      <div className="orders__row-head">
-        <div className="orders__row-id">
-          <span className="orders__row-id-num">{shortOrderId(order.orderId)}</span>
-          <span className="orders__row-id-date">{formatOrderDate(order.orderedAt)}</span>
-        </div>
-        <Badge variant={ORDER_STATUS_VARIANT[order.status] || 'neutral'} size="md">
-          {order.status}
-        </Badge>
+    <Card padding="lg" className="orders__card">
+      <div className="orders__card-head">
+        <dl className="orders__facts">
+          <div className="orders__fact">
+            <dt>Order id:</dt>
+            <dd className="orders__fact-strong">{shortOrderId(order.orderId)}</dd>
+          </div>
+          <span className="orders__fact-sep" aria-hidden="true" />
+          <div className="orders__fact">
+            <dt>Ordered on:</dt>
+            <dd>{formatOrderDate(order.orderedAt)}</dd>
+          </div>
+          <span className="orders__fact-sep" aria-hidden="true" />
+          <div className="orders__fact">
+            <dt>Order Status:</dt>
+            <dd className={`orders__status orders__status--${statusVariant}`}>
+              {order.status}
+            </dd>
+          </div>
+          <span className="orders__fact-sep" aria-hidden="true" />
+          <div className="orders__fact">
+            <dt>Bill Total:</dt>
+            <dd className="orders__fact-strong">
+              ₹{Number(order.totalAmount).toLocaleString('en-IN')}
+            </dd>
+          </div>
+        </dl>
+
+        <OrderAction order={order} />
       </div>
 
-      <div className="orders__row-body">
-        <div className="orders__thumbs" aria-hidden="true">
-          {preview.map((it, i) => (
-            <span key={it.orderItemId || it.productId || i} className="orders__thumb">
+      <ul className="orders__items">
+        {items.map((it, i) => (
+          <li
+            key={it.orderItemId || it.productId || i}
+            className="orders__item"
+          >
+            <Link
+              to={`/products/${it.productId}`}
+              className="orders__item-thumb"
+              aria-label={it.productName}
+            >
               <img
                 src={it.imageUrl || PLACEHOLDER}
                 alt=""
@@ -129,25 +151,39 @@ function OrderRow({ order }) {
                 decoding="async"
                 onError={(e) => { e.currentTarget.src = PLACEHOLDER }}
               />
-            </span>
-          ))}
-          {remaining > 0 && (
-            <span className="orders__thumb orders__thumb--more">+{remaining}</span>
-          )}
-        </div>
-
-        <div className="orders__row-meta">
-          <span className="orders__row-count">
-            {items.length} item{items.length === 1 ? '' : 's'}
-          </span>
-          <PriceTag amount={order.totalAmount} size="md" />
-        </div>
-
-        <span className="orders__row-cta" aria-hidden="true">
-          <ChevronRight size={18} />
-        </span>
-      </div>
+            </Link>
+            <div className="orders__item-body">
+              <Link
+                to={`/products/${it.productId}`}
+                className="orders__item-name"
+              >
+                {it.productName}
+              </Link>
+              <span className="orders__item-meta">
+                Qty {it.quantity}
+                {it.variantLabel ? ` · ${it.variantLabel}` : ''}
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
     </Card>
+  )
+}
+
+/* Single, status-agnostic action: every order just links to its
+ * detail page. Reorder/Track shortcuts were removed as they aren't
+ * needed for now. */
+function OrderAction({ order }) {
+  return (
+    <Button
+      as={Link}
+      to={`/orders/${order.orderId}`}
+      variant="secondary"
+      size="sm"
+    >
+      View Details
+    </Button>
   )
 }
 
@@ -160,14 +196,14 @@ function OrdersSkeleton() {
       <ul className="orders__list">
         {[1, 2, 3].map((i) => (
           <li key={i}>
-            <Card padding="md" className="orders__row">
-              <div className="orders__row-head">
-                <Skeleton width={140} height={20} />
-                <Skeleton width={80} height={24} />
+            <Card padding="lg" className="orders__card">
+              <div className="orders__card-head">
+                <Skeleton width={320} height={20} />
+                <Skeleton width={96} height={36} />
               </div>
-              <div className="orders__row-body">
-                <Skeleton width={200} height={48} />
-                <Skeleton width={120} height={20} />
+              <div className="orders__item">
+                <Skeleton width={48} height={48} />
+                <Skeleton width={160} height={20} />
               </div>
             </Card>
           </li>

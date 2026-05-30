@@ -104,7 +104,6 @@ export default function Account() {
   if (isLoading) {
     return (
       <section className="account stack">
-        <h1 className="account__title">Personal Information</h1>
         <div className="account__skeleton">Loading your profile…</div>
       </section>
     )
@@ -113,7 +112,6 @@ export default function Account() {
   if (isError) {
     return (
       <section className="account stack">
-        <h1 className="account__title">Personal Information</h1>
         <div className="account__error">
           {error?.response?.data?.message ||
             error?.message ||
@@ -127,8 +125,6 @@ export default function Account() {
 
   return (
     <section className="account stack">
-      <h1 className="account__title">Personal Information</h1>
-
       {/* ---------- Profile card ---------- */}
       <div className="account-card account-card--profile">
         <div className="account-avatar" aria-hidden="true">

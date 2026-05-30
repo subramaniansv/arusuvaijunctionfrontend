@@ -108,9 +108,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             {/* Checkout is a focused flow - no account sidebar. */}
             <Route path="checkout" element={<Checkout />} />
+            {/* Cart is a focused flow - no account sidebar. */}
+            <Route path="cart" element={<Cart />} />
             {/* Account area - shared sidebar nav. */}
             <Route element={<AccountLayout />}>
-              <Route path="cart" element={<Cart />} />
               <Route path="orders" element={<Orders />} />
               <Route path="orders/:orderId" element={<OrderDetail />} />
               <Route path="wishlist" element={<Wishlist />} />

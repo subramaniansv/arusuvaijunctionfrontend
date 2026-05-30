@@ -12,6 +12,7 @@
  * so we can render rich cards (image, rating, stock badge) without an
  * extra round-trip per product.
  */
+import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {
   ShoppingBag,
@@ -31,6 +32,7 @@ import {
   Skeleton,
   Alert,
   Badge,
+  Select,
 } from '../components'
 import { useWishlist, useRemoveFromWishlist } from '../lib/wishlist'
 import { useAddToCart } from '../lib/cart'
@@ -40,13 +42,43 @@ import './Wishlist.css'
 const PLACEHOLDER =
   "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 3'%3e%3crect width='4' height='3' fill='%23f5f5f0'/%3e%3c/svg%3e"
 
+const SORT_OPTIONS = [
+  { value: 'recent', label: 'Date added (newest)' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+]
+
+function itemPrice(item) {
+  const p = item.product || {}
+  return Number(p.price ?? p.salePrice ?? 0) || 0
+}
+
+function itemAddedAt(item) {
+  return new Date(item.createdAt || 0).getTime() || 0
+}
+
+function sortWishlist(items, sort) {
+  const copy = [...items]
+  switch (sort) {
+    case 'price-asc':
+      return copy.sort((a, b) => itemPrice(a) - itemPrice(b))
+    case 'price-desc':
+      return copy.sort((a, b) => itemPrice(b) - itemPrice(a))
+    case 'recent':
+    default:
+      return copy.sort((a, b) => itemAddedAt(b) - itemAddedAt(a))
+  }
+}
+
 export default function Wishlist() {
   const navigate = useNavigate()
   const { data, isLoading, isError, refetch } = useWishlist()
   const addToCart = useAddToCart()
   const remove = useRemoveFromWishlist()
+  const [sort, setSort] = useState('recent')
 
   const items = Array.isArray(data) ? data : []
+  const sortedItems = useMemo(() => sortWishlist(items, sort), [items, sort])
 
   /* ---------------- loading ---------------- */
   if (isLoading) {
@@ -135,10 +167,14 @@ export default function Wishlist() {
 
   return (
     <Container size="xl" className="wishlist">
-      <PageHeader itemCount={items.length} />
+      <PageHeader
+        itemCount={items.length}
+        sort={sort}
+        onSortChange={setSort}
+      />
 
       <div className="wishlist__grid">
-        {items.map((item) => (
+        {sortedItems.map((item) => (
           <WishlistTile
             key={item.productId}
             item={item}
@@ -155,21 +191,32 @@ export default function Wishlist() {
 
 /* ------------------------------------------------------------------ */
 
-function PageHeader({ itemCount }) {
+function PageHeader({ itemCount, sort, onSortChange }) {
   return (
     <header className="wishlist__header">
       <Link to="/products" className="wishlist__back">
         <ArrowLeft size={14} aria-hidden="true" />
         <span>Continue shopping</span>
       </Link>
-      <h1 className="wishlist__title">
-        My wishlist
-        {itemCount != null && (
-          <span className="wishlist__count">
-            {itemCount} item{itemCount === 1 ? '' : 's'}
-          </span>
+      <div className="wishlist__header-row">
+        <h1 className="wishlist__title">
+          {itemCount != null && (
+            <span className="wishlist__count">
+              {itemCount} item{itemCount === 1 ? '' : 's'}
+            </span>
+          )}
+        </h1>
+        {itemCount > 0 && onSortChange && (
+          <Select
+            aria-label="Sort wishlist"
+            className="wishlist__sort"
+            fullWidth={false}
+            value={sort}
+            onChange={(e) => onSortChange(e.target.value)}
+            options={SORT_OPTIONS}
+          />
         )}
-      </h1>
+      </div>
     </header>
   )
 }

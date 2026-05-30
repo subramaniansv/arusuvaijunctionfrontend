@@ -59,6 +59,17 @@
   border-radius: var(--radius-pill);
 }
 
+/* Mobile: match the 32px button height so icon controls aren't oversized */
+@media (max-width: 640px) {
+  .ui-iconbtn {
+    --ib-size: 2rem;
+  }
+  .ui-iconbtn > svg {
+    width: 1em;
+    height: 1em;
+  }
+}
+
 /* Sizes */
 .ui-iconbtn--sm { --ib-size: 2rem;   font-size: var(--text-sm);  }
 .ui-iconbtn--md { --ib-size: 2.5rem; font-size: var(--text-base); }

@@ -465,6 +465,11 @@ export default function Checkout() {
                     >
                       {it.productName}
                     </span>
+                    {it.variantLabel && (
+                      <span className="checkout__line-variant">
+                        {it.variantLabel}
+                      </span>
+                    )}
                     <span className="checkout__line-meta">
                       Qty {it.quantity} · ₹
                       {Number(it.price).toLocaleString("en-IN")}

@@ -16,7 +16,7 @@ import {
 import {
   useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress,
 } from '../lib/addresses'
-import { EmptyState } from '../components'
+import { EmptyState, Button } from '../components'
 import noAddressImg from '../assets/empty state/no saved address.png'
 import './Account.css'
 
@@ -199,74 +199,79 @@ export default function Addresses() {
 
   const saving = createAddr.isPending || updateAddr.isPending
 
+  const isEmpty = !isLoading && addresses.length === 0 && mode === null
+
   return (
     <section className="account stack">
-      <h1 className="account__title">Saved addresses</h1>
+      {isEmpty ? (
+        <EmptyState
+          image={noAddressImg}
+          imageAlt="No saved addresses"
+          title="No saved addresses yet"
+          description="Add one to speed up checkout."
+          action={
+            <Button onClick={() => setMode('new')} leftIcon={<Plus size={16} />}>
+              Add address
+            </Button>
+          }
+        />
+      ) : (
+        <div className="account-card">
+          <div className="account-card__header account-card__header--simple">
+            <MapPin size={18} aria-hidden="true" />
+            <h2 className="account-card__name">Address book</h2>
+            {mode === null && (
+              <button
+                className="btn btn--ghost btn--sm addr-add-btn"
+                onClick={() => setMode('new')}
+              >
+                <Plus size={15} aria-hidden="true" /> Add address
+              </button>
+            )}
+          </div>
 
-      <div className="account-card">
-        <div className="account-card__header account-card__header--simple">
-          <MapPin size={18} aria-hidden="true" />
-          <h2 className="account-card__name">Address book</h2>
-          {mode === null && (
-            <button
-              className="btn btn--ghost btn--sm addr-add-btn"
-              onClick={() => setMode('new')}
-            >
-              <Plus size={15} aria-hidden="true" /> Add address
-            </button>
+          {isLoading && <p className="addr-empty">Loading…</p>}
+
+          {!isLoading && addresses.map((addr) =>
+            mode?.editing?.addressId === addr.addressId ? (
+              <AddressForm
+                key={addr.addressId}
+                initial={{
+                  label: addr.label || '',
+                  fullName: addr.fullName,
+                  phone: addr.phone,
+                  line1: addr.line1,
+                  line2: addr.line2 || '',
+                  city: addr.city,
+                  state: addr.state,
+                  pincode: addr.pincode,
+                  country: addr.country,
+                  isDefault: addr.default,
+                }}
+                onSave={handleSave}
+                onCancel={() => setMode(null)}
+                saving={saving}
+              />
+            ) : (
+              <AddressCard
+                key={addr.addressId}
+                addr={addr}
+                onEdit={() => setMode({ editing: addr })}
+                onDelete={() => handleDelete(addr.addressId)}
+                deleting={deletingId === addr.addressId}
+              />
+            )
           )}
-        </div>
 
-        {isLoading && <p className="addr-empty">Loading…</p>}
-
-        {!isLoading && addresses.length === 0 && mode === null && (
-          <EmptyState
-            image={noAddressImg}
-            imageAlt="No saved addresses"
-            title="No saved addresses yet"
-            description="Add one to speed up checkout."
-          />
-        )}
-
-        {!isLoading && addresses.map((addr) =>
-          mode?.editing?.addressId === addr.addressId ? (
+          {mode === 'new' && (
             <AddressForm
-              key={addr.addressId}
-              initial={{
-                label: addr.label || '',
-                fullName: addr.fullName,
-                phone: addr.phone,
-                line1: addr.line1,
-                line2: addr.line2 || '',
-                city: addr.city,
-                state: addr.state,
-                pincode: addr.pincode,
-                country: addr.country,
-                isDefault: addr.default,
-              }}
               onSave={handleSave}
               onCancel={() => setMode(null)}
               saving={saving}
             />
-          ) : (
-            <AddressCard
-              key={addr.addressId}
-              addr={addr}
-              onEdit={() => setMode({ editing: addr })}
-              onDelete={() => handleDelete(addr.addressId)}
-              deleting={deletingId === addr.addressId}
-            />
-          )
-        )}
-
-        {mode === 'new' && (
-          <AddressForm
-            onSave={handleSave}
-            onCancel={() => setMode(null)}
-            saving={saving}
-          />
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </section>
   )
 }

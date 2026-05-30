@@ -26,12 +26,16 @@ export default function RatingStars({
 }) {
   const [hover, setHover] = useState(null)
   const displayed = hover != null ? hover : value
+  const numericSize = typeof size === 'number'
+  const sizeClass = numericSize ? null : `ui-rating--${size}`
+  const sizeStyle = numericSize ? { '--r-size': `${size}px` } : undefined
 
   return (
     <span
-      className={clsx('ui-rating', `ui-rating--${size}`, editable && 'ui-rating--editable', className)}
+      className={clsx('ui-rating', sizeClass, editable && 'ui-rating--editable', className)}
       role={editable ? 'radiogroup' : 'img'}
       aria-label={editable ? 'Rate this product' : `Rated ${value} out of ${TOTAL}`}
+      style={sizeStyle}
       {...rest}
     >
       <span className="ui-rating__stars" aria-hidden={!editable}>

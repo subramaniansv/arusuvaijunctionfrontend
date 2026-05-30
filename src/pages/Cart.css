@@ -258,6 +258,8 @@
 
 .cart__row-variant {
   display: inline-block;
+  align-self: flex-start;
+  width: fit-content;
   margin-top: 2px;
   padding: 2px 8px;
   border-radius: 999px;

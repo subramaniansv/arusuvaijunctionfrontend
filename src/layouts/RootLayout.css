@@ -65,6 +65,24 @@
   display: block;
 }
 
+/* English name stacked over the Tamil transliteration. */
+.nav__logo-text {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.nav__logo-en {
+  font-size: var(--text-xl);
+  font-weight: var(--font-weight-semibold);
+}
+.nav__logo-ta {
+  font-family: var(--font-tamil, var(--font-body));
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  letter-spacing: 0;
+}
+
 /* ---- search bar (grows in the middle) ---- */
 .nav__search {
   display: flex;
@@ -479,7 +497,7 @@
   gap: var(--space-3) var(--space-4);
   margin-inline: calc(50% - 50vw);
   margin-top: calc(-1 * var(--space-8));
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-5);
   padding-block: var(--space-5);
   padding-inline: calc(50vw - 50%);
   background: var(--brand-cream, #fdf6df);
@@ -517,6 +535,12 @@
 }
 .page-back svg { color: currentColor; }
 
+/* Vertical breathing room around the routed page content. Defined as a
+ * class (not inline) so it can be tightened on mobile. */
+.page-main {
+  padding-block: var(--space-8);
+}
+
 /* ==================================================================
  * Global page heading - shown on every page except home/auth.
  * ================================================================== */
@@ -528,4 +552,19 @@
   font-weight: var(--font-weight-bold);
   line-height: 1.1;
   color: var(--color-primary);
+}
+
+/* Tighter banner + smaller heading on phones. The negative margin-top
+ * MUST match .page-main's top padding so the cream banner stays flush
+ * under the fixed nav (no gap above it). */
+@media (max-width: 640px) {
+  .page-main {
+    padding-block-start: var(--space-6);
+  }
+  .page-head {
+    margin-top: calc(-1 * var(--space-6));
+    margin-bottom: var(--space-3);
+    padding-block: var(--space-3);
+  }
+  .page-heading { font-size: var(--text-xl); }
 }

@@ -140,3 +140,31 @@
 .ui-btn__spinner {
   margin-right: var(--space-1);
 }
+
+/* Mobile ---------------------------------------------------------
+ * On phones every control is too tall. Cap button height at 32px,
+ * shrink padding to a tight horizontal pad, and step down the font.
+ * Laptop/tablet sizing is left untouched. */
+@media (max-width: 640px) {
+  .ui-btn {
+    --btn-px: var(--space-3);
+    --btn-py: 0;
+    --btn-fs: var(--text-sm);
+    height: 32px;
+    min-height: 32px;
+  }
+
+  .ui-btn--sm {
+    --btn-px: var(--space-2);
+    --btn-fs: var(--text-xs);
+    height: 28px;
+    min-height: 28px;
+  }
+
+  .ui-btn--lg {
+    --btn-px: var(--space-4);
+    --btn-fs: var(--text-base);
+    height: 36px;
+    min-height: 36px;
+  }
+}

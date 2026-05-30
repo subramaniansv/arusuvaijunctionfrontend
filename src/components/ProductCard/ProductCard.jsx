@@ -127,7 +127,9 @@ export default function ProductCard({
         {(averageRating != null || reviewCount != null) && (
           <RatingStars
             size="sm"
-            value={averageRating || 0}
+            /* Snap to the nearest half-star so cards show clean
+               full/half stars (e.g. 4.2 -> 4, 4.3 -> 4.5). */
+            value={Math.round((averageRating || 0) * 2) / 2}
             reviewCount={reviewCount}
           />
         )}
@@ -143,7 +145,7 @@ export default function ProductCard({
               className="ui-product__add"
               fullWidth
             >
-              {outOfStock ? 'Sold out' : <><ShoppingCart size={15} style={{ marginRight: '0.3rem' }} /> Add</>}
+              {outOfStock ? 'Sold out' : <><ShoppingCart size={15} className="ui-product__add-icon" /> Add</>}
             </Button>
           )}
         </div>

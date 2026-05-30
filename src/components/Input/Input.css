@@ -126,3 +126,18 @@
   font-weight: var(--font-weight-medium);
 }
 .ui-field__toggle:hover { color: var(--color-primary); }
+
+/* Mobile: tighten form-field padding and font so inputs aren't oversized */
+@media (max-width: 640px) {
+  .ui-field__input,
+  .ui-field__textarea,
+  .ui-field__select,
+  .ui-select__trigger {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .ui-field__textarea {
+    min-height: 4.5rem;
+  }
+}

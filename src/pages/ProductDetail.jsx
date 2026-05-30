@@ -275,6 +275,14 @@ export default function ProductDetail() {
         ]}
       />
       <Container size="xl">
+        <button
+          type="button"
+          className="pd__back"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft size={22} /> Back to products
+        </button>
+
         {/* ---------- hero ---------- */}
         <section className="pd__hero">
           {/* Gallery */}
@@ -322,7 +330,7 @@ export default function ProductDetail() {
             )}
 
             <div className="pd__rating-row">
-              <RatingStars value={product.averageRating || 0} size="md" />
+              <RatingStars value={product.averageRating || 0} size={24} />
               <span className="pd__rating-meta">
                 {product.averageRating != null
                   ? `${Number(product.averageRating).toFixed(1)} · ${product.reviewCount || 0} review${product.reviewCount === 1 ? '' : 's'}`
@@ -390,6 +398,7 @@ export default function ProductDetail() {
                 min={1}
                 max={Math.max(1, Math.min(effectiveStock ?? 99, 99))}
                 disabled={outOfStock}
+                className="pd__qty"
               />
               <Button
                 size="lg"
@@ -554,25 +563,61 @@ export default function ProductDetail() {
             )}
           </div>
 
-          {/* Reviews list first - shoppers want social proof before
-              they're asked to contribute. */}
-          {Array.isArray(product.reviews) && product.reviews.length > 0 ? (
-            <div className="pd__reviews-grid">
-              {product.reviews.map((r) => (
-                <ReviewCard key={r.reviewId} review={toReviewCardShape(r)} />
-              ))}
+          {/* Signed-in shoppers get the two-column layout (reviews list +
+              add-a-review form). Guests just see the reviews (or empty
+              state) full width, with a sign-in link to add their own. */}
+          {isAuthed ? (
+            <div className="pd__reviews-layout">
+              <div className="pd__reviews-list">
+                {Array.isArray(product.reviews) && product.reviews.length > 0 ? (
+                  <div className="pd__reviews-grid">
+                    {product.reviews.map((r) => (
+                      <ReviewCard key={r.reviewId} review={toReviewCardShape(r)} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    image={noReviewImg}
+                    imageAlt="No reviews yet"
+                    title="No reviews yet"
+                    description="Be the first to share your thoughts after trying this product."
+                  />
+                )}
+              </div>
+
+              <aside className="pd__reviews-aside">
+                <ReviewComposer productId={product.id || product.productId} />
+              </aside>
             </div>
           ) : (
-            <EmptyState
-              image={noReviewImg}
-              imageAlt="No reviews yet"
-              title="No reviews yet"
-              description="Be the first to share your thoughts after trying this product."
-            />
+            <div className="pd__reviews-single">
+              <div className="pd__reviews-list">
+                {Array.isArray(product.reviews) && product.reviews.length > 0 ? (
+                  <div className="pd__reviews-grid">
+                    {product.reviews.map((r) => (
+                      <ReviewCard key={r.reviewId} review={toReviewCardShape(r)} />
+                    ))}
+                  </div>
+                ) : (
+                  <EmptyState
+                    image={noReviewImg}
+                    imageAlt="No reviews yet"
+                    title="No reviews yet"
+                    description="Be the first to share your thoughts after trying this product."
+                  />
+                )}
+              </div>
+              <p className="pd__reviews-login">
+                <Link
+                  to="/login"
+                  state={{ from: { pathname: `/products/${productId}` } }}
+                >
+                  Log in
+                </Link>{' '}
+                to add a review.
+              </p>
+            </div>
           )}
-
-          {/* Composer below the list. */}
-          <ReviewComposer productId={product.id || product.productId} />
         </section>
       </Container>
 
@@ -705,26 +750,31 @@ function ReviewComposer({ productId }) {
 
   return (
     <form className="pd__review-composer" onSubmit={handleSubmit}>
-      <h3 className="pd__review-composer-title">Share your experience</h3>
-      <div className="pd__review-composer-row">
-        <span className="pd__review-composer-label">Your rating</span>
-        <RatingStars value={rating} onChange={setRating} editable size={22} />
+      <h3 className="pd__review-composer-title">Add a Review</h3>
+
+      <div className="pd__review-field">
+        <span className="pd__review-field-label">
+          Your Rating <span className="pd__review-req">*</span>
+        </span>
+        <RatingStars value={rating} onChange={setRating} editable size={32} />
       </div>
-      <label className="pd__review-composer-row pd__review-composer-row--col">
-        <span className="pd__review-composer-label">Your review (optional)</span>
+
+      <label className="pd__review-box">
+        <span className="pd__review-box-label">Your review (optional)</span>
         <textarea
-          className="pd__review-textarea"
-          rows={3}
+          className="pd__review-box-input pd__review-box-textarea"
+          rows={4}
           maxLength={1000}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="What did you like? How was the freshness, taste, packaging?"
+          placeholder="What did you like?"
         />
       </label>
+
       <div className="pd__review-composer-actions">
-        <Button type="submit" size="sm" disabled={submit.isPending || rating < 1}>
+        <Button type="submit" size="md" disabled={submit.isPending || rating < 1}>
           {submit.isPending && <Loader2 size={14} className="spin" aria-hidden="true" />}
-          Post review
+          Post Review
         </Button>
       </div>
     </form>

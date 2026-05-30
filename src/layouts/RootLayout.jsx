@@ -20,7 +20,7 @@ import {
 import {
   Search, ShoppingBag, ShoppingCart, Package, LayoutDashboard,
   LogOut, LogIn, X, UserCircle, Heart, Menu, MailWarning, Loader2,
-  ArrowLeft, Home,
+  Home,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
@@ -279,7 +279,10 @@ export default function RootLayout() {
             {/* logo */}
             <Link to="/" className="nav__logo" aria-label="Arusuvai Junction home">
               <span className="nav__logo-mark" aria-hidden="true"><img src={Arusuvaijunction} alt="Arusuvai Junction logo" /></span>
-              <span className="nav__logo-text">Arusuvai Junction</span>
+              <span className="nav__logo-text">
+                <span className="nav__logo-en">Arusuvai Junction</span>
+                <span className="nav__logo-ta" lang="ta">அறுசுவை ஜங்ஷன்</span>
+              </span>
             </Link>
 
             {/* inline search (collapses below 720px to mobile toggle) */}
@@ -575,26 +578,11 @@ export default function RootLayout() {
       )}
 
       <main
-        className={isBare ? undefined : 'container'}
-        style={isBare ? undefined : { paddingBlock: 'var(--space-8)' }}
+        className={isBare ? undefined : 'container page-main'}
       >
-        {!isBare && (
+        {!isBare && pageTitle && (
           <div className="page-head">
-            <button
-              type="button"
-              className="page-back"
-              onClick={() => navigate(-1)}
-              aria-label="Go back"
-            >
-              <ArrowLeft size={18} aria-hidden="true" />
-              <span className="page-back__label">Back</span>
-            </button>
-            {pageTitle && (
-              <>
-                <span className="page-head__sep" aria-hidden="true" />
-                <h1 className="page-heading">{pageTitle}</h1>
-              </>
-            )}
+            <h1 className="page-heading">{pageTitle}</h1>
           </div>
         )}
         <Outlet />
@@ -611,16 +599,16 @@ export default function RootLayout() {
  * not yet converted. */
 const PAGE_TITLES = {
   '/products': 'Products',
+  '/cart': 'My Cart',
+  '/account': 'User profile',
+  '/orders': 'Orders',
+  '/wishlist': 'Wishlist',
+  '/addresses': 'Saved addresses',
 }
-
-/* Account-area routes all share the cream "My Account" banner next to
- * the Back button; each page keeps its own content heading below. */
-const ACCOUNT_PATHS = ['/account', '/addresses', '/orders', '/wishlist', '/cart']
 
 function getPageTitle(path) {
   if (PAGE_TITLES[path]) return PAGE_TITLES[path]
-  if (ACCOUNT_PATHS.some((p) => path === p || path.startsWith(`${p}/`))) {
-    return 'My Account'
-  }
+  // Single product page (/products/:id) reuses the Products heading.
+  if (path.startsWith('/products/')) return 'Products'
   return null
 }
