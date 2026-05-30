@@ -17,6 +17,7 @@ const Select = forwardRef(function Select(
     className,
     fullWidth = true,
     disabled,
+    required,
     children,
     ...rest
   },
@@ -39,7 +40,12 @@ const Select = forwardRef(function Select(
       )}
     >
       {label && (
-        <label htmlFor={inputId} className="ui-field__label">{label}</label>
+        <label htmlFor={inputId} className="ui-field__label">
+          {label}
+          {required && (
+            <span className="ui-field__req" aria-hidden="true"> *</span>
+          )}
+        </label>
       )}
       <div className="ui-field__control">
         <select
@@ -47,6 +53,7 @@ const Select = forwardRef(function Select(
           id={inputId}
           disabled={disabled}
           aria-invalid={!!error || undefined}
+          aria-required={required || undefined}
           aria-describedby={describedBy.join(' ') || undefined}
           className="ui-field__select"
           {...rest}

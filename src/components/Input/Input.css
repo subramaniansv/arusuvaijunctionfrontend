@@ -15,6 +15,12 @@
   line-height: 1.4;
 }
 
+/* Red asterisk marking a mandatory field */
+.ui-field__req {
+  color: #e11d48;
+  font-weight: var(--font-weight-semibold, 600);
+}
+
 .ui-field__control {
   position: relative;
   display: flex;

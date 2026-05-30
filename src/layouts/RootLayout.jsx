@@ -20,6 +20,7 @@ import {
 import {
   Search, ShoppingBag, ShoppingCart, Package, LayoutDashboard,
   LogOut, LogIn, X, UserCircle, Heart, Menu, MailWarning, Loader2,
+  ArrowLeft,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
@@ -27,6 +28,7 @@ import { useAuthStore } from '../stores/authStore'
 import { useCartItemCount } from '../lib/cart'
 import { useMyProfile, useResendVerification } from '../lib/me'
 import Avatar from '../components/Avatar/Avatar.jsx'
+import SiteFooter from '../components/SiteFooter/SiteFooter.jsx'
 import './RootLayout.css'
 
 export default function RootLayout() {
@@ -554,8 +556,20 @@ export default function RootLayout() {
         className={isBare ? undefined : 'container'}
         style={isBare ? undefined : { paddingBlock: 'var(--space-8)' }}
       >
+        {!isBare && (
+          <button
+            type="button"
+            className="page-back"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={18} aria-hidden="true" />
+            <span>Back</span>
+          </button>
+        )}
         <Outlet />
       </main>
+
+      {!isAuth && <SiteFooter />}
     </>
   )
 }

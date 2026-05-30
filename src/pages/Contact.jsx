@@ -28,10 +28,10 @@ const schema = z.object({
 })
 
 const CONTACT_INFO = [
-  { icon: Phone,         label: 'Call us',  value: '+91 98765 43210', href: 'tel:+919876543210' },
-  { icon: MessageCircle, label: 'WhatsApp', value: '+91 98765 43210', href: 'https://wa.me/919876543210' },
-  { icon: Mail,          label: 'Email',    value: 'hello@arusuvai.in', href: 'mailto:hello@arusuvai.in' },
-  { icon: MapPin,        label: 'Visit us', value: 'T. Nagar, Chennai 600017' },
+  { icon: Phone,         label: 'Call us',  value: '+91 98765 43210', href: 'tel:+919843471463' },
+  { icon: MessageCircle, label: 'WhatsApp', value: '+91 98765 43210', href: 'https://wa.me/919843471463' },
+  { icon: Mail,          label: 'Email',    value: 'support@arusuvaijunction.com', href: 'mailto:support@arusuvaijunction.com' },
+  { icon: MapPin,        label: 'Visit us', value: 'Tirunelveli Town - 627006' },
 ]
 
 export default function Contact() {
@@ -99,6 +99,7 @@ export default function Contact() {
           <div className="contactform__row contactform__row--2">
             <Input
               label="Your name"
+              required
               placeholder="e.g. Priya Ramesh"
               autoComplete="name"
               error={errors.name?.message}
@@ -106,6 +107,7 @@ export default function Contact() {
             />
             <Input
               label="Email"
+              required
               type="email"
               placeholder="you@example.com"
               autoComplete="email"
@@ -137,6 +139,7 @@ export default function Contact() {
 
           <Textarea
             label="Message"
+            required
             rows={6}
             placeholder="Tell us what's on your mind..."
             error={errors.message?.message}

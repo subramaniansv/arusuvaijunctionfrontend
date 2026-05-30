@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import '../Input/Input.css'
 
 const Textarea = forwardRef(function Textarea(
-  { label, hint, error, id, rows = 4, className, fullWidth = true, disabled, ...rest },
+  { label, hint, error, id, rows = 4, className, fullWidth = true, disabled, required, ...rest },
   ref,
 ) {
   const autoId = useId()
@@ -26,7 +26,12 @@ const Textarea = forwardRef(function Textarea(
       )}
     >
       {label && (
-        <label htmlFor={inputId} className="ui-field__label">{label}</label>
+        <label htmlFor={inputId} className="ui-field__label">
+          {label}
+          {required && (
+            <span className="ui-field__req" aria-hidden="true"> *</span>
+          )}
+        </label>
       )}
       <div className="ui-field__control">
         <textarea
@@ -35,6 +40,7 @@ const Textarea = forwardRef(function Textarea(
           rows={rows}
           disabled={disabled}
           aria-invalid={!!error || undefined}
+          aria-required={required || undefined}
           aria-describedby={describedBy.join(' ') || undefined}
           className="ui-field__textarea"
           {...rest}

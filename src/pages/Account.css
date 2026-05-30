@@ -8,7 +8,7 @@
   max-width: 720px;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .account__title {
@@ -52,6 +52,29 @@
 
 .account-card__header--simple {
   margin-bottom: .75rem;
+}
+
+/* ---------- compact profile card (avatar + name/email/badges) ---------- */
+.account-card--profile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.account-card--profile .account-card__heading {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.account-card--profile .account-card__badges {
+  margin-top: .15rem;
+}
+
+@media (max-width: 480px) {
+  .account-card--profile {
+    align-items: flex-start;
+  }
 }
 
 .account-card__heading {
@@ -213,6 +236,12 @@
   font-size: .85rem;
   font-weight: 500;
   color: var(--text, #1f1f1f);
+}
+
+/* Red asterisk marking a mandatory field */
+.form-req {
+  color: #e11d48;
+  font-weight: 600;
 }
 
 .form-field input {

@@ -25,6 +25,7 @@ const Input = forwardRef(function Input(
     fullWidth = true,
     type = 'text',
     disabled,
+    required,
     ...rest
   },
   ref,
@@ -48,6 +49,9 @@ const Input = forwardRef(function Input(
       {label && (
         <label htmlFor={inputId} className="ui-field__label">
           {label}
+          {required && (
+            <span className="ui-field__req" aria-hidden="true"> *</span>
+          )}
         </label>
       )}
 
@@ -59,6 +63,7 @@ const Input = forwardRef(function Input(
           type={type}
           disabled={disabled}
           aria-invalid={!!error || undefined}
+          aria-required={required || undefined}
           aria-describedby={describedBy.join(' ') || undefined}
           className="ui-field__input"
           {...rest}

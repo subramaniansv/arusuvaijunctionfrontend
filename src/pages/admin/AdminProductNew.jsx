@@ -182,6 +182,7 @@ export default function AdminProductNew() {
         <div className="admin-form__grid">
           <Input
             label="Name"
+            required
             placeholder="e.g. Filter Coffee Powder"
             {...register('name')}
             error={errors.name?.message}
@@ -190,6 +191,7 @@ export default function AdminProductNew() {
           <div>
             <Input
               label="Category"
+              required
               list="category-suggestions-new"
               placeholder="Pick existing or type a new one"
               autoComplete="off"
@@ -205,6 +207,7 @@ export default function AdminProductNew() {
 
           <Input
             label="Price (₹)"
+            required
             type="number"
             step="0.01"
             min="0"
@@ -214,6 +217,7 @@ export default function AdminProductNew() {
 
           <Input
             label="Stock quantity"
+            required
             type="number"
             min="0"
             {...register('stockQuantity')}
@@ -223,6 +227,7 @@ export default function AdminProductNew() {
 
         <Textarea
           label="Description"
+          required
           rows={4}
           placeholder="What is it, who is it for…"
           {...register('description')}

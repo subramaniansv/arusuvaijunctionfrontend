@@ -7,7 +7,7 @@ import clsx from 'clsx'
 import './Input.css'
 
 const PasswordInput = forwardRef(function PasswordInput(
-  { label, hint, error, id, className, fullWidth = true, disabled, ...rest },
+  { label, hint, error, id, className, fullWidth = true, disabled, required, ...rest },
   ref,
 ) {
   const [show, setShow] = useState(false)
@@ -30,6 +30,9 @@ const PasswordInput = forwardRef(function PasswordInput(
       {label && (
         <label htmlFor={inputId} className="ui-field__label">
           {label}
+          {required && (
+            <span className="ui-field__req" aria-hidden="true"> *</span>
+          )}
         </label>
       )}
       <div className="ui-field__control">
@@ -38,6 +41,7 @@ const PasswordInput = forwardRef(function PasswordInput(
           id={inputId}
           type={show ? 'text' : 'password'}
           disabled={disabled}
+          aria-required={required || undefined}
           aria-invalid={!!error || undefined}
           aria-describedby={describedBy.join(' ') || undefined}
           className="ui-field__input"

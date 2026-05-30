@@ -249,12 +249,14 @@ export default function AdminProductEdit() {
         <div className="admin-form__grid">
           <Input
             label="Name"
+            required
             {...register('name')}
             error={errors.name?.message}
           />
           <div>
             <Input
               label="Category"
+              required
               list="category-suggestions-edit"
               placeholder="Pick existing or type a new one"
               autoComplete="off"
@@ -269,6 +271,7 @@ export default function AdminProductEdit() {
           </div>
           <Input
             label="Price (₹)"
+            required
             type="number"
             step="0.01"
             min="0"
@@ -277,6 +280,7 @@ export default function AdminProductEdit() {
           />
           <Input
             label="Stock quantity"
+            required
             type="number"
             min="0"
             {...register('stockQuantity')}
@@ -286,6 +290,7 @@ export default function AdminProductEdit() {
 
         <Textarea
           label="Description"
+          required
           rows={4}
           {...register('description')}
           error={errors.description?.message}

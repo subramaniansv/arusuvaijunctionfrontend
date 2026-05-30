@@ -12,12 +12,11 @@
  * we fetch the matching post office and pre-fill state + city.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  ArrowLeft,
   MapPin,
   ShieldCheck,
   Loader2,
@@ -366,6 +365,7 @@ export default function Checkout() {
 
             <Input
               label="Full name"
+              required
               autoComplete="name"
               placeholder="Recipient name"
               error={errors.fullName?.message}
@@ -374,6 +374,7 @@ export default function Checkout() {
 
             <Input
               label="Phone number"
+              required
               type="tel"
               inputMode="tel"
               placeholder="+91 9XXXXXXXXX"
@@ -385,6 +386,7 @@ export default function Checkout() {
 
             <Input
               label="Address line 1"
+              required
               autoComplete="address-line1"
               placeholder="Door no, street, area"
               error={errors.line1?.message}
@@ -401,12 +403,14 @@ export default function Checkout() {
             <div className="checkout__grid-2">
               <Input
                 label="City"
+                required
                 autoComplete="address-level2"
                 error={errors.city?.message}
                 {...register("city")}
               />
               <Select
                 label="State"
+                required
                 placeholder="Select state"
                 options={INDIAN_STATES.map((s) => ({ value: s, label: s }))}
                 error={errors.state?.message}
@@ -416,6 +420,7 @@ export default function Checkout() {
             <div className="checkout__grid-2">
               <Input
                 label="PIN code"
+                required
                 inputMode="numeric"
                 autoComplete="postal-code"
                 placeholder={pinHint}
@@ -426,28 +431,6 @@ export default function Checkout() {
               <div className="checkout__pin-slot">{pinStatusNode}</div>
             </div>
           </Card>
-
-          <div className="checkout__actions">
-            {buyNow ? (
-              <Button
-                type="button"
-                variant="ghost"
-                leftIcon={<ArrowLeft size={16} />}
-                onClick={() => navigate(-1)}
-              >
-                Back
-              </Button>
-            ) : (
-              <Button
-                as={Link}
-                to="/cart"
-                variant="ghost"
-                leftIcon={<ArrowLeft size={16} />}
-              >
-                Back to cart
-              </Button>
-            )}
-          </div>
         </section>
 
         {/* ---- right: summary ---- */}

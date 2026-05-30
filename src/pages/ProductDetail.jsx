@@ -21,7 +21,6 @@ import {
   Truck,
   Leaf,
   ArrowLeft,
-  Sparkles,
   Share2,
   Zap,
   MailWarning,
@@ -181,6 +180,9 @@ export default function ProductDetail() {
   // Share dialog
   const [shareOpen, setShareOpen] = useState(false)
 
+  // Description language toggle ('en' | 'ta')
+  const [descLang, setDescLang] = useState('en')
+
   /* ---------------- loading / error ---------------- */
   if (isLoading) return <ProductDetailSkeleton />
   if (isError || !product) {
@@ -272,14 +274,6 @@ export default function ProductDetail() {
         ]}
       />
       <Container size="xl">
-        {/* ---------- back link ---------- */}
-        <nav className="pd__crumbs" aria-label="Breadcrumb">
-          <Link to="/products" className="pd__back">
-            <ArrowLeft size={14} aria-hidden="true" />
-            <span>Back to products</span>
-          </Link>
-        </nav>
-
         {/* ---------- hero ---------- */}
         <section className="pd__hero">
           {/* Gallery */}
@@ -448,12 +442,35 @@ export default function ProductDetail() {
         <section className="pd__panels" aria-label="Product details">
           {product.description && (
             <article className="pd__panel">
-              <h2 className="pd__panel-title">About this product</h2>
-              <p className="pd__panel-body">{product.description}</p>
-              {product.descriptionTamil && (
+              <div className="pd__panel-head">
+                <h2 className="pd__panel-title">About this product</h2>
+                {product.descriptionTamil && (
+                  <div className="pd__lang-switch" role="group" aria-label="Description language">
+                    <button
+                      type="button"
+                      className={`pd__lang-btn${descLang === 'en' ? ' is-active' : ''}`}
+                      aria-pressed={descLang === 'en'}
+                      onClick={() => setDescLang('en')}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      className={`pd__lang-btn${descLang === 'ta' ? ' is-active' : ''}`}
+                      aria-pressed={descLang === 'ta'}
+                      onClick={() => setDescLang('ta')}
+                    >
+                      தமிழ்
+                    </button>
+                  </div>
+                )}
+              </div>
+              {descLang === 'ta' && product.descriptionTamil ? (
                 <p className="pd__panel-body pd__panel-body--tamil" lang="ta">
                   {product.descriptionTamil}
                 </p>
+              ) : (
+                <p className="pd__panel-body">{product.description}</p>
               )}
             </article>
           )}
@@ -467,11 +484,9 @@ export default function ProductDetail() {
               )}
             </div>
             {ingredients.length > 0 ? (
-              <ul className="pd__ingredients">
-                {ingredients.map((ing, i) => (
-                  <li key={i}><Sparkles size={14} aria-hidden="true" /> {ing}</li>
-                ))}
-              </ul>
+              <p className="pd__panel-body pd__ingredients">
+                {ingredients.join(', ')}
+              </p>
             ) : (
               <p className="pd__panel-body pd__panel-body--muted">
                 We&apos;re working on listing the full ingredient breakdown
@@ -557,6 +572,32 @@ export default function ProductDetail() {
           <ReviewComposer productId={product.id || product.productId} />
         </section>
       </Container>
+
+      {/* ---------- sticky mobile action bar (Zepto-style) ---------- */}
+      <div className="pd__sticky-bar">
+        <Button
+          size="lg"
+          variant="secondary"
+          leftIcon={<ShoppingBag size={18} />}
+          disabled={outOfStock}
+          loading={addToCart.isPending}
+          onClick={handleAdd}
+          className="pd__sticky-add"
+        >
+          {outOfStock ? 'Sold out' : 'Add to cart'}
+        </Button>
+        <Button
+          size="lg"
+          variant="primary"
+          leftIcon={<Zap size={18} />}
+          disabled={outOfStock}
+          loading={addToCart.isPending}
+          onClick={handleBuyNow}
+          className="pd__sticky-buy"
+        >
+          Buy now
+        </Button>
+      </div>
 
       <ShareModal
         open={shareOpen}

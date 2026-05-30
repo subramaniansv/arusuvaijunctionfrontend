@@ -9,10 +9,10 @@
  * also tolerate them being missing.
  */
 import { useEffect } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import {
   CheckCircle2, MapPin, Phone, Package, Truck, Home, XCircle, Clock,
-  ArrowLeft, MessageCircle, ChevronRight,
+  MessageCircle, ChevronRight,
 } from 'lucide-react'
 
 import {
@@ -48,7 +48,6 @@ const TIMELINE = [
 export default function OrderDetail() {
   const { orderId } = useParams()
   const location = useLocation()
-  const navigate = useNavigate()
   const justPlaced = !!location.state?.justPlaced
 
   const { data: order, isLoading, isError } = useOrder(orderId)
@@ -61,7 +60,6 @@ export default function OrderDetail() {
   if (isError || !order) {
     return (
       <Container size="lg" className="orderdetail">
-        <BackLink />
         <Alert variant="danger" title="Order not found">
           <p style={{ margin: '0 0 var(--space-3)' }}>
             We couldn&apos;t find this order. It may have been removed.
@@ -80,8 +78,6 @@ export default function OrderDetail() {
 
   return (
     <Container size="xl" className="orderdetail">
-      <BackLink />
-
       {justPlaced && (
         <Alert
           variant="success"
@@ -267,18 +263,6 @@ export default function OrderDetail() {
       </div>
     </Container>
   )
-
-  function BackLink() {
-    return (
-      <button
-        type="button"
-        className="orderdetail__back"
-        onClick={() => navigate(-1)}
-      >
-        <ArrowLeft size={16} /> Back
-      </button>
-    )
-  }
 }
 
 /* =================================================================

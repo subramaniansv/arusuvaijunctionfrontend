@@ -12,7 +12,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import {
-  User as UserIcon, Mail, ShieldCheck,
+  Mail, ShieldCheck,
   Eye, EyeOff, KeyRound, Loader2, MailCheck, MailWarning,
   MapPin, Plus, Pencil, Trash2, Star,
 } from 'lucide-react'
@@ -65,20 +65,20 @@ function AddressForm({ initial, onSave, onCancel, saving }) {
           <input id="af-label" placeholder="Home / Office…" {...register('label')} />
         </div>
         <div className="form-field">
-          <label htmlFor="af-fullName">Full name *</label>
+          <label htmlFor="af-fullName">Full name <span className="form-req" aria-hidden="true">*</span></label>
           <input id="af-fullName" {...register('fullName')} aria-invalid={!!errors.fullName || undefined} />
           {errors.fullName && <p className="form-error">{errors.fullName.message}</p>}
         </div>
       </div>
 
       <div className="form-field">
-        <label htmlFor="af-phone">Phone *</label>
+        <label htmlFor="af-phone">Phone <span className="form-req" aria-hidden="true">*</span></label>
         <input id="af-phone" type="tel" inputMode="tel" {...register('phone')} aria-invalid={!!errors.phone || undefined} />
         {errors.phone && <p className="form-error">{errors.phone.message}</p>}
       </div>
 
       <div className="form-field">
-        <label htmlFor="af-line1">Address line 1 *</label>
+        <label htmlFor="af-line1">Address line 1 <span className="form-req" aria-hidden="true">*</span></label>
         <input id="af-line1" placeholder="Door no, street, area" {...register('line1')} aria-invalid={!!errors.line1 || undefined} />
         {errors.line1 && <p className="form-error">{errors.line1.message}</p>}
       </div>
@@ -90,24 +90,24 @@ function AddressForm({ initial, onSave, onCancel, saving }) {
 
       <div className="addr-form__row addr-form__row--3">
         <div className="form-field">
-          <label htmlFor="af-city">City *</label>
+          <label htmlFor="af-city">City <span className="form-req" aria-hidden="true">*</span></label>
           <input id="af-city" {...register('city')} aria-invalid={!!errors.city || undefined} />
           {errors.city && <p className="form-error">{errors.city.message}</p>}
         </div>
         <div className="form-field">
-          <label htmlFor="af-state">State *</label>
+          <label htmlFor="af-state">State <span className="form-req" aria-hidden="true">*</span></label>
           <input id="af-state" {...register('state')} aria-invalid={!!errors.state || undefined} />
           {errors.state && <p className="form-error">{errors.state.message}</p>}
         </div>
         <div className="form-field">
-          <label htmlFor="af-pincode">Pincode *</label>
+          <label htmlFor="af-pincode">Pincode <span className="form-req" aria-hidden="true">*</span></label>
           <input id="af-pincode" inputMode="numeric" {...register('pincode')} aria-invalid={!!errors.pincode || undefined} />
           {errors.pincode && <p className="form-error">{errors.pincode.message}</p>}
         </div>
       </div>
 
       <div className="form-field">
-        <label htmlFor="af-country">Country *</label>
+        <label htmlFor="af-country">Country <span className="form-req" aria-hidden="true">*</span></label>
         <input id="af-country" {...register('country')} aria-invalid={!!errors.country || undefined} />
         {errors.country && <p className="form-error">{errors.country.message}</p>}
       </div>
@@ -281,17 +281,6 @@ const pwSchema = z
     message: 'New password must be different from the current one',
   })
 
-function formatDate(value) {
-  if (!value) return '-'
-  try {
-    return new Date(value).toLocaleDateString(undefined, {
-      year: 'numeric', month: 'long', day: 'numeric',
-    })
-  } catch {
-    return String(value)
-  }
-}
-
 function fullName(profile) {
   const fn = (profile?.firstName || '').trim()
   const ln = (profile?.lastName || '').trim()
@@ -386,25 +375,33 @@ export default function Account() {
       <h1 className="account__title">My account</h1>
 
       {/* ---------- Profile card ---------- */}
-      <div className="account-card">
-        <div className="account-card__header">
-          <div className="account-avatar" aria-hidden="true">
-            {initials(profile)}
-          </div>
-          <div className="account-card__heading">
-            <h2 className="account-card__name">{fullName(profile)}</h2>
-            <p className="account-card__email">
-              <Mail size={14} aria-hidden="true" />
-              <span>{profile?.email || '-'}</span>
-            </p>
-          </div>
+      <div className="account-card account-card--profile">
+        <div className="account-avatar" aria-hidden="true">
+          {initials(profile)}
+        </div>
+        <div className="account-card__heading">
+          <h2 className="account-card__name">{fullName(profile)}</h2>
+          <p className="account-card__email">
+            <Mail size={14} aria-hidden="true" />
+            <span>{profile?.email || '-'}</span>
+          </p>
           <div className="account-card__badges">
-            {profile?.emailVerified && (
+            {profile?.emailVerified ? (
               <span className="account-badge account-badge--verified">
                 <MailCheck size={14} aria-hidden="true" />
                 Verified
               </span>
+            ) : (
+              <span className="account-badge account-badge--unverified">
+                <MailWarning size={14} aria-hidden="true" />
+                Not verified
+              </span>
             )}
+            <span
+              className={`account-status account-status--${(profile?.status || 'unknown').toLowerCase()}`}
+            >
+              {profile?.status || 'UNKNOWN'}
+            </span>
             {isAdmin && (
               <span className="account-badge account-badge--admin">
                 <ShieldCheck size={14} aria-hidden="true" />
@@ -413,28 +410,6 @@ export default function Account() {
             )}
           </div>
         </div>
-
-        <dl className="account-meta">
-          <div className="account-meta__row">
-            <dt><UserIcon size={14} aria-hidden="true" />Name</dt>
-            <dd>{fullName(profile)}</dd>
-          </div>
-          <div className="account-meta__row">
-            <dt><Mail size={14} aria-hidden="true" />Email</dt>
-            <dd>{profile?.email || '-'}</dd>
-          </div>
-          <div className="account-meta__row">
-            <dt><ShieldCheck size={14} aria-hidden="true" />Status</dt>
-            <dd>
-              <span
-                className={`account-status account-status--${(profile?.status || 'unknown').toLowerCase()}`}
-              >
-                {profile?.status || 'UNKNOWN'}
-              </span>
-            </dd>
-          </div>
-     
-        </dl>
       </div>
 
       {/* ---------- Email verification card (only when NOT verified) ---------- */}
@@ -488,7 +463,7 @@ export default function Account() {
           noValidate
         >
           <div className="form-field">
-            <label htmlFor="oldPassword">Current password</label>
+            <label htmlFor="oldPassword">Current password <span className="form-req" aria-hidden="true">*</span></label>
             <div className="form-input-wrap">
               <input
                 id="oldPassword"
@@ -512,7 +487,7 @@ export default function Account() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="newPassword">New password</label>
+            <label htmlFor="newPassword">New password <span className="form-req" aria-hidden="true">*</span></label>
             <div className="form-input-wrap">
               <input
                 id="newPassword"
@@ -537,7 +512,7 @@ export default function Account() {
           </div>
 
           <div className="form-field">
-            <label htmlFor="confirmPassword">Confirm new password</label>
+            <label htmlFor="confirmPassword">Confirm new password <span className="form-req" aria-hidden="true">*</span></label>
             <input
               id="confirmPassword"
               type={showNew ? 'text' : 'password'}
