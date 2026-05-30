@@ -16,7 +16,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Search, SlidersHorizontal, X, ShoppingBag } from 'lucide-react'
+import { SlidersHorizontal, X } from 'lucide-react'
 
 import {
   Container,
@@ -36,6 +36,7 @@ import { useAddToCart } from '../lib/cart'
 import Seo from '../components/Seo'
 import { breadcrumbLd, BRAND } from '../lib/seo'
 import { useAuthStore } from '../stores/authStore'
+import noSearchImg from '../assets/empty state/no search.png'
 import './Products.css'
 
 const SORT_OPTIONS = [
@@ -90,22 +91,6 @@ function writeFilters(prev, next) {
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = useMemo(() => readFilters(searchParams), [searchParams])
-
-  // Local search input -- debounced into the URL so we don't fire a
-  // query on every keystroke.
-  const [searchDraft, setSearchDraft] = useState(filters.q)
-  useEffect(() => { setSearchDraft(filters.q) }, [filters.q])
-  useEffect(() => {
-    const id = setTimeout(() => {
-      if (searchDraft !== filters.q) {
-        setSearchParams((prev) =>
-          writeFilters(prev, { ...readFilters(prev), q: searchDraft }),
-        )
-      }
-    }, 300)
-    return () => clearTimeout(id)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchDraft])
 
   const [filtersOpen, setFiltersOpen] = useState(false)
 
@@ -303,17 +288,6 @@ export default function Products() {
           {/* main */}
           <div className="products__main">
             <div className="products__toolbar">
-              <div className="products__search">
-                <Input
-                  type="search"
-                  placeholder="Search snacks, sweets..."
-                  value={searchDraft}
-                  onChange={(e) => setSearchDraft(e.target.value)}
-                  leftIcon={<Search size={18} />}
-                  aria-label="Search products"
-                />
-              </div>
-
               <Button
                 variant="secondary"
                 size="md"
@@ -371,7 +345,8 @@ export default function Products() {
 
             {!isLoading && !isError && products.length === 0 && (
               <EmptyState
-                icon={<ShoppingBag size={36} />}
+                image={noSearchImg}
+                imageAlt="No products found"
                 title="No products match your filters"
                 description="Try removing a filter or searching for something else."
                 action={

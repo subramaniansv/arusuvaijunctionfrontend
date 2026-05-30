@@ -29,7 +29,7 @@
 .products__sidebar {
   position: fixed;
   inset: 0 auto 0 0;
-  z-index: 60;
+  z-index: 1200;
   width: min(86vw, 320px);
   background: var(--color-bg-surface);
   border-right: 1px solid var(--color-border);
@@ -59,18 +59,23 @@
 @media (min-width: 960px) {
   .products__sidebar {
     position: sticky;
-    /* Align with the sidebar's natural y so it does NOT move on scroll:
-         nav-height (body padding) + main padding-block (--space-8)
-         + page padding-block top (--space-6). */
-    top: calc(var(--nav-height) + var(--space-8) + var(--space-6));
+    /* Stick just below the navbar with a small gap. */
+    top: calc(var(--nav-height) + var(--space-4));
+    /* Reset the mobile drawer's high z-index so the desktop sticky sidebar
+       always stays BELOW the fixed navbar. */
+    z-index: auto;
     transform: none;
     width: auto;
     align-self: flex-start;
-    max-height: calc(100vh - var(--nav-height) - var(--space-10));
-    background: transparent;
-    border-right: 0;
-    box-shadow: none;
-    padding: 0;
+    max-height: calc(100vh - var(--nav-height) - var(--space-8));
+    /* Bordered card (Figma): squarish border + surface background. */
+    background: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-right: 1px solid var(--color-border);
+    border-radius: var(--radius-btn);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    overflow-y: auto;
     /* Always visible on desktop regardless of drawer state */
     visibility: visible;
   }
@@ -126,7 +131,7 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
-  z-index: 55;
+  z-index: 1190;
   animation: fadeIn var(--duration-fast) var(--ease-out);
 }
 @media (min-width: 960px) { .products__backdrop { display: none; } }
@@ -191,23 +196,17 @@
 .products__main { min-width: 0; }
 
 .products__toolbar {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-2) var(--space-3);
   margin-bottom: var(--space-3);
 }
-.products__toolbar .products__search {
-  grid-column: 1 / -1;
-  width: 100%;
-}
 @media (min-width: 960px) {
-  /* Desktop: filters btn is hidden -> search | sort */
+  /* Desktop: filters btn is hidden -> sort aligns right. */
   .products__toolbar {
-    grid-template-columns: 1fr auto;
-  }
-  .products__toolbar .products__search {
-    grid-column: auto;
+    justify-content: flex-end;
   }
 }
 

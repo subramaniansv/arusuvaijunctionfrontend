@@ -104,6 +104,7 @@
   --radius-lg:   1rem;      /* 16px - default for cards */
   --radius-xl:   1.25rem;   /* 20px */
   --radius-pill: 9999px;
+  --radius-btn:  4px;       /* squarish buttons (Figma) - mandated for all buttons */
 
   /* 6. Shadows --------------------------------------------------- */
   --shadow-sm:

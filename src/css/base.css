@@ -129,6 +129,7 @@ button {
   cursor: pointer;
   background: none;
   border: none;
+  border-radius: var(--radius-btn);
 }
 
 button:disabled {

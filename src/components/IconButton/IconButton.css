@@ -14,7 +14,7 @@
   background: var(--ib-bg);
   color: var(--ib-fg);
   border: 1px solid var(--ib-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-btn);
   cursor: pointer;
   transition:
     background var(--duration-fast) var(--ease-out),

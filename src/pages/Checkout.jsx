@@ -339,27 +339,27 @@ export default function Checkout() {
             {/* ---- Saved-address picker (only shown when user has saved addresses) ---- */}
             {savedAddresses.length > 0 && (
               <div className="checkout__saved-addr">
-                <label
-                  htmlFor="savedAddrSelect"
-                  className="checkout__saved-addr__label"
-                >
-                  <BookUser size={15} aria-hidden="true" /> Use a saved address
-                </label>
-                <select
+                <Select
                   id="savedAddrSelect"
                   className="checkout__saved-addr__select"
+                  label={
+                    <>
+                      <BookUser size={15} aria-hidden="true" /> Use a saved
+                      address
+                    </>
+                  }
                   value={selectedSavedId}
                   onChange={(e) => setSelectedSavedId(e.target.value)}
-                >
-                  <option value="">— fill form manually —</option>
-                  {savedAddresses.map((a) => (
-                    <option key={a.addressId} value={a.addressId}>
-                      {a.label ? `${a.label} – ` : ""}
-                      {a.fullName}, {a.city}
-                      {a.default ? " ★" : ""}
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: "", label: "— fill form manually —" },
+                    ...savedAddresses.map((a) => ({
+                      value: a.addressId,
+                      label: `${a.label ? `${a.label} – ` : ""}${a.fullName}, ${
+                        a.city
+                      }${a.default ? " ★" : ""}`,
+                    })),
+                  ]}
+                />
               </div>
             )}
 

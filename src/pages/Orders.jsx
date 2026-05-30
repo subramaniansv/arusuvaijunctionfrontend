@@ -5,7 +5,7 @@
  * (backend already orders by orderedAt DESC).
  */
 import { Link } from 'react-router-dom'
-import { Package, ChevronRight } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 
 import {
   Container,
@@ -23,6 +23,7 @@ import {
   formatOrderDate,
   shortOrderId,
 } from '../lib/orders'
+import noOrdersImg from '../assets/empty state/no ordrs.png'
 import './Orders.css'
 
 const PLACEHOLDER =
@@ -51,7 +52,8 @@ export default function Orders() {
       <Container size="lg" className="orders">
         <PageHeader />
         <EmptyState
-          icon={<Package size={40} />}
+          image={noOrdersImg}
+          imageAlt="No orders placed yet"
           title="No orders yet"
           description="When you place an order, it'll show up here."
           action={

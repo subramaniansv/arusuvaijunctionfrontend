@@ -20,7 +20,7 @@ import {
 import {
   Search, ShoppingBag, ShoppingCart, Package, LayoutDashboard,
   LogOut, LogIn, X, UserCircle, Heart, Menu, MailWarning, Loader2,
-  ArrowLeft,
+  ArrowLeft, Home,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
@@ -46,6 +46,9 @@ export default function RootLayout() {
   const path = location.pathname
   const isAuth = path === '/login' || path === '/register'
   const isBare = path === '/' || isAuth
+
+  // Global page heading shown on every page except Home / auth.
+  const pageTitle = getPageTitle(path)
 
   // ---- search state ----
   const onProducts = path === '/products'
@@ -134,6 +137,16 @@ export default function RootLayout() {
      the mobile drawer.  When closeDrawer is provided, it's called on click. */
   const renderNavItems = (closeDrawer) => (
     <>
+      <NavLink
+        to="/"
+        end
+        className={({ isActive }) => `nav__item${isActive ? ' is-active' : ''}`}
+        onClick={closeDrawer}
+      >
+        <Home size={20} aria-hidden="true" />
+        <span>Home</span>
+      </NavLink>
+
       <NavLink
         to="/products"
         end
@@ -301,6 +314,15 @@ export default function RootLayout() {
                  (Wishlist, Orders, Account, Admin, Verify, Logout)
                  lives inside the avatar menu to keep the bar tidy. */}
             <nav className="nav__cluster" aria-label="Primary">
+              <NavLink
+                to="/"
+                end
+                className={({ isActive }) => `nav__item${isActive ? ' is-active' : ''}`}
+              >
+                <Home size={20} aria-hidden="true" />
+                <span>Home</span>
+              </NavLink>
+
               <NavLink
                 to="/products"
                 end
@@ -557,14 +579,23 @@ export default function RootLayout() {
         style={isBare ? undefined : { paddingBlock: 'var(--space-8)' }}
       >
         {!isBare && (
-          <button
-            type="button"
-            className="page-back"
-            onClick={() => navigate(-1)}
-          >
-            <ArrowLeft size={18} aria-hidden="true" />
-            <span>Back</span>
-          </button>
+          <div className="page-head">
+            <button
+              type="button"
+              className="page-back"
+              onClick={() => navigate(-1)}
+              aria-label="Go back"
+            >
+              <ArrowLeft size={18} aria-hidden="true" />
+              <span className="page-back__label">Back</span>
+            </button>
+            {pageTitle && (
+              <>
+                <span className="page-head__sep" aria-hidden="true" />
+                <h1 className="page-heading">{pageTitle}</h1>
+              </>
+            )}
+          </div>
         )}
         <Outlet />
       </main>
@@ -572,4 +603,24 @@ export default function RootLayout() {
       {!isAuth && <SiteFooter />}
     </>
   )
+}
+
+/* Map a route pathname to a human page heading. Pages are added here
+ * as we converge each screen onto the unified heading (and remove that
+ * page's old inline title). Returns null for home/auth and any screen
+ * not yet converted. */
+const PAGE_TITLES = {
+  '/products': 'Products',
+}
+
+/* Account-area routes all share the cream "My Account" banner next to
+ * the Back button; each page keeps its own content heading below. */
+const ACCOUNT_PATHS = ['/account', '/addresses', '/orders', '/wishlist', '/cart']
+
+function getPageTitle(path) {
+  if (PAGE_TITLES[path]) return PAGE_TITLES[path]
+  if (ACCOUNT_PATHS.some((p) => path === p || path.startsWith(`${p}/`))) {
+    return 'My Account'
+  }
+  return null
 }

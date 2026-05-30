@@ -14,7 +14,6 @@
  */
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  Heart,
   ShoppingBag,
   Zap,
   Trash2,
@@ -35,6 +34,7 @@ import {
 } from '../components'
 import { useWishlist, useRemoveFromWishlist } from '../lib/wishlist'
 import { useAddToCart } from '../lib/cart'
+import noWishlistImg from '../assets/empty state/no wishlist.png'
 import './Wishlist.css'
 
 const PLACEHOLDER =
@@ -83,7 +83,8 @@ export default function Wishlist() {
       <Container size="lg" className="wishlist">
         <PageHeader />
         <EmptyState
-          icon={<Heart size={40} />}
+          image={noWishlistImg}
+          imageAlt="An empty wishlist"
           title="Your wishlist is empty"
           description="Tap the heart on any product to save it here for later."
           action={

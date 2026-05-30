@@ -15,7 +15,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  ShoppingBag,
   Trash2,
   ArrowLeft,
   ShieldCheck,
@@ -42,6 +41,7 @@ import {
   useClearCart,
 } from '../lib/cart'
 import { MIN_SHIPPING_INR, FREE_ABOVE_INR } from '../lib/shipping'
+import cartEmptyImg from '../assets/empty state/cart empty.png'
 import './Cart.css'
 
 const PLACEHOLDER =
@@ -86,7 +86,8 @@ export default function Cart() {
       <Container size="lg" className="cart">
         <PageHeader />
         <EmptyState
-          icon={<ShoppingBag size={40} />}
+          image={cartEmptyImg}
+          imageAlt="An empty shopping cart"
           title="Your cart is empty"
           description="Browse our handmade snacks and sweets to get started."
           action={

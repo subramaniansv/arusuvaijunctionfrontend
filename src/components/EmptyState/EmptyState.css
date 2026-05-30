@@ -26,6 +26,14 @@
   height: 1.75rem;
 }
 
+/* Full illustration variant (replaces the small icon badge). */
+.ui-empty__image {
+  width: clamp(160px, 42vw, 240px);
+  height: auto;
+  margin-bottom: var(--space-4);
+  object-fit: contain;
+}
+
 .ui-empty__title {
   margin: 0;
   font-family: var(--font-display);

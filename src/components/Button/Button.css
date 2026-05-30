@@ -6,7 +6,7 @@
   --btn-px: var(--space-5);
   --btn-py: var(--space-3);
   --btn-fs: var(--text-base);
-  --btn-radius: var(--radius-md);
+  --btn-radius: var(--radius-btn);
 
   display: inline-flex;
   align-items: center;
@@ -113,7 +113,7 @@
   --btn-px: var(--space-6);
   --btn-py: var(--space-4);
   --btn-fs: var(--text-lg);
-  --btn-radius: var(--radius-lg);
+  --btn-radius: var(--radius-btn);
 }
 
 /* Modifiers ------------------------------------------------------ */

@@ -39,6 +39,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
 
 import RootLayout from './layouts/RootLayout'
+import AccountLayout from './layouts/AccountLayout'
 import {
   ProtectedRoute,
   PublicOnlyRoute,
@@ -59,6 +60,7 @@ const Checkout        = lazy(() => import('./pages/Checkout'))
 const Orders          = lazy(() => import('./pages/Orders'))
 const OrderDetail     = lazy(() => import('./pages/OrderDetail'))
 const Account         = lazy(() => import('./pages/Account'))
+const Addresses       = lazy(() => import('./pages/Addresses'))
 const Wishlist        = lazy(() => import('./pages/Wishlist'))
 const About           = lazy(() => import('./pages/About'))
 const Contact         = lazy(() => import('./pages/Contact'))
@@ -104,12 +106,17 @@ function App() {
 
           {/* Protected */}
           <Route element={<ProtectedRoute />}>
-            <Route path="cart" element={<Cart />} />
+            {/* Checkout is a focused flow - no account sidebar. */}
             <Route path="checkout" element={<Checkout />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="orders/:orderId" element={<OrderDetail />} />
-            <Route path="wishlist" element={<Wishlist />} />
-            <Route path="account" element={<Account />} />
+            {/* Account area - shared sidebar nav. */}
+            <Route element={<AccountLayout />}>
+              <Route path="cart" element={<Cart />} />
+              <Route path="orders" element={<Orders />} />
+              <Route path="orders/:orderId" element={<OrderDetail />} />
+              <Route path="wishlist" element={<Wishlist />} />
+              <Route path="account" element={<Account />} />
+              <Route path="addresses" element={<Addresses />} />
+            </Route>
           </Route>
 
           {/* Admin */}

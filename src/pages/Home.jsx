@@ -36,11 +36,11 @@ import {
   BRAND,
 } from '../lib/seo'
 import './Home.css'
+import heroImg from '../assets/hero.png'
 
-// Hero background image is now declared in Home.css via image-set()
-// so the browser can pick AVIF, then WebP, then JPEG. The matching
-// <link rel="preload" href="/hero.webp"> in index.html primes the LCP
-// image to download in parallel with the JS bundle.
+// The hero banner uses the new watercolor illustration in
+// src/assets/hero.png, applied as an inline background-image on the
+// .home-hero section (overriding the CSS image-set fallback).
 
 /* ---------------- Dummy data (replace with API later) ----------- */
 
@@ -182,6 +182,7 @@ function Hero() {
   return (
     <section
       className="home-hero"
+      style={{ backgroundImage: `url(${heroImg})` }}
       aria-label="Arusuvai Junction - fresh, homemade traditional South Indian foods"
     >
       <div className="home-hero__veil" aria-hidden="true" />

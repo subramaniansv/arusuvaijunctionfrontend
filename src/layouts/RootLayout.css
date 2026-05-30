@@ -15,7 +15,7 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 50;
+  z-index: 1000;
   background: var(--color-surface, #fff);
   border-bottom: 1px solid var(--color-border);
   backdrop-filter: saturate(180%) blur(8px);
@@ -145,7 +145,7 @@
   border: none;
   background: transparent;
   color: var(--color-text);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-btn, 4px);
   cursor: pointer;
   text-decoration: none;
   font: inherit;
@@ -183,7 +183,7 @@
   border: none;
   background: transparent;
   color: var(--color-text);
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-btn, 4px);
   cursor: pointer;
   text-decoration: none;
   flex-shrink: 0;
@@ -230,7 +230,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 180ms ease;
-  z-index: 70;
+  z-index: 1100;
 }
 .nav__backdrop.is-open { opacity: 1; pointer-events: auto; }
 
@@ -245,7 +245,7 @@
   box-shadow: 8px 0 24px rgba(15, 23, 42, 0.08);
   transform: translateX(-100%);
   transition: transform 220ms cubic-bezier(.22,.61,.36,1);
-  z-index: 80;
+  z-index: 1110;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -468,15 +468,39 @@
 /* ==================================================================
  * Global "Back" button - top-left on every page (except home/auth).
  * ================================================================== */
+.page-head {
+  /* Full-bleed cream banner that sits flush under the fixed nav, matching
+     the Figma page header. The negative inline margin breaks out of the
+     centred .container, and the matching inline padding realigns the inner
+     content back to the container's content edge. */
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  margin-inline: calc(50% - 50vw);
+  margin-top: calc(-1 * var(--space-8));
+  margin-bottom: var(--space-8);
+  padding-block: var(--space-5);
+  padding-inline: calc(50vw - 50%);
+  background: var(--brand-cream, #fdf6df);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-head__sep {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1.6rem;
+  background: var(--color-border);
+}
+
 .page-back {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
   padding: var(--space-2) var(--space-3);
   background: var(--color-surface, #fff);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--radius-btn, 4px);
   color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -492,3 +516,16 @@
   outline: none;
 }
 .page-back svg { color: currentColor; }
+
+/* ==================================================================
+ * Global page heading - shown on every page except home/auth.
+ * ================================================================== */
+.page-heading {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+  color: var(--color-primary);
+}

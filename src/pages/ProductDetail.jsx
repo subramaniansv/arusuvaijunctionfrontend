@@ -51,6 +51,7 @@ import { useMyProfile } from '../lib/me'
 import { useAuthStore } from '../stores/authStore'
 import Seo from '../components/Seo'
 import { productLd, breadcrumbLd } from '../lib/seo'
+import noReviewImg from '../assets/empty state/no review yet.png'
 import './ProductDetail.css'
 
 const PLACEHOLDER =
@@ -563,6 +564,8 @@ export default function ProductDetail() {
             </div>
           ) : (
             <EmptyState
+              image={noReviewImg}
+              imageAlt="No reviews yet"
               title="No reviews yet"
               description="Be the first to share your thoughts after trying this product."
             />
