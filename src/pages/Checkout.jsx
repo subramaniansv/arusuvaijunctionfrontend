@@ -37,7 +37,7 @@ import { useCart } from "../lib/cart";
 import { useRazorpayCheckout } from "../lib/payment";
 import { useMyProfile } from "../lib/me";
 import { useAddresses } from "../lib/addresses";
-import { calcShipping, getZoneLabel, FREE_ABOVE_INR } from "../lib/shipping";
+import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR } from "../lib/shipping";
 import "./Checkout.css";
 
 const PLACEHOLDER =
@@ -141,6 +141,7 @@ export default function Checkout() {
           productId: buyNow.productId,
           productName: buyNow.snapshot?.name || "Selected product",
           imageUrl: buyNow.snapshot?.imageUrl || null,
+          variantLabel: buyNow.snapshot?.variantLabel || null,
           price: Number(buyNow.snapshot?.price) || 0,
           quantity: qty,
           subtotal: (Number(buyNow.snapshot?.price) || 0) * qty,
@@ -190,8 +191,19 @@ export default function Checkout() {
     setValue("pincode", addr.pincode || "", { shouldValidate: false });
   }, [selectedSavedId, savedAddresses, setValue]);
 
-  const totalQty = items.reduce((s, it) => s + (it.quantity || 1), 0);
-  const shippingFee = calcShipping(pincode, totalQty, subtotal);
+  const totalGrams = items.reduce(
+    (s, it) => s + variantGrams(it.variantLabel) * (it.quantity || 1),
+    0
+  );
+  // Free shipping (subtotal-based) is known regardless of location.
+  // Otherwise the fee is only knowable once a valid 6-digit pincode is given;
+  // until then we prompt for the pincode instead of showing a default price.
+  const qualifiesFreeShipping = subtotal >= FREE_ABOVE_INR;
+  const hasValidPincode = /^\d{6}$/.test((pincode || "").trim());
+  const shippingKnown = qualifiesFreeShipping || hasValidPincode;
+  const shippingFee = shippingKnown
+    ? calcShippingByGrams(pincode, totalGrams, subtotal)
+    : 0;
   const shippingZoneLabel = getZoneLabel(pincode);
   const total = subtotal + shippingFee;
 
@@ -498,12 +510,14 @@ export default function Checkout() {
                   </span>
                 )}
               </span>
-              {shippingFee === 0 ? (
-                <span className="checkout__free">
-                  {subtotal >= FREE_ABOVE_INR ? "Free" : "TBD"}
-                </span>
+              {shippingKnown ? (
+                shippingFee === 0 ? (
+                  <span className="checkout__free">Free</span>
+                ) : (
+                  <PriceTag amount={shippingFee} size="md" />
+                )
               ) : (
-                <PriceTag amount={shippingFee} size="md" />
+                <span className="checkout__shipping-tbd">Enter pincode</span>
               )}
             </div>
             <Divider />

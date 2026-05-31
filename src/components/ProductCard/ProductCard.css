@@ -50,6 +50,13 @@
   z-index: 2;
 }
 
+/* Inline heart next to the name -- mobile only (hidden on desktop) */
+.ui-product__wish-inline {
+  display: none;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 .ui-product__overlay {
   position: absolute;
   inset: 0;
@@ -159,8 +166,24 @@
 .ui-product__add {
   flex-shrink: 0;
   width: auto;
+  height: 34px;
+  min-height: 34px;
+  line-height: 1;
   padding-inline: var(--space-3);
   font-size: var(--text-xs);
+}
+
+/* Stack the price in cards: small strike-through MRP on top, the real
+   price below. Discount badge hidden so the footer stays narrow and the
+   Add button never overflows the card. */
+.ui-product__footer .ui-price {
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 0;
+  line-height: 1.1;
+}
+.ui-product__footer .ui-price__discount {
+  display: none;
 }
 
 .ui-product__add-icon {
@@ -178,9 +201,26 @@
   }
   .ui-product__add{
     max-height: 32px;
+    height: 32px;
+    min-height: 32px;
   }
   /* Drop the cart icon on mobile so the Add button stays compact. */
   .ui-product__add-icon {
+    display: none;
+  }
+  /* Declutter mobile cards: hide category badge, share and rating. */
+  .ui-product__cat-badge,
+  .ui-product__share,
+  .ui-product .ui-rating {
+    display: none;
+  }
+  /* Hide the Tamil subtitle on mobile. */
+  .ui-product__name-tamil {
+    display: none;
+  }
+  /* Hide the wishlist heart entirely on mobile. */
+  .ui-product__wish,
+  .ui-product__wish-inline {
     display: none;
   }
 }

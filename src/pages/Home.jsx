@@ -37,6 +37,11 @@ import {
 } from '../lib/seo'
 import './Home.css'
 import heroImg from '../assets/hero.png'
+import podiCat from '../assets/podicategory.png'
+import ladooCat from '../assets/ladoocategory.png'
+import nutsCat from '../assets/nutscategory.png'
+import readyMixCat from '../assets/vathakulambu (1).png'
+import pickleCat from '../assets/picklecategoey.png'
 
 // The hero banner uses the new watercolor illustration in
 // src/assets/hero.png, applied as an inline background-image on the
@@ -45,11 +50,11 @@ import heroImg from '../assets/hero.png'
 /* ---------------- Dummy data (replace with API later) ----------- */
 
 const CATEGORIES = [
-  { name: 'Podi',      tamil: 'பொடி',         image: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=800' },
-  { name: 'Ladoo',     tamil: 'லட்டு',        image: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=800' },
-  { name: 'Nuts',      tamil: 'நட்ஸ்',         image: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=800' },
-  { name: 'Ready Mix', tamil: 'ரெடி மிக்ஸ்',  image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800' },
-  { name: 'Pickles',   tamil: 'ஊறுகாய்',      image: 'https://images.unsplash.com/photo-1524179091875-bf99a9a6af57?w=800' },
+  { name: 'Podi',      tamil: 'பொடி',         image: podiCat },
+  { name: 'Ladoo',     tamil: 'லட்டு',        image: ladooCat },
+  { name: 'Nuts',      tamil: 'நட்ஸ்',         image: nutsCat },
+  { name: 'Kulambu Mix', tamil: 'குழம்பு மிக்ஸ்',  image: readyMixCat },
+  { name: 'Pickles',   tamil: 'ஊறுகாய்',      image: pickleCat },
 ]
 
 const FEATURED_PRODUCTS = [

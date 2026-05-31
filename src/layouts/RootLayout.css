@@ -559,12 +559,12 @@
  * under the fixed nav (no gap above it). */
 @media (max-width: 640px) {
   .page-main {
-    padding-block-start: var(--space-6);
+    padding-block-start: var(--space-5);
   }
   .page-head {
-    margin-top: calc(-1 * var(--space-6));
-    margin-bottom: var(--space-3);
-    padding-block: var(--space-3);
+    margin-top: calc(-1 * var(--space-5));
+    margin-bottom: var(--space-2);
+    padding-block: var(--space-2);
   }
   .page-heading { font-size: var(--text-xl); }
 }

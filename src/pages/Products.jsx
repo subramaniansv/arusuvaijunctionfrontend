@@ -311,14 +311,14 @@ export default function Products() {
                 fullWidth={false}
                 className="products__sort"
               />
-            </div>
 
-            <div className="products__count">
-              {isLoading
-                ? 'Loading...'
-                : products.length === 0
-                ? 'No results'
-                : `Showing ${products.length} product${products.length === 1 ? '' : 's'}`}
+              <div className="products__count">
+                {isLoading
+                  ? 'Loading...'
+                  : products.length === 0
+                  ? 'No results'
+                  : `Showing ${products.length} product${products.length === 1 ? '' : 's'}`}
+              </div>
             </div>
 
             {activeChips.length > 0 && (

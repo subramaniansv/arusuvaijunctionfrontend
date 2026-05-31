@@ -44,7 +44,7 @@ const FOOTER_CATEGORIES = [
   { label: 'Podi',      to: '/products?category=podi' },
   { label: 'Ladoo',     to: '/products?category=ladoo' },
   { label: 'Nuts',      to: '/products?category=nuts' },
-  { label: 'Ready Mix', to: '/products?category=ready+mix' },
+  { label: 'Kulambu Mix', to: '/products?category=kulambu+mix' },
 ]
 
 export default function SiteFooter() {

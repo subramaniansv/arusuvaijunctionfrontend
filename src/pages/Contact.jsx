@@ -5,6 +5,7 @@
  * in /admin/messages.
  */
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -36,6 +37,7 @@ const CONTACT_INFO = [
 
 export default function Contact() {
   const user = useAuthStore((s) => s.user)
+  const [searchParams] = useSearchParams()
   const [submitted, setSubmitted] = useState(false)
   const [serverError, setServerError] = useState('')
   const submit = useSubmitContact()
@@ -48,7 +50,7 @@ export default function Contact() {
       name:    user?.name || '',
       email:   user?.email || '',
       phone:   '',
-      subject: '',
+      subject: searchParams.get('subject') || '',
       message: '',
     },
   })

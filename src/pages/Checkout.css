@@ -176,8 +176,8 @@
 .checkout__line-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .checkout__line-qty {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: 2px;
+  right: 2px;
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
@@ -190,6 +190,7 @@
   align-items: center;
   justify-content: center;
   line-height: 1;
+  box-shadow: 0 0 0 2px var(--color-surface, #fff);
 }
 
 .checkout__line-body {
@@ -242,6 +243,11 @@
   font-size: var(--text-xs);
   color: var(--color-text-muted);
   font-weight: var(--font-weight-normal);
+}
+.checkout__shipping-tbd {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
 }
 
 .checkout__place { margin-top: var(--space-3); }

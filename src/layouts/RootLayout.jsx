@@ -18,7 +18,7 @@ import {
   Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams,
 } from 'react-router-dom'
 import {
-  Search, ShoppingBag, ShoppingCart, Package, LayoutDashboard,
+  Search, ShoppingBag, ShoppingCart, LayoutDashboard,
   LogOut, LogIn, X, UserCircle, Heart, Menu, MailWarning, Loader2,
   Home,
 } from 'lucide-react'
@@ -168,17 +168,6 @@ export default function RootLayout() {
         </NavLink>
       )}
 
-      {isAuthed && (
-        <NavLink
-          to="/orders"
-          className={({ isActive }) => `nav__item${isActive ? ' is-active' : ''}`}
-          onClick={closeDrawer}
-        >
-          <Package size={20} aria-hidden="true" />
-          <span>Orders</span>
-        </NavLink>
-      )}
-
       {needsVerify && (
         <button
           type="button"
@@ -215,27 +204,6 @@ export default function RootLayout() {
           <span>Admin</span>
         </NavLink>
       )}
-
-      <NavLink
-        to="/cart"
-        className={({ isActive }) => `nav__item${isActive ? ' is-active' : ''}`}
-        onClick={closeDrawer}
-        aria-label={
-          isAuthed && cartCount > 0
-            ? `Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`
-            : 'Cart'
-        }
-      >
-        <span className="nav__item-iconwrap">
-          <ShoppingCart size={20} aria-hidden="true" />
-          {isAuthed && cartCount > 0 && (
-            <span className="nav__badge" aria-hidden="true">
-              {cartCount > 99 ? '99+' : cartCount}
-            </span>
-          )}
-        </span>
-        <span>Cart</span>
-      </NavLink>
 
       {isAuthed ? (
         <button
@@ -335,26 +303,6 @@ export default function RootLayout() {
                 <span>Products</span>
               </NavLink>
 
-              <NavLink
-                to="/cart"
-                className={({ isActive }) => `nav__item${isActive ? ' is-active' : ''}`}
-                aria-label={
-                  isAuthed && cartCount > 0
-                    ? `Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`
-                    : 'Cart'
-                }
-              >
-                <span className="nav__item-iconwrap">
-                  <ShoppingCart size={20} aria-hidden="true" />
-                  {isAuthed && cartCount > 0 && (
-                    <span className="nav__badge" aria-hidden="true">
-                      {cartCount > 99 ? '99+' : cartCount}
-                    </span>
-                  )}
-                </span>
-                <span>Cart</span>
-              </NavLink>
-
               {isAuthed ? (
                 <div className="nav__account" ref={accountMenuRef}>
                   <button
@@ -384,16 +332,6 @@ export default function RootLayout() {
                       )}
 
                       <NavLink
-                        to="/orders"
-                        className="nav__menu-item"
-                        role="menuitem"
-                        onClick={() => setAccountMenuOpen(false)}
-                      >
-                        <Package size={18} aria-hidden="true" />
-                        <span>Orders</span>
-                      </NavLink>
-
-                      <NavLink
                         to="/account"
                         className="nav__menu-item"
                         role="menuitem"
@@ -411,6 +349,26 @@ export default function RootLayout() {
                       >
                         <Heart size={18} aria-hidden="true" />
                         <span>Wishlist</span>
+                      </NavLink>
+
+                      <NavLink
+                        to="/orders"
+                        className="nav__menu-item"
+                        role="menuitem"
+                        onClick={() => setAccountMenuOpen(false)}
+                      >
+                        <ShoppingBag size={18} aria-hidden="true" />
+                        <span>Orders</span>
+                      </NavLink>
+
+                      <NavLink
+                        to="/cart"
+                        className="nav__menu-item"
+                        role="menuitem"
+                        onClick={() => setAccountMenuOpen(false)}
+                      >
+                        <ShoppingCart size={18} aria-hidden="true" />
+                        <span>Cart</span>
                       </NavLink>
 
                       {isAdmin && (

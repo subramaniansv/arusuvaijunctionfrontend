@@ -229,12 +229,14 @@ export default function Auth() {
 
             {mode === 'login' && (
               <div className="auth__row-meta">
-                {/* Forgot-password flow isn't wired yet -- placeholder
-                 * link kept disabled-looking so users don't click it
-                 * and hit a dead end. */}
-                <span className="auth__forgot" aria-disabled>
+                {/* Routes to the Contact page with a pre-filled subject
+                 * so the user can request a password reset. */}
+                <Link
+                  to="/contact?subject=I%20forgot%20my%20password"
+                  className="auth__forgot"
+                >
                   Forgot password?
-                </span>
+                </Link>
               </div>
             )}
 

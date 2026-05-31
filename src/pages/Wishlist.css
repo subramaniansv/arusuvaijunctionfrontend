@@ -38,6 +38,21 @@
   min-width: 200px;
 }
 
+/* Mobile: shrink the sort control to a 32px pill so it lines up neatly
+   with the item count beside it. */
+@media (max-width: 640px) {
+  .wishlist__sort {
+    min-width: 0;
+  }
+  .wishlist__sort .ui-select__trigger {
+    height: 32px;
+    min-height: 32px;
+    padding-block: 0;
+    padding-inline: var(--space-3);
+    font-size: var(--text-sm);
+  }
+}
+
 .wishlist__title {
   margin: 0;
   font-size: 1.6rem;
@@ -137,6 +152,16 @@
 .wl-tile__add,
 .wl-tile__buy {
   width: 100%;
+}
+
+@media (max-width: 640px) {
+  .wl-tile__add,
+  .wl-tile__buy {
+    max-height: 32px;
+    min-height: 32px;
+    line-height: 1;
+  }
+
 }
 
 @media (max-width: 380px) {

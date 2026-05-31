@@ -108,6 +108,10 @@ export default function ProductCard({
       <div className="ui-product__body">
         <div className="ui-product__name-row">
           <h3 className="ui-product__name" title={name}>{name}</h3>
+          <WishlistButton
+            product={product}
+            className="ui-product__wish-inline"
+          />
           <button
             type="button"
             className="ui-product__share"
@@ -135,7 +139,11 @@ export default function ProductCard({
         )}
 
         <div className="ui-product__footer">
-          <PriceTag amount={price} size={compact ? 'sm' : 'md'} />
+          <PriceTag
+            amount={price}
+            mrp={price ? Math.round(price * 1.1) : undefined}
+            size={compact ? 'sm' : 'md'}
+          />
           {onAddToCart && (
             <Button
               size="sm"

@@ -21,10 +21,16 @@
  */
 
 /** Cart subtotal at or above this value → free shipping. */
-export const FREE_ABOVE_INR = 999
+export const FREE_ABOVE_INR = 499
 
 /** Assumed weight per unit item in grams. */
 export const GRAMS_PER_ITEM = 300
+
+/**
+ * Fallback weight (g) for piece/count variants like "5 pcs" whose label
+ * carries no mass. Kept low so piece-based items land in the cheapest tier.
+ */
+export const PCS_GRAMS = 100
 
 /**
  * Non-document rate table per zone (food products only).
@@ -103,11 +109,56 @@ function getZone(pincode) {
  * @returns {number} shipping fee in ₹
  */
 export function calcShipping(pincode, totalItems, merchandiseTotal) {
+  return calcShippingByGrams(pincode, Math.max(1, totalItems) * GRAMS_PER_ITEM, merchandiseTotal)
+}
+
+/** Matches a weight token in a variant label, e.g. "250g", "1.5 kg". */
+const WEIGHT_RE = /(\d+(?:\.\d+)?)\s*(kg|kgs|g|gm|gms|gram|grams)\b/
+
+/** Matches piece/count variant labels, e.g. "5 pcs", "10 nos". */
+const PIECE_RE = /\b(pc|pcs|piece|pieces|no|nos|count|pack|packs)\b/
+
+/**
+ * Derive the per-unit weight (grams) of a variant from its label.
+ *
+ * Weight labels ("250g", "1kg") parse to their gram value; piece/count
+ * labels ("5 pcs") fall back to PCS_GRAMS; anything unrecognized (or no
+ * variant) falls back to GRAMS_PER_ITEM.
+ *
+ * @param {string|null|undefined} label variant label
+ * @returns {number} estimated grams for one unit of this variant
+ */
+export function variantGrams(label) {
+  if (!label || !String(label).trim()) return GRAMS_PER_ITEM
+  const s = String(label).toLowerCase().trim()
+
+  const m = s.match(WEIGHT_RE)
+  if (m) {
+    const value = parseFloat(m[1])
+    const unit  = m[2]
+    const grams = unit.startsWith('kg') ? Math.round(value * 1000) : Math.round(value)
+    return Math.max(1, grams)
+  }
+
+  if (PIECE_RE.test(s)) return PCS_GRAMS
+
+  return GRAMS_PER_ITEM
+}
+
+/**
+ * Calculate shipping fee in ₹ from an explicit total weight in grams.
+ *
+ * @param {string} pincode            6-digit Indian pincode (or empty)
+ * @param {number} totalGrams         total shipment weight in grams
+ * @param {number} merchandiseTotal   cart value in ₹ (for free-shipping check)
+ * @returns {number} shipping fee in ₹
+ */
+export function calcShippingByGrams(pincode, totalGrams, merchandiseTotal) {
   if (merchandiseTotal >= FREE_ABOVE_INR) return 0
 
   const zone  = getZone(pincode)
   const rate  = ZONE_RATES[zone]
-  const grams = Math.max(1, totalItems) * GRAMS_PER_ITEM
+  const grams = Math.max(1, totalGrams)
 
   if (grams <= 250) return rate.upto250
   if (grams <= 500) return rate.upto500

@@ -170,6 +170,27 @@ export default function Cart() {
           </Card>
         </aside>
       </div>
+
+      {/* Mobile-only sticky checkout bar (Zepto-style): keeps the primary
+          CTA pinned to the bottom of the viewport for thumb reach. Hidden
+          on >=900px where the sticky summary card holds the button. */}
+      <div className="cart__mobile-bar" aria-label="Checkout">
+        <div className="cart__mobile-bar-info">
+          <span className="cart__mobile-bar-label">Subtotal</span>
+          <span className="cart__mobile-bar-total">
+            ₹{subtotal.toLocaleString('en-IN')}
+          </span>
+        </div>
+        <Button
+          as={Link}
+          to="/checkout"
+          variant="primary"
+          size="lg"
+          className="cart__mobile-bar-btn"
+        >
+          Checkout
+        </Button>
+      </div>
     </Container>
   )
 }
