@@ -113,7 +113,6 @@ export default function Wishlist() {
   if (items.length === 0) {
     return (
       <Container size="lg" className="wishlist">
-        <PageHeader />
         <EmptyState
           image={noWishlistImg}
           imageAlt="An empty wishlist"

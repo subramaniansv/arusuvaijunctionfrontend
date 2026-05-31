@@ -151,7 +151,7 @@
 
 @media (max-width: 599px) {
   :root {
-    --container-pad: var(--space-1);
+    --container-pad: var(--space-4);
   }
 }
 
