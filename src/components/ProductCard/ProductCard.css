@@ -203,6 +203,7 @@
     max-height: 32px;
     height: 32px;
     min-height: 32px;
+    min-width: 52px;
   }
   /* Drop the cart icon on mobile so the Add button stays compact. */
   .ui-product__add-icon {

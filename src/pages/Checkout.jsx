@@ -33,8 +33,6 @@ import {
   Divider,
 } from "../components";
 import { useCart } from "../lib/cart";
-import { useRazorpayCheckout } from "../lib/payment";
-import { useMyProfile } from "../lib/me";
 import { useAddresses } from "../lib/addresses";
 import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR } from "../lib/shipping";
 import "./Checkout.css";
@@ -117,11 +115,12 @@ export default function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { data: cart, isLoading } = useCart();
-  const payWithRazorpay = useRazorpayCheckout();
-  const { data: profile } = useMyProfile();
+
   const { data: savedAddresses = [] } = useAddresses();
-  const [paying, setPaying] = useState(false);
+
   const [selectedSavedId, setSelectedSavedId] = useState("");
+  const [showPaymentNotice, setShowPaymentNotice] = useState(false);
+  const [paying, setPaying] = useState(false);
 
   /* -----------------------------------------------------------------
    * Buy-Now mode: when arriving with router state.buyNow, this checkout
@@ -257,7 +256,13 @@ export default function Checkout() {
     }
   }, [buyNow, isLoading, items.length, navigate]);
 
-  const onSubmit = async (values) => {
+  // TODO: Switch back to onSubmitLive once Razorpay is approved (June 2)
+  const onSubmit = () => {
+    setShowPaymentNotice(true);
+  };
+
+  // eslint-disable-next-line no-unused-vars
+  const onSubmitLive = async (values) => {
     const payload = {
       shippingAddress: buildShippingAddress(values),
       phone: values.phone,
@@ -557,6 +562,44 @@ export default function Checkout() {
           </Button>
         </div>
       </form>
+
+      {/* Payment-coming-soon modal */}
+      {showPaymentNotice && (
+        <div
+          className="checkout__notice-overlay"
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            background: 'rgba(0,0,0,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem',
+          }}
+          onClick={() => setShowPaymentNotice(false)}
+        >
+          <div
+            style={{
+              background: '#fff', borderRadius: '12px', padding: '2rem',
+              maxWidth: '420px', width: '100%', textAlign: 'center',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem' }}>Online Payment Coming Soon</h2>
+            <p style={{ color: '#555', marginBottom: '1rem', lineHeight: 1.6 }}>
+              We are setting up our payment gateway. In the meantime, please contact us to place your order:
+            </p>
+            <p style={{ marginBottom: '0.5rem' }}>
+              <a href="mailto:support@arusuvaijunction.com" style={{ color: '#2563eb' }}>support@arusuvaijunction.com</a>
+            </p>
+            <p style={{ marginBottom: '1.5rem' }}>
+              <a href="https://wa.me/919597451463" style={{ color: '#25d366', fontWeight: 600 }}>WhatsApp: +91 9597451463</a>
+              <span style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>(for urgent orders)</span>
+            </p>
+            <Button variant="primary" size="md" onClick={() => setShowPaymentNotice(false)}>
+              Close
+            </Button>
+          </div>
+        </div>
+      )}
     </Container>
   );
 }
