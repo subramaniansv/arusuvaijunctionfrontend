@@ -20,13 +20,6 @@ export default function AccountLayout() {
   return (
     <div className="account-area">
       <Container size="xl">
-        <header className="account-area__head">
-          <h1 className="account-area__title">My Account</h1>
-          <p className="account-area__subtitle">
-            Manage your profile, saved addresses and orders.
-          </p>
-        </header>
-
         <nav className="account-area__tabs" aria-label="Account sections">
           {TABS.map(({ to, label, icon: Icon, end }) => (
             <NavLink

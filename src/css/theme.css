@@ -149,6 +149,12 @@
   --container-pad:  var(--space-6);
 }
 
+@media (max-width: 599px) {
+  :root {
+    --container-pad: var(--space-1);
+  }
+}
+
 /* ------------------------------------------------------------------
  * Dark mode overrides. Toggle by adding `.dark` to <html> or <body>.
  * Only semantic tokens flip; brand palette stays the same so accents

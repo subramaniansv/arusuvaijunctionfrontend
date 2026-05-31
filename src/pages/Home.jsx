@@ -75,7 +75,7 @@ const STATIC_REVIEWS = [
     name: 'Gnaneshwaran',
     city: 'Madurai',
     rating: 5,
-    body: 'Usually, I don’t give reviews for products… but this one is different.I’ve grown up eating pickle my whole life  it’s always been just a side dish. But this one? Totally changed that for me.Especially the garlic pickle… it’s so good that I literally ended up eating it as the main dish 😅 Seriously, a must try!',
+    body: 'Usually, I don’t give reviews for products… but this one is different.I’ve grown up eating pickle my whole life  it’s always been just a side dish. But this one? Totally changed that for me.Especially the garlic pickle… it’s so good that I literally ended up eating it as the main dish  Seriously, a must try!',
   },
   {
     id: 'r2',
@@ -86,8 +86,8 @@ const STATIC_REVIEWS = [
   },
   {
     id: 'r3',
-    name: 'Meera Rajesh',
-    city: 'Coimbatore',
+    name: 'Shanthi A',
+    city: 'Tirunelveli',
     rating: 5,
     body: 'Dates Ladoo is a guilt-free treat. Kids absolutely love it and there\'s no refined sugar — total win!',
   },

@@ -17,13 +17,12 @@
  * ------------------------------------------------------------------ */
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Share2, ShoppingCart } from 'lucide-react'
+import { Share2 } from 'lucide-react'
 import clsx from 'clsx'
 import Card from '../Card/Card.jsx'
 import Badge from '../Badge/Badge.jsx'
 import PriceTag from '../PriceTag/PriceTag.jsx'
 import RatingStars from '../RatingStars/RatingStars.jsx'
-import Button from '../Button/Button.jsx'
 import ShareModal from '../ShareModal/ShareModal.jsx'
 import WishlistButton from '../WishlistButton/WishlistButton.jsx'
 import './ProductCard.css'
@@ -33,7 +32,6 @@ const PLACEHOLDER =
 
 export default function ProductCard({
   product,
-  onAddToCart,
   compact = false,
   className,
 }) {
@@ -54,12 +52,6 @@ export default function ProductCard({
   const outOfStock = stockQuantity != null && stockQuantity <= 0
 
   const [shareOpen, setShareOpen] = useState(false)
-
-  const handleAdd = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (!outOfStock) onAddToCart?.(productId)
-  }
 
   const handleShare = (e) => {
     e.preventDefault()
@@ -94,10 +86,6 @@ export default function ProductCard({
           {!category && isOrganic && <Badge variant="success">Organic</Badge>}
           {!category && isVeg && <Badge variant="primary">Veg</Badge>}
         </div>
-        <WishlistButton
-          product={product}
-          className="ui-product__wish"
-        />
         {outOfStock && (
           <div className="ui-product__overlay">
             <Badge variant="danger">Out of stock</Badge>
@@ -108,10 +96,6 @@ export default function ProductCard({
       <div className="ui-product__body">
         <div className="ui-product__name-row">
           <h3 className="ui-product__name" title={name}>{name}</h3>
-          <WishlistButton
-            product={product}
-            className="ui-product__wish-inline"
-          />
           <button
             type="button"
             className="ui-product__share"
@@ -144,18 +128,10 @@ export default function ProductCard({
             mrp={price ? Math.round(price * 1.1) : undefined}
             size={compact ? 'sm' : 'md'}
           />
-          {onAddToCart && (
-            <Button
-              size="sm"
-              variant="primary"
-              disabled={outOfStock}
-              onClick={handleAdd}
-              className="ui-product__add"
-              fullWidth
-            >
-              {outOfStock ? 'Sold out' : <><ShoppingCart size={15} className="ui-product__add-icon" /> Add</>}
-            </Button>
-          )}
+          <WishlistButton
+            product={product}
+            className="ui-product__wish-footer"
+          />
         </div>
       </div>
 

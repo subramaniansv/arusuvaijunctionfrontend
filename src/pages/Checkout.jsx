@@ -516,9 +516,6 @@ export default function Checkout() {
                         e.currentTarget.src = PLACEHOLDER;
                       }}
                     />
-                    <span className="checkout__line-qty" aria-hidden="true">
-                      {it.quantity}
-                    </span>
                   </span>
                   <span className="checkout__line-body">
                     <span

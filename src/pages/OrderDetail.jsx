@@ -9,9 +9,9 @@
  * also tolerate them being missing.
  */
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  CheckCircle2, MapPin, Phone, Package, Truck, Home, XCircle, Clock,
+  ArrowLeft, CheckCircle2, MapPin, Phone, Package, Truck, Home, XCircle, Clock,
   MessageCircle, ChevronRight, ExternalLink, Loader2,
 } from 'lucide-react'
 
@@ -49,6 +49,7 @@ const TIMELINE = [
 export default function OrderDetail() {
   const { orderId } = useParams()
   const location = useLocation()
+  const navigate = useNavigate()
   const justPlaced = !!location.state?.justPlaced
 
   const { data: order, isLoading, isError } = useOrder(orderId)
@@ -111,10 +112,20 @@ export default function OrderDetail() {
       {/* ---- header ---- */}
       <header className="orderdetail__header">
         <div className="orderdetail__head-l">
-          <h1 className="orderdetail__title">Order {shortOrderId(order.orderId)}</h1>
-          <p className="orderdetail__placed-on">
-            Placed on {formatOrderDate(order.orderedAt)}
-          </p>
+          <button
+            type="button"
+            className="orderdetail__back"
+            onClick={() => navigate(-1)}
+            aria-label="Go back"
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div className="orderdetail__head-text">
+            <h1 className="orderdetail__title">Order {shortOrderId(order.orderId)}</h1>
+            <p className="orderdetail__placed-on">
+              Placed on {formatOrderDate(order.orderedAt)}
+            </p>
+          </div>
         </div>
         <Badge variant={ORDER_STATUS_VARIANT[status] || 'neutral'} size="md">
           {status}

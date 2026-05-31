@@ -311,7 +311,10 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-text-muted);
   white-space: nowrap;
-  margin-left: auto;
+  /* Drop below filters + sort row on mobile */
+  order: 10;
+  flex: 1 0 100%;
+  margin-top: var(--space-1);
 }
 @media (min-width: 960px) {
   .products__count-mobile { display: none; }

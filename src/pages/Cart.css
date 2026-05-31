@@ -61,7 +61,8 @@
   grid-template-columns: 96px minmax(0, 1fr);
   grid-template-areas:
     "img body"
-    "img subtotal";
+    "controls controls";
+  align-items: center;
   gap: var(--space-3) var(--space-4);
   padding: var(--space-4);
   background: var(--color-bg-surface);
@@ -71,9 +72,14 @@
 @media (min-width: 640px) {
   .cart__row {
     grid-template-columns: 110px minmax(0, 1fr) auto;
-    grid-template-areas: "img body subtotal";
+    grid-template-areas: "img body controls";
     align-items: center;
-    gap: var(--space-5);
+    gap: var(--space-3) var(--space-5);
+  }
+  .cart__row-controls {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
   }
 }
 
@@ -122,10 +128,24 @@
 }
 
 .cart__row-controls {
+  grid-area: controls;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-top: var(--space-1);
+}
+@media (max-width: 639px) {
+  .cart__row-controls {
+    gap: var(--space-4);
+    padding-top: var(--space-2);
+  }
+  .cart__row-controls .ui-qty {
+    --qty-h: 2.5rem;
+    --qty-w: 2.5rem;
+  }
+  .cart__row-controls .ui-qty__value {
+    width: 3rem;
+    font-size: var(--text-base);
+  }
 }
 
 /* Counter alignment mirrors the product page: nudge it up 2px so the
@@ -144,14 +164,14 @@
 .cart__row-remove:hover { color: var(--color-danger, #c0392b); }
 
 .cart__row-subtotal {
-  grid-area: subtotal;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-1);
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
 }
 @media (min-width: 640px) {
-  .cart__row-subtotal { align-items: flex-end; min-width: 96px; }
+  .cart__row-subtotal { flex-direction: column; align-items: flex-end; gap: var(--space-1); margin-left: 0; }
 }
 .cart__row-subtotal-label {
   font-size: var(--text-xs);

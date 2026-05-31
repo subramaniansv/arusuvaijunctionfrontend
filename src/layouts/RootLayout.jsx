@@ -495,8 +495,11 @@ export default function RootLayout() {
                 className="nav__logo"
                 onClick={() => setDrawerOpen(false)}
               >
-                <span className="nav__logo-mark" aria-hidden="true">A</span>
-                <span>Arusuvai Junction</span>
+                <span className="nav__logo-mark" aria-hidden="true"><img src={Arusuvaijunction} alt="Arusuvai Junction logo" /></span>
+                <span className="nav__logo-text">
+                  <span className="nav__logo-en">Arusuvai Junction</span>
+                  <span className="nav__logo-ta" lang="ta">அறுசுவை ஜங்ஷன்</span>
+                </span>
               </Link>
               <button
                 type="button"
@@ -507,13 +510,6 @@ export default function RootLayout() {
                 <X size={20} aria-hidden="true" />
               </button>
             </div>
-
-            {isAuthed && user && user.email && (
-              <div className="nav__drawer-user">
-                <UserCircle size={28} aria-hidden="true" />
-                <div className="nav__drawer-user-email">{user.email}</div>
-              </div>
-            )}
 
             <nav className="nav__drawer-list" aria-label="Primary">
               {renderNavItems(() => setDrawerOpen(false))}

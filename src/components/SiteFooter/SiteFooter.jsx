@@ -40,7 +40,7 @@ const QUICK_LINKS = [
 ]
 
 const FOOTER_CATEGORIES = [
-  { label: 'Pickles',   to: '/products?category=pickles' },
+  { label: 'Pickle',   to: '/products?category=pickle' },
   { label: 'Podi',      to: '/products?category=podi' },
   { label: 'Ladoo',     to: '/products?category=ladoo' },
   { label: 'Nuts',      to: '/products?category=nuts' },

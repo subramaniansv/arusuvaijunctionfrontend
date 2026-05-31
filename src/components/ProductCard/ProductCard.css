@@ -42,19 +42,9 @@
   border: 1px solid rgba(44, 92, 26, 0.18) !important;
 }
 
-/* Wishlist heart sits top-RIGHT of the image */
-.ui-product__wish {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
-  z-index: 2;
-}
-
-/* Inline heart next to the name -- mobile only (hidden on desktop) */
-.ui-product__wish-inline {
-  display: none;
+/* Wishlist heart in footer */
+.ui-product__wish-footer {
   flex-shrink: 0;
-  margin-top: 1px;
 }
 
 .ui-product__overlay {
@@ -70,14 +60,14 @@
 .ui-product__body {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-1);
+  padding: var(--space-3);
   flex: 1;
   min-width: 0;
 }
 
 @media (min-width: 640px) {
-  .ui-product__body { padding: var(--space-4); gap: var(--space-3); }
+  .ui-product__body { padding: var(--space-4); gap: var(--space-2); }
 }
 
 /* Name row: product name on left, share icon on right */
@@ -160,7 +150,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding-top: var(--space-2);
+  padding-top: var(--space-1);
 }
 
 .ui-product__add {
@@ -219,10 +209,12 @@
   .ui-product__name-tamil {
     display: none;
   }
-  /* Hide the wishlist heart entirely on mobile. */
-  .ui-product__wish,
-  .ui-product__wish-inline {
-    display: none;
+  /* Shrink wishlist button on mobile */
+  .ui-product .ui-product__wish-footer.ui-wishlist {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
   }
 }
 

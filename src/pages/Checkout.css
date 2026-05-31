@@ -268,8 +268,10 @@
     color: var(--color-text);
   }
   .checkout__mobile-bar-btn {
-    flex: 0 0 auto;
-    min-width: 150px;
+    flex: 1 1 auto;
+    min-width: 160px;
+    font-size: var(--text-base);
+    min-height: 48px;
   }
 
   /* The fixed bar replaces the in-card button on mobile. */

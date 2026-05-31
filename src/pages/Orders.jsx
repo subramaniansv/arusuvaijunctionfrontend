@@ -4,7 +4,8 @@
  * Renders the authenticated user's past orders, most-recent first
  * (backend already orders by orderedAt DESC).
  */
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 
 import {
   Container,
@@ -84,15 +85,18 @@ export default function Orders() {
 /* =============== sub components =============== */
 
 function PageHeader({ count }) {
+  const navigate = useNavigate()
   return (
     <header className="orders__header">
-      <div>
-        {count > 0 && (
-          <p className="orders__sub">
-            {count} order{count === 1 ? '' : 's'}
-          </p>
-        )}
+      <div className="orders__header-row">
+
+        <h1 className="orders__title">My Orders</h1>
       </div>
+      {count > 0 && (
+        <p className="orders__sub">
+          {count} order{count === 1 ? '' : 's'}
+        </p>
+      )}
     </header>
   )
 }
@@ -102,7 +106,7 @@ function OrderRow({ order }) {
   const statusVariant = ORDER_STATUS_VARIANT[order.status] || 'neutral'
 
   return (
-    <Card padding="lg" className="orders__card">
+    <Card as={Link} to={`/orders/${order.orderId}`} padding="lg" className="orders__card">
       <div className="orders__card-head">
         <dl className="orders__facts">
           <div className="orders__fact">
@@ -130,7 +134,6 @@ function OrderRow({ order }) {
           </div>
         </dl>
 
-        <OrderAction order={order} />
       </div>
 
       <ul className="orders__items">
@@ -171,21 +174,7 @@ function OrderRow({ order }) {
   )
 }
 
-/* Single, status-agnostic action: every order just links to its
- * detail page. Reorder/Track shortcuts were removed as they aren't
- * needed for now. */
-function OrderAction({ order }) {
-  return (
-    <Button
-      as={Link}
-      to={`/orders/${order.orderId}`}
-      variant="secondary"
-      size="sm"
-    >
-      View Details
-    </Button>
-  )
-}
+
 
 function OrdersSkeleton() {
   return (

@@ -223,33 +223,32 @@ function CartRow({ item, onQtyChange, onRemove, busy }) {
           <PriceTag amount={item.price} size="sm" />
           <span className="cart__row-each">each</span>
         </div>
-
-        <div className="cart__row-controls">
-          <QuantityStepper
-            value={item.quantity}
-            onChange={onQtyChange}
-            min={1}
-            max={99}
-            disabled={busy}
-            size="sm"
-          />
-          <IconButton
-            aria-label="Remove from cart"
-            onClick={onRemove}
-            disabled={busy}
-            className="cart__row-remove"
-          >
-            <Trash2 size={16} />
-          </IconButton>
-        </div>
       </div>
 
-      <div className="cart__row-subtotal">
-        <span className="cart__row-subtotal-label">Subtotal</span>
-        <PriceTag
-          amount={item.subtotal ?? item.price * item.quantity}
-          size="md"
+      <div className="cart__row-controls">
+        <QuantityStepper
+          value={item.quantity}
+          onChange={onQtyChange}
+          min={1}
+          max={99}
+          disabled={busy}
+          size="sm"
         />
+        <IconButton
+          aria-label="Remove from cart"
+          onClick={onRemove}
+          disabled={busy}
+          className="cart__row-remove"
+        >
+          <Trash2 size={16} />
+        </IconButton>
+        <div className="cart__row-subtotal">
+          <span className="cart__row-subtotal-label">Subtotal</span>
+          <PriceTag
+            amount={item.subtotal ?? item.price * item.quantity}
+            size="md"
+          />
+        </div>
       </div>
     </article>
   )
