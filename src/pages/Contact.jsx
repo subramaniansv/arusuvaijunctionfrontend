@@ -29,8 +29,8 @@ const schema = z.object({
 })
 
 const CONTACT_INFO = [
-  { icon: Phone,         label: 'Call us',  value: '+91 98765 43210', href: 'tel:+919843471463' },
-  { icon: MessageCircle, label: 'WhatsApp', value: '+91 98765 43210', href: 'https://wa.me/919843471463' },
+  { icon: Phone,         label: 'Call us',  value: '+91 9597451463', href: 'tel:+919597451463' },
+  { icon: MessageCircle, label: 'WhatsApp', value: '+91 9597451463', href: 'https://wa.me/919597451463' },
   { icon: Mail,          label: 'Email',    value: 'support@arusuvaijunction.com', href: 'mailto:support@arusuvaijunction.com' },
   { icon: MapPin,        label: 'Visit us', value: 'Tirunelveli Town - 627006' },
 ]
