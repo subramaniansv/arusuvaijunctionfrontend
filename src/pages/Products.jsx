@@ -305,6 +305,10 @@ export default function Products() {
                 )}
               </Button>
 
+              <span className="products__count-mobile">
+                {!isLoading && products.length > 0 && `${products.length} product${products.length === 1 ? '' : 's'}`}
+              </span>
+
               <Select
                 value={filters.sort}
                 onChange={(e) => update({ sort: e.target.value })}

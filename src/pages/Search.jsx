@@ -121,7 +121,7 @@ export default function Search() {
               ref={inputRef}
               type="search"
               className="search__input"
-              placeholder="Search murukku, sweets, mixture…"
+              placeholder="Search pickles, nuts, mix…"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               aria-label="Search products"

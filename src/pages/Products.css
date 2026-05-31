@@ -303,13 +303,27 @@
   height: 1px;
 }
 
+/* ---------------- Count sibling (mobile only) -------------- */
+.products__count-mobile {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  margin-left: auto;
+}
+@media (min-width: 960px) {
+  .products__count-mobile { display: none; }
+}
+
 /* ---------------- Mobile tweaks -------------- */
 @media (max-width: 599px) {
   /* Tighter typography on small screens. */
   .products__sidebar-title { font-size: var(--text-lg); }
   .products__group-title   { font-size: 0.6875rem; }
   .products__cat           { font-size: var(--text-sm); }
-  .products__count         { font-size: var(--text-xs); }
+  .products__count         { display: none; }
 
   /* Toolbar controls run full-height on mobile and crowd the row.
      Slim down both the Filters button and the sort dropdown. */
