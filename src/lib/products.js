@@ -153,3 +153,56 @@ export function useRelatedProducts(productId, limit = 8) {
 }
 
 export const PRODUCT_PAGE_SIZE = PAGE_SIZE
+
+/* ------------------------------------------------------------------
+ * Featured products (home page).
+ *
+ * The four "featured" products are curated by name. We fetch the
+ * catalogue once (single cached request) and pick the matching
+ * products in the configured order, so the home page always shows
+ * real backend data (live price / image / stock / id) without any
+ * hand-maintained dummy list.
+ * ------------------------------------------------------------------ */
+export const FEATURED_PRODUCT_NAMES = [
+  'Garlic Pickle',
+  'Beetroot Malt',
+  'Dates Ladoo',
+  'Garlic Masala Nuts',
+]
+
+const normalizeName = (s) =>
+  String(s || '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
+
+/**
+ * Resolve the curated featured products from the live catalogue.
+ *
+ * One request, cached for 5 minutes. Returns a `products` array in
+ * the same order as `names`, skipping any that aren't found so the
+ * grid degrades gracefully if a product is renamed or out of catalog.
+ */
+export function useFeaturedProducts(names = FEATURED_PRODUCT_NAMES) {
+  const query = useQuery({
+    queryKey: ['featured-products', names],
+    queryFn: async () => {
+      const res = await api.get('/api/product?limit=100', { _withAuth: false })
+      return res.data?.data || []
+    },
+    staleTime: 5 * 60_000,
+  })
+
+  const all = Array.isArray(query.data) ? query.data : []
+  const products = names
+    .map((name) => {
+      const target = normalizeName(name)
+      return (
+        all.find((p) => normalizeName(p.name) === target) ||
+        all.find((p) => normalizeName(p.name).includes(target))
+      )
+    })
+    .filter(Boolean)
+
+  return { ...query, products }
+}

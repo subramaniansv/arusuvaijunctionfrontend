@@ -127,14 +127,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-block: 0 var(--space-2);
+  gap: 0.75rem;
+  color: #2c5c1a;
+  margin-block: var(--space-1) var(--space-2);
   width: 100%;
-  max-width: 244px;
+  max-width: 220px;
+}
+.home-hero__divider span {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(44, 92, 26, 0.40), transparent);
 }
 .home-hero__divider-leaf {
   display: block;
-  width: min(244px, 100%);
-  height: auto;
+  width: auto;
+  height: 20px;
+  flex: 0 0 auto;
 }
 
 .home-hero__lead {

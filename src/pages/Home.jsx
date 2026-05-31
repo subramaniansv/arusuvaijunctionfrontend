@@ -10,7 +10,7 @@
  * setTimeout - swap the fetcher in /src/lib/reviews.js when the
  * backend endpoint exists.
  */
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Leaf,
   Clock,
@@ -26,6 +26,7 @@ import {
   Button,
   ProductCard,
   RatingStars,
+  Skeleton,
 } from '../components'
 import Seo from '../components/Seo'
 import {
@@ -35,6 +36,9 @@ import {
   faqLd,
   BRAND,
 } from '../lib/seo'
+import { useFeaturedProducts } from '../lib/products'
+import { useAddToCart } from '../lib/cart'
+import { useAuthStore } from '../stores/authStore'
 import './Home.css'
 import heroImg from '../assets/hero.png'
 import leafIcon from '../assets/leaf.svg'
@@ -58,54 +62,6 @@ const CATEGORIES = [
   { name: 'Pickles',   tamil: 'ஊறுகாய்',      image: pickleCat },
 ]
 
-const FEATURED_PRODUCTS = [
-  {
-    productId: 'p1',
-    name: 'Idi Sambar Podi',
-    nameTamil: 'இடி சாம்பார் பொடி',
-    category: 'Podi',
-    price: 100,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=600',
-    stockQuantity: 25,
-    averageRating: 4.0,
-    reviewCount: 500,
-  },
-  {
-    productId: 'p2',
-    name: 'Garlic Masala Nuts',
-    nameTamil: 'பூண்டு மசாலா நட்ஸ்',
-    category: 'Nuts',
-    price: 60,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1620706857370-e1b9770e8bb1?w=600',
-    stockQuantity: 18,
-    averageRating: 4.5,
-    reviewCount: 500,
-  },
-  {
-    productId: 'p3',
-    name: 'Protein Chocolate Ladoo',
-    nameTamil: 'சாக்லேட் லட்டு',
-    category: 'Ladoo',
-    price: 80,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1635952346904-95f2ccfcd029?w=600',
-    stockQuantity: 40,
-    averageRating: 4.5,
-    reviewCount: 500,
-  },
-  {
-    productId: 'p4',
-    name: 'Vathal Kuzhambu Mix',
-    nameTamil: 'வத்தக்குழம்பு மிக்ஸ்',
-    category: 'Ready Mix',
-    price: 90,
-    mrp: 110,
-    primaryImageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600',
-    stockQuantity: 30,
-    averageRating: 4.5,
-    reviewCount: 500,
-  },
-]
-
 const FEATURES = [
   { icon: HomeIcon, title: 'Homemade',         description: 'Traditional recipes prepared fresh in our kitchen.' },
   { icon: Leaf,     title: 'No Preservatives', description: '100% natural ingredients, no artificial additives.' },
@@ -116,24 +72,24 @@ const FEATURES = [
 const STATIC_REVIEWS = [
   {
     id: 'r1',
-    name: 'Priya Venkatesh',
-    city: 'Chennai',
+    name: 'Gnaneshwaran',
+    city: 'Madurai',
     rating: 5,
-    body: 'The Idi Sambar Podi is incredible! Tastes exactly like what my grandmother used to make. Already ordered 3 bags!',
+    body: 'Usually, I don’t give reviews for products… but this one is different.I’ve grown up eating pickle my whole life  it’s always been just a side dish. But this one? Totally changed that for me.Especially the garlic pickle… it’s so good that I literally ended up eating it as the main dish 😅 Seriously, a must try!',
   },
   {
     id: 'r2',
-    name: 'Karthik Sundaram',
-    city: 'Bangalore',
+    name: 'Sam',
+    city: 'Chennai',
     rating: 4,
-    body: 'Garlic Masala Nuts are perfectly spiced — great crunchy snack for the office. Family loves them too.',
+    body: 'First naan 100g garlic pickle sample ah vangunen. Then I ordered 500g for a week. Adhukku apram naan 1.5kg oru month ku order pannen. Now I’ve taken a monthly subscription—please 1.5kg every months venumnu..',
   },
   {
     id: 'r3',
     name: 'Meera Rajesh',
     city: 'Coimbatore',
     rating: 5,
-    body: 'Protein Chocolate Ladoo is a guilt-free treat. Kids absolutely love it and there\'s no refined sugar — total win!',
+    body: 'Dates Ladoo is a guilt-free treat. Kids absolutely love it and there\'s no refined sugar — total win!',
   },
 ]
 
@@ -200,7 +156,9 @@ function Hero() {
           </h1>
 
           <div className="home-hero__divider" aria-hidden="true">
+            <span />
             <img src={leafIcon} alt="" className="home-hero__divider-leaf" />
+            <span />
           </div>
 
           <p className="home-hero__lead">
@@ -255,6 +213,23 @@ function Categories() {
 
 /* ----- Featured products -------------------------------------- */
 function Featured() {
+  const { products, isLoading } = useFeaturedProducts()
+  const addToCart = useAddToCart()
+  const isAuthed = useAuthStore((s) => !!s.accessToken)
+  const navigate = useNavigate()
+
+  const handleAddToCart = (productId) => {
+    if (!isAuthed) {
+      navigate('/login', { state: { from: { pathname: '/' } } })
+      return
+    }
+    const product = products.find((p) => (p.productId || p.id) === productId)
+    addToCart.mutate({ productId, quantity: 1, product })
+  }
+
+  // Nothing to show once loaded (e.g. catalogue empty) - hide the section.
+  if (!isLoading && products.length === 0) return null
+
   return (
     <section className="home-section home-section--tint">
       <Container size="xl">
@@ -264,13 +239,25 @@ function Featured() {
           spacing="md"
         >
           <div className="home-grid-4">
-            {FEATURED_PRODUCTS.map((p) => (
-              <ProductCard
-                key={p.productId}
-                product={p}
-                onAddToCart={(id) => console.log('add', id)}
-              />
-            ))}
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div className="home-featured__skel" key={i}>
+                    <Skeleton
+                      width="100%"
+                      height={0}
+                      style={{ aspectRatio: '1 / 1' }}
+                    />
+                    <Skeleton width="80%" height={16} />
+                    <Skeleton width="40%" height={20} />
+                  </div>
+                ))
+              : products.map((p) => (
+                  <ProductCard
+                    key={p.productId || p.id}
+                    product={{ ...p, productId: p.productId || p.id }}
+                    onAddToCart={handleAddToCart}
+                  />
+                ))}
           </div>
           <div className="home-featured__more">
             <Link to="/products" className="home-link">

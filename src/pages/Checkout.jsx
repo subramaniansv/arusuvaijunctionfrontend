@@ -21,7 +21,6 @@ import {
   ShieldCheck,
   Loader2,
   Check,
-  BookUser,
 } from "lucide-react";
 
 import {
@@ -353,12 +352,7 @@ export default function Checkout() {
               <Select
                 id="savedAddrSelect"
                 className="checkout__saved-addr__select"
-                label={
-                  <>
-                    <BookUser size={15} aria-hidden="true" /> Use a saved
-                    address
-                  </>
-                }
+                label="Use a saved address"
                 value={selectedSavedId}
                 onChange={(e) => setSelectedSavedId(e.target.value)}
                 options={[

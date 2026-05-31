@@ -284,13 +284,6 @@ export default function Products() {
               >
                 Clear all filters
               </Button>
-              <div className="products__sidebar-count">
-                {isLoading
-                  ? 'Loading…'
-                  : products.length === 0
-                  ? 'No products'
-                  : `${products.length} product${products.length === 1 ? '' : 's'}`}
-              </div>
             </div>
           </aside>
 

@@ -52,7 +52,7 @@
   --color-ring:             var(--brand-green);  /* focus ring */
 
   /* 3. Typography ------------------------------------------------ */
-  --font-display: 'Fraunces', Georgia, serif;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
   --font-body:    'Lato', 'Roboto', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, 'Segoe UI', sans-serif;
   --font-tamil:   'Anek Tamil', 'Noto Sans Tamil', sans-serif;
   --font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;

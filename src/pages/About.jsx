@@ -38,7 +38,7 @@ export default function About() {
         <span className="staticpage__eyebrow">About us</span>
         <h1 className="staticpage__title">Traditional Tamil snacks, made the way they should be</h1>
         <p className="staticpage__lead">
-          Arusuvai started as a small family kitchen in Chennai with a single goal - to share
+          Arusuvai started as a small family kitchen in Tirunelveli with a single goal - to share
           homemade Tamil snacks with families who don&apos;t have the time (or the patient
           grandmother) to make them at home.
         </p>
@@ -48,8 +48,8 @@ export default function About() {
         <div className="staticpage__section">
           <h2>Our story</h2>
           <p>
-            What started as a Diwali order for a few neighbours grew into a tiny commercial
-            kitchen in T. Nagar. Today we ship across India, but the recipes haven&apos;t changed:
+            What started as a Diwali order for a few neighbours grew into a small kitchen in the
+            heart of Tirunelveli town. Today we ship across India, but the recipes haven&apos;t changed:
             our murukku still gets its crunch from the same hand-press my grandmother used, and
             the laddoos still come out of the same brass pan.
           </p>
@@ -75,24 +75,6 @@ export default function About() {
             ))}
           </ul>
         </div>
-
-        <aside className="staticpage__aside">
-          <div className="staticpage__card">
-            <h3>By the numbers</h3>
-            <p style={{ margin: 0 }}>
-              <strong>12+</strong> family recipes &middot; <strong>5,000+</strong> happy
-              households &middot; shipping across <strong>India</strong>.
-            </p>
-          </div>
-          <div className="staticpage__card">
-            <h3>Want a custom order?</h3>
-            <p style={{ margin: 0 }}>
-              We do bulk hampers for weddings, festivals and offices. Drop us a note and we&apos;ll
-              put together a quote within a day.
-            </p>
-            <Button as={Link} to="/contact" size="md">Talk to us</Button>
-          </div>
-        </aside>
       </div>
     </div>
   )

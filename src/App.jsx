@@ -32,8 +32,8 @@
  *     the user to /login (remembering where they came from).
  */
 import './App.css'
-import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/react'
@@ -82,9 +82,23 @@ function RouteFallback() {
   return <div style={{ minHeight: '60vh' }} aria-busy="true" />
 }
 
+/* Reset scroll to the top of the page whenever the route changes.
+   Without this, react-router keeps the previous scroll position, so
+   navigating from a long page can land you at the bottom. In-page
+   anchor links (#hash) are left untouched. */
+function ScrollToTop() {
+  const { pathname, hash } = useLocation()
+  useEffect(() => {
+    if (hash) return
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname, hash])
+  return null
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<RouteFallback />}>
         <Routes>
           <Route element={<RootLayout />}>

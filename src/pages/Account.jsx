@@ -13,12 +13,11 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import {
-  Mail, ShieldCheck,
-  Eye, EyeOff, KeyRound, Loader2, MailCheck, MailWarning,
+  Mail,
+  Eye, EyeOff, KeyRound, Loader2, MailWarning,
 } from 'lucide-react'
 
 import { useMyProfile, useChangePassword, useResendVerification } from '../lib/me'
-import { useAuthStore } from '../stores/authStore'
 import './Account.css'
 
 const pwSchema = z
@@ -53,7 +52,6 @@ function initials(profile) {
 }
 
 export default function Account() {
-  const authUser = useAuthStore((s) => s.user)
   const { data: profile, isLoading, isError, error } = useMyProfile()
   const changePw = useChangePassword()
   const resendVerify = useResendVerification()
@@ -121,8 +119,6 @@ export default function Account() {
     )
   }
 
-  const isAdmin = profile?.admin || authUser?.roles?.includes('admin')
-
   return (
     <section className="account stack">
       {/* ---------- Profile card ---------- */}
@@ -136,30 +132,6 @@ export default function Account() {
             <Mail size={14} aria-hidden="true" />
             <span>{profile?.email || '-'}</span>
           </p>
-          <div className="account-card__badges">
-            {profile?.emailVerified ? (
-              <span className="account-badge account-badge--verified">
-                <MailCheck size={14} aria-hidden="true" />
-                Verified
-              </span>
-            ) : (
-              <span className="account-badge account-badge--unverified">
-                <MailWarning size={14} aria-hidden="true" />
-                Not verified
-              </span>
-            )}
-            <span
-              className={`account-status account-status--${(profile?.status || 'unknown').toLowerCase()}`}
-            >
-              {profile?.status || 'UNKNOWN'}
-            </span>
-            {isAdmin && (
-              <span className="account-badge account-badge--admin">
-                <ShieldCheck size={14} aria-hidden="true" />
-                Admin
-              </span>
-            )}
-          </div>
         </div>
       </div>
 

@@ -30,7 +30,7 @@ export const GRAMS_PER_ITEM = 300
  * Fallback weight (g) for piece/count variants like "5 pcs" whose label
  * carries no mass. Kept low so piece-based items land in the cheapest tier.
  */
-export const PCS_GRAMS = 100
+export const PCS_GRAMS = 165
 
 /**
  * Non-document rate table per zone (food products only).
