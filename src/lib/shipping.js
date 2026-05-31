@@ -42,7 +42,7 @@ export const PCS_GRAMS = 165
 const ZONE_RATES = {
   LOCAL:     { upto250:  25, upto500:  25, perKg:  30 },
   LOCAL_OUT: { upto250:  35, upto500:  35, perKg:  40 },
-  TN:        { upto250:  70, upto500:  70, perKg:  80 },
+  TN:        { upto250:  70, upto500:  70, perKg:  30 },
   KERALA:    { upto250:  85, upto500:  85, perKg: 100 },
   BANGALORE: { upto250:  80, upto500:  80, perKg: 100 },
   KARNATAKA: { upto250:  85, upto500:  85, perKg: 105 },
