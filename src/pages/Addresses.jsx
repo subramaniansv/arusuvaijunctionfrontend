@@ -17,7 +17,7 @@ import {
   useAddresses, useCreateAddress, useUpdateAddress, useDeleteAddress,
 } from '../lib/addresses'
 import { EmptyState, Button } from '../components'
-import noAddressImg from '../assets/empty state/no saved address.png'
+import noAddressImg from '../assets/empty state/no saved address.svg'
 import './Account.css'
 
 /* ------------------------------------------------------------------ */

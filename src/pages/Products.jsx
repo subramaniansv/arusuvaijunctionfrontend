@@ -36,7 +36,7 @@ import { useAddToCart } from '../lib/cart'
 import Seo from '../components/Seo'
 import { breadcrumbLd, BRAND } from '../lib/seo'
 import { useAuthStore } from '../stores/authStore'
-import noSearchImg from '../assets/empty state/no search.png'
+import noSearchImg from '../assets/empty state/no search.svg'
 import './Products.css'
 
 const SORT_OPTIONS = [
@@ -275,14 +275,23 @@ export default function Products() {
               />
             </FilterGroup>
 
-            <Button
-              variant="ghost"
-              fullWidth
-              onClick={clearAll}
-              disabled={activeChips.length === 0}
-            >
-              Clear all filters
-            </Button>
+            <div className="products__sidebar-foot">
+              <Button
+                variant="ghost"
+                fullWidth
+                onClick={clearAll}
+                disabled={activeChips.length === 0}
+              >
+                Clear all filters
+              </Button>
+              <div className="products__sidebar-count">
+                {isLoading
+                  ? 'Loading…'
+                  : products.length === 0
+                  ? 'No products'
+                  : `${products.length} product${products.length === 1 ? '' : 's'}`}
+              </div>
+            </div>
           </aside>
 
           {/* main */}

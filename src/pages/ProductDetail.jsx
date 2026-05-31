@@ -51,7 +51,7 @@ import { useMyProfile } from '../lib/me'
 import { useAuthStore } from '../stores/authStore'
 import Seo from '../components/Seo'
 import { productLd, breadcrumbLd } from '../lib/seo'
-import noReviewImg from '../assets/empty state/no review yet.png'
+import noReviewImg from '../assets/empty state/no review yet.svg'
 import './ProductDetail.css'
 
 const PLACEHOLDER =

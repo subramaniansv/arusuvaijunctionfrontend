@@ -151,6 +151,20 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
+.products__sidebar-foot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+.products__sidebar-foot > .ui-btn { flex: 1 1 auto; }
+.products__sidebar-count {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+
 .products__group {
   display: flex;
   flex-direction: column;

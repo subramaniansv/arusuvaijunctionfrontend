@@ -53,8 +53,8 @@
 
   /* 3. Typography ------------------------------------------------ */
   --font-display: 'Fraunces', Georgia, serif;
-  --font-body:    'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --font-tamil:   'Noto Sans Tamil', sans-serif;
+  --font-body:    'Lato', 'Roboto', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, 'Segoe UI', sans-serif;
+  --font-tamil:   'Anek Tamil', 'Noto Sans Tamil', sans-serif;
   --font-mono:    ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* Font sizes - modular scale, base 16px */

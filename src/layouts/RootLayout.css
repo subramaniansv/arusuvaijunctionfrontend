@@ -106,15 +106,19 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 3px rgba(15, 93, 58, 0.15);
 }
-.nav__search svg { color: var(--color-text-muted); flex-shrink: 0; }
+.nav__search svg { color: var(--color-text-muted); flex-shrink: 0; display: block; }
 .nav__search input {
   flex: 1;
   min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
   border: none;
   outline: none;
   background: transparent;
   font: inherit;
   font-size: var(--text-sm);
+  line-height: 1;
   color: var(--color-text);
 }
 .nav__search input::placeholder { color: var(--color-text-muted); }
@@ -182,6 +186,15 @@
   align-items: center;
   justify-content: center;
 }
+
+/* Cart link: wraps the icon so the count badge can pin to it. */
+.nav__item-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav__item-icon .nav__badge { top: -6px; right: -8px; }
 
 /* Login CTA pill */
 .nav__item--cta {

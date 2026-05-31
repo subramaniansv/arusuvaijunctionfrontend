@@ -36,7 +36,7 @@ import {
 } from '../components'
 import { useWishlist, useRemoveFromWishlist } from '../lib/wishlist'
 import { useAddToCart } from '../lib/cart'
-import noWishlistImg from '../assets/empty state/no wishlist.png'
+import noWishlistImg from '../assets/empty state/no wishlist.svg'
 import './Wishlist.css'
 
 const PLACEHOLDER =

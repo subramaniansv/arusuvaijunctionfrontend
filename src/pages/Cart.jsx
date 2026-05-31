@@ -42,7 +42,7 @@ import {
   useClearCart,
 } from '../lib/cart'
 import { MIN_SHIPPING_INR, FREE_ABOVE_INR } from '../lib/shipping'
-import cartEmptyImg from '../assets/empty state/cart empty.png'
+import cartEmptyImg from '../assets/empty state/cart empty.svg'
 import './Cart.css'
 
 const PLACEHOLDER =

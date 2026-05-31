@@ -54,6 +54,7 @@ import Home from './pages/Home'
    per page on `npm run build`. */
 const Products        = lazy(() => import('./pages/Products'))
 const ProductDetail   = lazy(() => import('./pages/ProductDetail'))
+const Search          = lazy(() => import('./pages/Search'))
 const Auth            = lazy(() => import('./pages/Auth'))
 const Cart            = lazy(() => import('./pages/Cart'))
 const Checkout        = lazy(() => import('./pages/Checkout'))
@@ -91,6 +92,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:productId" element={<ProductDetail />} />
+          <Route path="search" element={<Search />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="policy/privacy" element={<PrivacyPolicy />} />

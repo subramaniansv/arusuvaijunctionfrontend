@@ -350,29 +350,27 @@ export default function Checkout() {
 
             {/* ---- Saved-address picker (only shown when user has saved addresses) ---- */}
             {savedAddresses.length > 0 && (
-              <div className="checkout__saved-addr">
-                <Select
-                  id="savedAddrSelect"
-                  className="checkout__saved-addr__select"
-                  label={
-                    <>
-                      <BookUser size={15} aria-hidden="true" /> Use a saved
-                      address
-                    </>
-                  }
-                  value={selectedSavedId}
-                  onChange={(e) => setSelectedSavedId(e.target.value)}
-                  options={[
-                    { value: "", label: "— fill form manually —" },
-                    ...savedAddresses.map((a) => ({
-                      value: a.addressId,
-                      label: `${a.label ? `${a.label} – ` : ""}${a.fullName}, ${
-                        a.city
-                      }${a.default ? " ★" : ""}`,
-                    })),
-                  ]}
-                />
-              </div>
+              <Select
+                id="savedAddrSelect"
+                className="checkout__saved-addr__select"
+                label={
+                  <>
+                    <BookUser size={15} aria-hidden="true" /> Use a saved
+                    address
+                  </>
+                }
+                value={selectedSavedId}
+                onChange={(e) => setSelectedSavedId(e.target.value)}
+                options={[
+                  { value: "", label: "— fill form manually —" },
+                  ...savedAddresses.map((a) => ({
+                    value: a.addressId,
+                    label: `${a.label ? `${a.label} – ` : ""}${a.fullName}, ${
+                      a.city
+                    }${a.default ? " ★" : ""}`,
+                  })),
+                ]}
+              />
             )}
 
             <Input
@@ -543,6 +541,27 @@ export default function Checkout() {
             </p>
           </Card>
         </aside>
+
+        {/* Mobile-only fixed pay bar (matches the Cart / Product pattern):
+            keeps the primary CTA pinned to the bottom of the viewport for
+            thumb reach. Hidden on >=900px where the summary card holds it. */}
+        <div className="checkout__mobile-bar" aria-label="Payment">
+          <div className="checkout__mobile-bar-info">
+            <span className="checkout__mobile-bar-label">Total</span>
+            <span className="checkout__mobile-bar-total">
+              ₹{Number(total).toLocaleString("en-IN")}
+            </span>
+          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            loading={isSubmitting || paying}
+            className="checkout__mobile-bar-btn"
+          >
+            Pay now
+          </Button>
+        </div>
       </form>
     </Container>
   );

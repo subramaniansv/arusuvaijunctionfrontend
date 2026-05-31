@@ -1,0 +1,144 @@
+/* ===================================================================
+ * Search page - dedicated results view for the header search bar.
+ * =================================================================== */
+.search {
+  display: flex;
+  flex-direction: column;
+  padding-block: var(--space-6) var(--space-16);
+}
+
+.search__head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+/* ---- back arrow (inside the search bar) ---- */
+.search__back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px;
+  margin-left: calc(-1 * var(--space-2));
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.search__back:hover { color: var(--color-text); background: rgba(0, 0, 0, 0.05); }
+.search__back svg { display: block; }
+
+.search__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  line-height: var(--line-height-tight);
+}
+.search__term { color: var(--color-primary); }
+
+/* ---- refine field ---- */
+.search__form {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  max-width: 640px;
+  margin-inline: auto;
+  height: 48px;
+  padding: 0 var(--space-2) 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--brand-yellow-light, #fef8e8);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
+}
+.search__form:focus-within {
+  background: #fff;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(15, 93, 58, 0.15);
+}
+.search__form > svg { color: var(--color-text-muted); flex-shrink: 0; }
+
+.search__input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-base);
+  line-height: 1;
+  color: var(--color-text);
+}
+.search__input::placeholder { color: var(--color-text-muted); }
+.search__input[type="search"]::-webkit-search-cancel-button,
+.search__input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+          appearance: none;
+  display: none;
+}
+
+.search__clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+.search__clear:hover { color: var(--color-text); background: rgba(0, 0, 0, 0.05); }
+
+.search__count {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---- results grid (mirrors the catalogue) ---- */
+.search__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+@media (min-width: 640px)  { .search__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); } }
+@media (min-width: 1280px) { .search__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6); } }
+
+.search__skel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.search__more {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-10) var(--space-4);
+}
+
+.search__sentinel { width: 100%; height: 1px; }
+
+@media (max-width: 640px) {
+  .search__title { font-size: var(--text-xl); }
+  .search__form { height: 44px; }
+  .search__submit { display: none; }
+}

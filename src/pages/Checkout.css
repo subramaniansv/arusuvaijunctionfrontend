@@ -60,38 +60,7 @@
 .checkout__section-title svg { color: var(--color-primary); flex-shrink: 0; }
 
 /* ---- saved address picker ---- */
-.checkout__saved-addr {
-  display: grid;
-  gap: .4rem;
-  padding: .85rem 1rem;
-  background: #f8f6f2;
-  border: 1px solid #e8dfc8;
-  border-radius: 10px;
-  margin-bottom: var(--space-2);
-}
-
-.checkout__saved-addr__label {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--color-text-muted, #555);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-}
-
-.checkout__saved-addr__select {
-  width: 100%;
-  padding: .5rem .75rem;
-  border-radius: 8px;
-  border: 1px solid var(--border, #d4d4d4);
-  background: #fff;
-  font-size: .9rem;
-  color: var(--color-text, #1f1f1f);
-  cursor: pointer;
-  appearance: auto;
-}
+.checkout__saved-addr__select { margin-bottom: var(--space-2); }
 
 .checkout__hint {
   margin: 0;
@@ -262,6 +231,54 @@
   line-height: var(--line-height-snug);
 }
 .checkout__secure svg { color: var(--color-primary); flex-shrink: 0; margin-top: 2px; }
+
+/* ---------------- mobile sticky pay bar (Zepto-style) ---------------- */
+.checkout__mobile-bar { display: none; }
+
+@media (max-width: 899px) {
+  .checkout__mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
+    background: var(--color-surface, #fff);
+    border-top: 1px solid var(--color-border);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .checkout__mobile-bar-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+  .checkout__mobile-bar-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+  .checkout__mobile-bar-total {
+    font-size: var(--text-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+  }
+  .checkout__mobile-bar-btn {
+    flex: 0 0 auto;
+    min-width: 150px;
+  }
+
+  /* The fixed bar replaces the in-card button on mobile. */
+  .checkout__place,
+  .checkout__secure { display: none; }
+
+  /* Reserve space so the fixed bar never covers the last content. */
+  .checkout { padding-bottom: 96px; }
+}
 
 @media (max-width: 599px) {
   .checkout__title { font-size: var(--text-2xl); }

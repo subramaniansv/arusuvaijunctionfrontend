@@ -46,28 +46,25 @@ export default function RootLayout() {
   const path = location.pathname
   const isAuth = path === '/login' || path === '/register'
   const isBare = path === '/' || isAuth
+  const isSearchPage = path === '/search'
 
   // Global page heading shown on every page except Home / auth.
   const pageTitle = getPageTitle(path)
 
   // ---- search state ----
-  const onProducts = path === '/products'
+  // The header field mirrors the URL query whenever we're on a page
+  // that reads it (the dedicated search page or the catalogue).
+  const onSearchPage = path === '/search' || path === '/products'
   const [urlParams] = useSearchParams()
-  const [query, setQuery] = useState(onProducts ? (urlParams.get('q') || '') : '')
+  const [query, setQuery] = useState(onSearchPage ? (urlParams.get('q') || '') : '')
   useEffect(() => {
-    if (onProducts) setQuery(urlParams.get('q') || '')
-  }, [onProducts, urlParams])
+    if (onSearchPage) setQuery(urlParams.get('q') || '')
+  }, [onSearchPage, urlParams])
 
   // ---- mobile UI state ----
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
-  const mobileInputRef = useRef(null)
   const accountMenuRef = useRef(null)
-
-  useEffect(() => {
-    if (mobileSearchOpen) mobileInputRef.current?.focus()
-  }, [mobileSearchOpen])
 
   // close drawer on route change
   useEffect(() => { setDrawerOpen(false); setAccountMenuOpen(false) }, [path])
@@ -105,9 +102,8 @@ export default function RootLayout() {
   const submitSearch = (e) => {
     e?.preventDefault()
     const q = query.trim()
-    const target = q ? `/products?q=${encodeURIComponent(q)}` : '/products'
+    const target = q ? `/search?q=${encodeURIComponent(q)}` : '/search'
     navigate(target)
-    setMobileSearchOpen(false)
   }
 
   const onLogout = () => {
@@ -253,32 +249,36 @@ export default function RootLayout() {
               </span>
             </Link>
 
-            {/* inline search (collapses below 720px to mobile toggle) */}
-            <form
-              className="nav__search"
-              role="search"
-              onSubmit={submitSearch}
-              aria-label="Search products"
-            >
-              <Search size={16} aria-hidden="true" />
-              <input
-                type="search"
-                placeholder="Search murukku, sweets, mixture..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+            {/* inline search (collapses below 720px to mobile toggle).
+                Hidden on the dedicated search page where the page itself
+                renders the field. */}
+            {!isSearchPage && (
+              <form
+                className="nav__search"
+                role="search"
+                onSubmit={submitSearch}
                 aria-label="Search products"
-              />
-              {query && (
-                <button
-                  type="button"
-                  className="nav__search-clear"
-                  aria-label="Clear search"
-                  onClick={() => setQuery('')}
-                >
-                  <X size={14} aria-hidden="true" />
-                </button>
-              )}
-            </form>
+              >
+                <Search size={16} aria-hidden="true" />
+                <input
+                  type="search"
+                  placeholder="Search murukku, sweets, mixture..."
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  aria-label="Search products"
+                />
+                {query && (
+                  <button
+                    type="button"
+                    className="nav__search-clear"
+                    aria-label="Clear search"
+                    onClick={() => setQuery('')}
+                  >
+                    <X size={14} aria-hidden="true" />
+                  </button>
+                )}
+              </form>
+            )}
 
             {/* desktop nav cluster (>= 960px):
                  Products + Cart + Avatar dropdown. Everything else
@@ -301,6 +301,26 @@ export default function RootLayout() {
               >
                 <ShoppingBag size={20} aria-hidden="true" />
                 <span>Products</span>
+              </NavLink>
+
+              <NavLink
+                to="/cart"
+                className={({ isActive }) => `nav__item nav__item--cart${isActive ? ' is-active' : ''}`}
+                aria-label={
+                  isAuthed && cartCount > 0
+                    ? `Cart, ${cartCount} item${cartCount === 1 ? '' : 's'}`
+                    : 'Cart'
+                }
+              >
+                <span className="nav__item-icon">
+                  <ShoppingCart size={20} aria-hidden="true" />
+                  {isAuthed && cartCount > 0 && (
+                    <span className="nav__badge" aria-hidden="true">
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
+                  )}
+                </span>
+                <span>Cart</span>
               </NavLink>
 
               {isAuthed ? (
@@ -420,17 +440,17 @@ export default function RootLayout() {
               )}
             </nav>
 
-            {/* mobile right-side cluster: search toggle + cart */}
+            {/* mobile right-side cluster: search link + cart */}
             <div className="nav__cluster-mobile">
-              <button
-                type="button"
-                className="nav__icon"
+              <NavLink
+                to="/search"
+                className={({ isActive }) =>
+                  `nav__icon${isActive ? ' is-active' : ''}`
+                }
                 aria-label="Search"
-                aria-expanded={mobileSearchOpen}
-                onClick={() => setMobileSearchOpen((v) => !v)}
               >
                 <Search size={20} aria-hidden="true" />
-              </button>
+              </NavLink>
 
               <NavLink
                 to="/cart"
@@ -451,39 +471,6 @@ export default function RootLayout() {
                 )}
               </NavLink>
             </div>
-          </div>
-
-          {/* mobile expandable search row */}
-          <div
-            className="nav__search-row container"
-            hidden={!mobileSearchOpen}
-          >
-            <form
-              className="nav__search nav__search--row"
-              role="search"
-              onSubmit={submitSearch}
-              aria-label="Search products"
-            >
-              <Search size={16} aria-hidden="true" />
-              <input
-                ref={mobileInputRef}
-                type="search"
-                placeholder="Search products..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                aria-label="Search products"
-              />
-              {query && (
-                <button
-                  type="button"
-                  className="nav__search-clear"
-                  aria-label="Clear search"
-                  onClick={() => setQuery('')}
-                >
-                  <X size={14} aria-hidden="true" />
-                </button>
-              )}
-            </form>
           </div>
         </header>
       )}

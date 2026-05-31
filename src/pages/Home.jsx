@@ -37,15 +37,16 @@ import {
 } from '../lib/seo'
 import './Home.css'
 import heroImg from '../assets/hero.png'
+import leafIcon from '../assets/leaf.svg'
 import podiCat from '../assets/podicategory.png'
 import ladooCat from '../assets/ladoocategory.png'
 import nutsCat from '../assets/nutscategory.png'
 import readyMixCat from '../assets/vathakulambu (1).png'
 import pickleCat from '../assets/picklecategoey.png'
 
-// The hero banner uses the new watercolor illustration in
-// src/assets/hero.png, applied as an inline background-image on the
-// .home-hero section (overriding the CSS image-set fallback).
+// The hero banner uses the watercolor illustration in src/assets/hero.png,
+// applied as an inline background-image on the .home-hero section. The
+// decorative leaf (src/assets/leaf.svg) sits in the title divider.
 
 /* ---------------- Dummy data (replace with API later) ----------- */
 
@@ -199,9 +200,7 @@ function Hero() {
           </h1>
 
           <div className="home-hero__divider" aria-hidden="true">
-            <span />
-            <Leaf size={14} />
-            <span />
+            <img src={leafIcon} alt="" className="home-hero__divider-leaf" />
           </div>
 
           <p className="home-hero__lead">

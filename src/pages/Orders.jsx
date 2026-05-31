@@ -20,7 +20,7 @@ import {
   formatOrderDate,
   shortOrderId,
 } from '../lib/orders'
-import noOrdersImg from '../assets/empty state/no ordrs.png'
+import noOrdersImg from '../assets/empty state/no ordrs.svg'
 import './Orders.css'
 
 const PLACEHOLDER =
