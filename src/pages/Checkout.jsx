@@ -34,7 +34,9 @@ import {
 } from "../components";
 import { useCart } from "../lib/cart";
 import { useAddresses } from "../lib/addresses";
-import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR } from "../lib/shipping";
+import { useMyProfile } from "../lib/me";
+import { useRazorpayCheckout } from "../lib/payment";
+import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR, checkPincodeServiceability, fetchShippingRate } from "../lib/shipping";
 import "./Checkout.css";
 
 const PLACEHOLDER =
@@ -117,9 +119,10 @@ export default function Checkout() {
   const { data: cart, isLoading } = useCart();
 
   const { data: savedAddresses = [] } = useAddresses();
+  const { data: profile } = useMyProfile();
+  const payWithRazorpay = useRazorpayCheckout();
 
   const [selectedSavedId, setSelectedSavedId] = useState("");
-  const [showPaymentNotice, setShowPaymentNotice] = useState(false);
   const [paying, setPaying] = useState(false);
 
   /* -----------------------------------------------------------------
@@ -194,14 +197,70 @@ export default function Checkout() {
     0
   );
   // Free shipping (subtotal-based) is known regardless of location.
-  // Otherwise the fee is only knowable once a valid 6-digit pincode is given;
-  // until then we prompt for the pincode instead of showing a default price.
   const qualifiesFreeShipping = subtotal >= FREE_ABOVE_INR;
   const hasValidPincode = /^\d{6}$/.test((pincode || "").trim());
-  const shippingKnown = qualifiesFreeShipping || hasValidPincode;
-  const shippingFee = shippingKnown
-    ? calcShippingByGrams(pincode, totalGrams, subtotal)
-    : 0;
+
+  /* -----------------------------------------------------------------
+   * API-based shipping: serviceability + live rate from Delhivery.
+   * Falls back to static calculator if the backend Delhivery call fails.
+   * ----------------------------------------------------------------- */
+  const [shippingFee, setShippingFee] = useState(0);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [serviceability, setServiceability] = useState(null); // { serviceable, estimatedDays, district, codAvailable }
+  const [notServiceable, setNotServiceable] = useState(false);
+  const lastShippingPinRef = useRef("");
+
+  useEffect(() => {
+    const pin = (pincode || "").trim();
+    if (qualifiesFreeShipping) {
+      setShippingFee(0);
+      setNotServiceable(false);
+      setServiceability(null);
+      return;
+    }
+    if (!/^\d{6}$/.test(pin)) {
+      setShippingFee(0);
+      setNotServiceable(false);
+      setServiceability(null);
+      lastShippingPinRef.current = "";
+      return;
+    }
+    if (lastShippingPinRef.current === pin + "_" + totalGrams) return;
+    lastShippingPinRef.current = pin + "_" + totalGrams;
+
+    let cancelled = false;
+    const lookup = async () => {
+      setShippingLoading(true);
+      try {
+        // Check serviceability first
+        const svc = await checkPincodeServiceability(pin);
+        if (cancelled) return;
+        setServiceability(svc);
+        if (!svc?.serviceable) {
+          setNotServiceable(true);
+          setShippingFee(0);
+          return;
+        }
+        setNotServiceable(false);
+        // Get live rate
+        const rate = await fetchShippingRate(pin, totalGrams, subtotal);
+        if (cancelled) return;
+        setShippingFee(rate?.shippingFee ?? 0);
+      } catch {
+        if (cancelled) return;
+        // Fallback to client-side static calculator
+        setShippingFee(calcShippingByGrams(pin, totalGrams, subtotal));
+        setNotServiceable(false);
+        setServiceability(null);
+      } finally {
+        if (!cancelled) setShippingLoading(false);
+      }
+    };
+    const t = setTimeout(lookup, 200);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [pincode, totalGrams, subtotal, qualifiesFreeShipping]);
+
+  const shippingKnown = qualifiesFreeShipping || (hasValidPincode && !shippingLoading);
   const shippingZoneLabel = getZoneLabel(pincode);
   const total = subtotal + shippingFee;
 
@@ -256,13 +315,7 @@ export default function Checkout() {
     }
   }, [buyNow, isLoading, items.length, navigate]);
 
-  // TODO: Switch back to onSubmitLive once Razorpay is approved (June 2)
-  const onSubmit = () => {
-    setShowPaymentNotice(true);
-  };
-
-  // eslint-disable-next-line no-unused-vars
-  const onSubmitLive = async (values) => {
+  const onSubmit = async (values) => {
     const payload = {
       shippingAddress: buildShippingAddress(values),
       phone: values.phone,
@@ -500,14 +553,24 @@ export default function Checkout() {
             <div className="checkout__sum-line">
               <span>
                 Shipping
-                {shippingZoneLabel && (
+                {shippingZoneLabel && !serviceability?.district && (
                   <span className="checkout__shipping-zone">
                     {" "}
                     – {shippingZoneLabel}
                   </span>
                 )}
+                {serviceability?.district && (
+                  <span className="checkout__shipping-zone">
+                    {" "}
+                    – {serviceability.district}
+                  </span>
+                )}
               </span>
-              {shippingKnown ? (
+              {shippingLoading ? (
+                <span className="checkout__shipping-tbd">
+                  <Loader2 size={14} className="checkout__spin" /> Checking…
+                </span>
+              ) : shippingKnown ? (
                 shippingFee === 0 ? (
                   <span className="checkout__free">Free</span>
                 ) : (
@@ -517,6 +580,16 @@ export default function Checkout() {
                 <span className="checkout__shipping-tbd">Enter pincode</span>
               )}
             </div>
+            {serviceability?.estimatedDays > 0 && !notServiceable && hasValidPincode && (
+              <p className="checkout__delivery-est">
+                Estimated delivery: {serviceability.estimatedDays} days
+              </p>
+            )}
+            {notServiceable && (
+              <p className="checkout__not-serviceable">
+                Sorry, we don't deliver to this pincode yet.
+              </p>
+            )}
             <Divider />
             <div className="checkout__sum-line checkout__sum-line--strong">
               <span>Total</span>
@@ -529,6 +602,7 @@ export default function Checkout() {
               size="lg"
               fullWidth
               loading={isSubmitting || paying}
+              disabled={notServiceable || shippingLoading}
               className="checkout__place"
             >
               {`Pay ₹${Number(total).toLocaleString("en-IN")}`}
@@ -556,6 +630,7 @@ export default function Checkout() {
             variant="primary"
             size="lg"
             loading={isSubmitting || paying}
+            disabled={notServiceable || shippingLoading}
             className="checkout__mobile-bar-btn"
           >
             Pay now
@@ -563,43 +638,7 @@ export default function Checkout() {
         </div>
       </form>
 
-      {/* Payment-coming-soon modal */}
-      {showPaymentNotice && (
-        <div
-          className="checkout__notice-overlay"
-          style={{
-            position: 'fixed', inset: 0, zIndex: 9999,
-            background: 'rgba(0,0,0,0.5)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '1rem',
-          }}
-          onClick={() => setShowPaymentNotice(false)}
-        >
-          <div
-            style={{
-              background: '#fff', borderRadius: '12px', padding: '2rem',
-              maxWidth: '420px', width: '100%', textAlign: 'center',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-            }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 style={{ marginBottom: '0.75rem', fontSize: '1.25rem' }}>Online Payment Coming Soon</h2>
-            <p style={{ color: '#555', marginBottom: '1rem', lineHeight: 1.6 }}>
-              We are setting up our payment gateway. In the meantime, please contact us to place your order:
-            </p>
-            <p style={{ marginBottom: '0.5rem' }}>
-              <a href="mailto:support@arusuvaijunction.com" style={{ color: '#2563eb' }}>support@arusuvaijunction.com</a>
-            </p>
-            <p style={{ marginBottom: '1.5rem' }}>
-              <a href="https://wa.me/919597451463" style={{ color: '#25d366', fontWeight: 600 }}>WhatsApp: +91 9597451463</a>
-              <span style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>(for urgent orders)</span>
-            </p>
-            <Button variant="primary" size="md" onClick={() => setShowPaymentNotice(false)}>
-              Close
-            </Button>
-          </div>
-        </div>
-      )}
+
     </Container>
   );
 }

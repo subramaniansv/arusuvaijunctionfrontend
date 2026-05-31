@@ -122,14 +122,14 @@ const PIECE_RE = /\b(pc|pcs|piece|pieces|no|nos|count|pack|packs)\b/
  * Derive the per-unit weight (grams) of a variant from its label.
  *
  * Weight labels ("250g", "1kg") parse to their gram value; piece/count
- * labels ("5 pcs") fall back to PCS_GRAMS; anything unrecognized (or no
- * variant) falls back to GRAMS_PER_ITEM.
+ * labels ("5 pcs") use PCS_GRAMS. Returns 0 if no label is provided
+ * (caller must handle missing variant).
  *
  * @param {string|null|undefined} label variant label
- * @returns {number} estimated grams for one unit of this variant
+ * @returns {number} grams for one unit of this variant (0 if unknown)
  */
 export function variantGrams(label) {
-  if (!label || !String(label).trim()) return GRAMS_PER_ITEM
+  if (!label || !String(label).trim()) return 0
   const s = String(label).toLowerCase().trim()
 
   const m = s.match(WEIGHT_RE)
@@ -142,7 +142,8 @@ export function variantGrams(label) {
 
   if (PIECE_RE.test(s)) return PCS_GRAMS
 
-  return GRAMS_PER_ITEM
+  // Label exists but doesn't match known patterns — treat as PCS_GRAMS
+  return PCS_GRAMS
 }
 
 /**
@@ -182,3 +183,39 @@ export function getZoneLabel(pincode) {
  */
 export const MIN_SHIPPING_INR = ZONE_RATES.LOCAL.upto250  // ₹25
 
+/* ------------------------------------------------------------------
+ * API-based shipping (Delhivery via backend).
+ *
+ * These call the backend shipping endpoints which use Delhivery live
+ * rates when configured, falling back to the static calculator above.
+ * ------------------------------------------------------------------ */
+import { api } from './api'
+
+/**
+ * Check if a pincode is serviceable.
+ * @returns {{ serviceable, codAvailable, estimatedDays, district }}
+ */
+export async function checkPincodeServiceability(pincode) {
+  const res = await api.get(`/api/shipping?action=check&pincode=${pincode}`)
+  return res.data?.data
+}
+
+/**
+ * Get shipping rate from the backend (Delhivery or fallback).
+ * @returns {{ shippingFee, freeShipping }}
+ */
+export async function fetchShippingRate(pincode, weightGrams, subtotal) {
+  const res = await api.get(
+    `/api/shipping?action=rate&pincode=${pincode}&weightGrams=${weightGrams}&subtotal=${subtotal}`
+  )
+  return res.data?.data
+}
+
+/**
+ * Track a shipment by waybill (requires auth).
+ * @returns {{ waybill, status, statusDate, expectedDeliveryDate, scans }}
+ */
+export async function trackShipment(waybill) {
+  const res = await api.get(`/api/shipping?action=track&waybill=${waybill}`)
+  return res.data?.data
+}

@@ -132,8 +132,13 @@ export default function Wishlist() {
   /* ---------------- list ---------------- */
   const handleAdd = (product) => {
     if (!product) return
+    const variants = product?.variants || []
+    const firstVariant = variants.find(
+      (v) => v.active !== false && (v.stockQuantity ?? 0) > 0,
+    ) || variants[0] || null
     addToCart.mutate({
       productId: product.id || product.productId,
+      variantId: firstVariant ? firstVariant.variantId : null,
       quantity: 1,
       product,
     })

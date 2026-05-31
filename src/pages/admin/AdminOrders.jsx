@@ -10,15 +10,22 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import {
+  Truck, Eye, XCircle, Loader2, ExternalLink,
+} from 'lucide-react'
+import {
   ORDER_STATUSES,
   useAdminOrders,
   useUpdateOrderStatus,
+  useCreateShipment,
+  useCancelShipment,
+  adminTrackOrder,
 } from '../../lib/admin'
 import {
   formatOrderDate,
   shortOrderId,
   ORDER_STATUS_VARIANT,
 } from '../../lib/orders'
+import { variantGrams } from '../../lib/shipping'
 import {
   Alert,
   Badge,
@@ -73,6 +80,56 @@ function StatusEditor({ order }) {
 
 export default function AdminOrders() {
   const { data: orders = [], isLoading, error } = useAdminOrders({ limit: 100 })
+  const createShipment = useCreateShipment()
+  const cancelShipment = useCancelShipment()
+  const [shippingOrderId, setShippingOrderId] = useState(null)
+  const [cancellingOrderId, setCancellingOrderId] = useState(null)
+  const [trackingData, setTrackingData] = useState({})
+  const [trackingLoading, setTrackingLoading] = useState({})
+
+  const handleShip = (order) => {
+    setShippingOrderId(order.orderId)
+    const weightGrams = (order.orderItems || []).reduce(
+      (sum, it) => sum + variantGrams(it.variantLabel) * (it.quantity || 1), 0
+    ) || 300
+    createShipment.mutate({ orderId: order.orderId, weightGrams }, {
+      onSuccess: (data) => {
+        toast.success(`Shipment created! AWB: ${data?.waybill}`)
+        setShippingOrderId(null)
+      },
+      onError: (e) => {
+        toast.error(e?.response?.data?.message || 'Failed to create shipment')
+        setShippingOrderId(null)
+      },
+    })
+  }
+
+  const handleCancel = (orderId) => {
+    setCancellingOrderId(orderId)
+    cancelShipment.mutate({ orderId }, {
+      onSuccess: () => {
+        toast.success('Shipment cancelled')
+        setCancellingOrderId(null)
+        setTrackingData((p) => { const c = { ...p }; delete c[orderId]; return c })
+      },
+      onError: (e) => {
+        toast.error(e?.response?.data?.message || 'Failed to cancel shipment')
+        setCancellingOrderId(null)
+      },
+    })
+  }
+
+  const handleTrack = async (orderId) => {
+    setTrackingLoading((p) => ({ ...p, [orderId]: true }))
+    try {
+      const data = await adminTrackOrder(orderId)
+      setTrackingData((p) => ({ ...p, [orderId]: data }))
+    } catch (e) {
+      toast.error(e?.response?.data?.message || 'Tracking failed')
+    } finally {
+      setTrackingLoading((p) => ({ ...p, [orderId]: false }))
+    }
+  }
 
   return (
     <div className="stack">
@@ -114,29 +171,114 @@ export default function AdminOrders() {
               (n, it) => n + (Number(it.quantity) || 0),
               0,
             )
+            const hasAwb = !!o.trackingNumber
+            const canShip = ['CONFIRMED', 'PAID', 'PENDING', 'SHIPPED'].includes(o.status) && !hasAwb
+            const isShipping = shippingOrderId === o.orderId
+            const isCancelling = cancellingOrderId === o.orderId
+            const isTracking = trackingLoading[o.orderId]
+            const tracking = trackingData[o.orderId]
+
             return (
-              <div key={o.orderId} className="admin-table__row">
-                <div className="admin-product-cell">
-                  <div>
-                    <div className="admin-product-cell__name">
-                      <Link to={`/orders/${o.orderId}`}>
-                        {shortOrderId(o.orderId)}
-                      </Link>
-                    </div>
-                    <div className="admin-product-cell__id">
-                      user {String(o.userId || '').slice(0, 8)}…
+              <div key={o.orderId} className="admin-table__row admin-table__row--expanded">
+                <div className="admin-table__row-main">
+                  <div className="admin-product-cell">
+                    <div>
+                      <div className="admin-product-cell__name">
+                        <Link to={`/orders/${o.orderId}`}>
+                          {shortOrderId(o.orderId)}
+                        </Link>
+                      </div>
+                      <div className="admin-product-cell__id">
+                        user {String(o.userId || '').slice(0, 8)}…
+                      </div>
                     </div>
                   </div>
+                  <span className="text-muted">{formatOrderDate(o.orderedAt)}</span>
+                  <span>
+                    {itemCount} item{itemCount === 1 ? '' : 's'}
+                  </span>
+                  <PriceTag amount={Number(o.totalAmount) || 0} />
+                  <Badge variant={ORDER_STATUS_VARIANT[o.status] || 'neutral'}>
+                    {o.status}
+                  </Badge>
+                  <StatusEditor order={o} />
                 </div>
-                <span className="text-muted">{formatOrderDate(o.orderedAt)}</span>
-                <span>
-                  {itemCount} item{itemCount === 1 ? '' : 's'}
-                </span>
-                <PriceTag amount={Number(o.totalAmount) || 0} />
-                <Badge variant={ORDER_STATUS_VARIANT[o.status] || 'neutral'}>
-                  {o.status}
-                </Badge>
-                <StatusEditor order={o} />
+
+                {/* Shipping actions row */}
+                <div className="admin-table__shipping-row">
+                  {canShip && (
+                    <Button
+                      size="sm"
+                      variant="primary"
+                      onClick={() => handleShip(o)}
+                      disabled={isShipping}
+                    >
+                      {isShipping
+                        ? <><Loader2 size={14} className="spin-icon" /> Creating…</>
+                        : <><Truck size={14} /> Ship via Delhivery</>
+                      }
+                    </Button>
+                  )}
+
+                  {hasAwb && (
+                    <>
+                      <span className="admin-awb-info">
+                        AWB:{' '}
+                        <a
+                          href={`https://www.delhivery.com/track/package/${o.trackingNumber}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {o.trackingNumber} <ExternalLink size={11} />
+                        </a>
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleTrack(o.orderId)}
+                        disabled={isTracking}
+                      >
+                        {isTracking
+                          ? <><Loader2 size={14} className="spin-icon" /> Tracking…</>
+                          : <><Eye size={14} /> Track</>
+                        }
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => handleCancel(o.orderId)}
+                        disabled={isCancelling}
+                      >
+                        {isCancelling
+                          ? <><Loader2 size={14} className="spin-icon" /> Cancelling…</>
+                          : <><XCircle size={14} /> Cancel Shipment</>
+                        }
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                {/* Tracking details */}
+                {tracking && (
+                  <div className="admin-table__tracking">
+                    <p><strong>Status:</strong> {tracking.tracking?.status || tracking.status}
+                      {(tracking.tracking?.expectedDeliveryDate || tracking.expectedDeliveryDate) &&
+                        <span> · ETA: {tracking.tracking?.expectedDeliveryDate || tracking.expectedDeliveryDate}</span>
+                      }
+                    </p>
+                    {(tracking.tracking?.scans || tracking.scans)?.length > 0 && (
+                      <ul className="admin-tracking-scans">
+                        {(tracking.tracking?.scans || tracking.scans).slice(0, 10).map((scan, i) => (
+                          <li key={i}>
+                            <span className="admin-scan-time">{scan.dateTime}</span>
+                            <span className="admin-scan-activity">{scan.activity}</span>
+                            {scan.location && <span className="admin-scan-loc">{scan.location}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
             )
           })}

@@ -323,3 +323,44 @@ export const ORDER_STATUSES = [
 ]
 
 export const USER_STATUSES = ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'DEAD']
+
+// ---------------- shipping (Delhivery) ----------------
+
+/** Create a Delhivery shipment for an order (admin only). */
+export function useCreateShipment() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ orderId, weightGrams }) => {
+      const body = { orderId }
+      if (weightGrams) body.weightGrams = weightGrams
+      const res = await api.post('/api/admin/shipping?action=ship', body)
+      return res.data?.data
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'orders'] })
+      qc.invalidateQueries({ queryKey: ['orders'] })
+    },
+  })
+}
+
+/** Cancel a Delhivery shipment for an order (admin only). */
+export function useCancelShipment() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ orderId }) => {
+      const res = await api.post('/api/admin/shipping?action=cancel', { orderId })
+      return res.data?.data
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'orders'] })
+      qc.invalidateQueries({ queryKey: ['orders'] })
+    },
+  })
+}
+
+/** Track an order's shipment (admin only). */
+export async function adminTrackOrder(orderId) {
+  const res = await api.get(`/api/admin/shipping?action=track&orderId=${orderId}`)
+  return res.data?.data
+}
+

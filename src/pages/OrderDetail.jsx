@@ -8,11 +8,11 @@
  * present on the checkout response, so we keep them in cache and
  * also tolerate them being missing.
  */
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import {
   CheckCircle2, MapPin, Phone, Package, Truck, Home, XCircle, Clock,
-  MessageCircle, ChevronRight,
+  MessageCircle, ChevronRight, ExternalLink, Loader2,
 } from 'lucide-react'
 
 import {
@@ -31,6 +31,7 @@ import {
   formatOrderDate,
   shortOrderId,
 } from '../lib/orders'
+import { trackShipment } from '../lib/shipping'
 import './OrderDetail.css'
 
 const PLACEHOLDER =
@@ -51,6 +52,24 @@ export default function OrderDetail() {
   const justPlaced = !!location.state?.justPlaced
 
   const { data: order, isLoading, isError } = useOrder(orderId)
+
+  // Tracking state
+  const [tracking, setTracking] = useState(null)
+  const [trackingLoading, setTrackingLoading] = useState(false)
+  const [trackingError, setTrackingError] = useState(null)
+
+  const handleTrack = async (waybill) => {
+    setTrackingLoading(true)
+    setTrackingError(null)
+    try {
+      const data = await trackShipment(waybill)
+      setTracking(data)
+    } catch (e) {
+      setTrackingError(e?.response?.data?.message || 'Could not load tracking info')
+    } finally {
+      setTrackingLoading(false)
+    }
+  }
 
   // Scroll to top when opening a different order.
   useEffect(() => { window.scrollTo({ top: 0 }) }, [orderId])
@@ -165,6 +184,94 @@ export default function OrderDetail() {
               <Timeline status={status} />
             )}
           </Card>
+
+          {/* Tracking card (shown when order has a tracking number) */}
+          {order.trackingNumber && (
+            <Card padding="lg">
+              <h2 className="orderdetail__section-title">
+                <Truck size={18} aria-hidden="true" />
+                Shipment tracking
+              </h2>
+              <div className="orderdetail__tracking-info">
+                <span className="orderdetail__awb-label">AWB:</span>
+                <a
+                  href={`https://www.delhivery.com/track/package/${order.trackingNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="orderdetail__awb-link"
+                >
+                  {order.trackingNumber}
+                  <ExternalLink size={12} />
+                </a>
+                {order.shippingProvider && (
+                  <Badge variant="neutral" size="sm">{order.shippingProvider}</Badge>
+                )}
+              </div>
+
+              {!tracking && !trackingLoading && (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleTrack(order.trackingNumber)}
+                  leftIcon={<Truck size={14} />}
+                  className="orderdetail__track-btn"
+                >
+                  Load tracking details
+                </Button>
+              )}
+
+              {trackingLoading && (
+                <div className="orderdetail__tracking-loading">
+                  <Loader2 size={16} className="orderdetail__spin" />
+                  Loading tracking…
+                </div>
+              )}
+
+              {trackingError && (
+                <p className="orderdetail__tracking-error">{trackingError}</p>
+              )}
+
+              {tracking && (
+                <div className="orderdetail__tracking-detail">
+                  <div className="orderdetail__tracking-status">
+                    <strong>Status:</strong> {tracking.status}
+                    {tracking.expectedDeliveryDate && (
+                      <span> · ETA: {tracking.expectedDeliveryDate}</span>
+                    )}
+                  </div>
+                  {tracking.scans?.length > 0 && (
+                    <ul className="orderdetail__tracking-scans">
+                      {tracking.scans.map((scan, i) => (
+                        <li key={i} className="orderdetail__scan">
+                          <span className="orderdetail__scan-dot" aria-hidden="true" />
+                          <div className="orderdetail__scan-body">
+                            <span className="orderdetail__scan-activity">{scan.activity}</span>
+                            <span className="orderdetail__scan-meta">
+                              {scan.dateTime}
+                              {scan.location && ` · ${scan.location}`}
+                            </span>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+            </Card>
+          )}
+
+          {/* Preparing for shipping (no tracking yet, but order is confirmed) */}
+          {!order.trackingNumber && ['CONFIRMED', 'PAID', 'PENDING'].includes(status) && (
+            <Card padding="lg">
+              <h2 className="orderdetail__section-title">
+                <Package size={18} aria-hidden="true" />
+                Shipment
+              </h2>
+              <p className="orderdetail__preparing">
+                Your order is being prepared for shipping. You'll see tracking details here once it ships.
+              </p>
+            </Card>
+          )}
 
           {/* items */}
           <Card padding="lg">

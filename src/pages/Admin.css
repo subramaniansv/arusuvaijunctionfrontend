@@ -1,0 +1,175 @@
+/* ==================================================================
+ * Admin page styles.
+ * ================================================================== */
+
+.admin { padding-block: var(--space-4) var(--space-16); }
+
+.admin__header {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.admin__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-3xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+.admin__sub {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.admin__orders {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.admin__order-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+.admin__order-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.admin__order-id {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-base);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+.admin__order-id:hover { text-decoration: underline; }
+.admin__order-date {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+.admin__order-total {
+  font-family: var(--font-display);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-lg);
+  color: var(--color-text);
+}
+
+.admin__order-addr {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin__order-addr svg { flex-shrink: 0; color: var(--color-text-muted); }
+
+.admin__order-items-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin__order-items-summary svg { flex-shrink: 0; }
+
+.admin__order-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  padding-top: var(--space-2);
+}
+.admin__status-select {
+  min-width: 160px;
+}
+
+/* AWB info */
+.admin__awb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt, #f5f5f0);
+  font-size: var(--text-sm);
+}
+.admin__awb-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+}
+.admin__awb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-sm);
+}
+.admin__awb-link:hover { text-decoration: underline; }
+
+/* Tracking details */
+.admin__tracking {
+  margin-top: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-alt, #f5f5f0);
+  font-size: var(--text-sm);
+}
+.admin__tracking-header {
+  margin-bottom: var(--space-2);
+  color: var(--color-text);
+}
+.admin__tracking-scans {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.admin__tracking-scan {
+  display: grid;
+  grid-template-columns: 140px 1fr auto;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-xs);
+}
+.admin__tracking-scan:last-child { border-bottom: none; }
+.admin__scan-time {
+  color: var(--color-text-muted);
+  font-family: var(--font-mono, monospace);
+}
+.admin__scan-activity { color: var(--color-text); }
+.admin__scan-loc { color: var(--color-text-muted); text-align: right; }
+
+/* Spinner animation for loading buttons */
+@keyframes admin-spin {
+  to { transform: rotate(360deg); }
+}
+.admin__spin { animation: admin-spin 1s linear infinite; }
+
+@media (max-width: 599px) {
+  .admin__title { font-size: var(--text-2xl); }
+  .admin__order-actions { flex-direction: column; align-items: stretch; }
+  .admin__tracking-scan {
+    grid-template-columns: 1fr;
+  }
+}

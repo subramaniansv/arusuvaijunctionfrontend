@@ -84,7 +84,16 @@ export default function Search() {
       return
     }
     const product = products.find((p) => (p.productId || p.id) === productId)
-    addToCart.mutate({ productId, quantity: 1, product })
+    const variants = product?.variants || []
+    const firstVariant = variants.find(
+      (v) => v.active !== false && (v.stockQuantity ?? 0) > 0,
+    ) || variants[0] || null
+    addToCart.mutate({
+      productId,
+      variantId: firstVariant ? firstVariant.variantId : null,
+      quantity: 1,
+      product,
+    })
   }
 
   const onSubmit = (e) => {
