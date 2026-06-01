@@ -106,7 +106,7 @@ export default function Search() {
     <div className="search">
       <Seo
         title={q ? `Search results for “${q}”` : 'Search'}
-        description="Search Arusuvai Junction\u2019s range of traditional Indian snacks: murukku, laddoos, mixture, sweets and more."
+        description="Search Arusuvai Junction\u2019s range of traditional Indian foods : pickles, snacks, sweets and more. Find your favourite flavours by product name, category or ingredient."
         path="/search"
         noindex
         jsonLd={breadcrumbLd([

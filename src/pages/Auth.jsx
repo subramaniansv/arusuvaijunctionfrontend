@@ -129,7 +129,7 @@ export default function Auth() {
       <aside className="auth__brand" aria-hidden="true">
         <div className="auth__brand-inner">
           <Link to="/" className="auth__logo">
-            Arusuvai
+            Arusuvai Junction
           </Link>
           <h2 className="auth__brand-title">
             Homemade Tamil snacks,<br />delivered fresh.
