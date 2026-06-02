@@ -117,6 +117,28 @@ function buildTargets({ url, title, text }) {
   ]
 }
 
+/* Open an external share destination without leaving a blank tab behind.
+ * On iOS Safari, window.open('_blank') for scheme links (mailto:) or
+ * app-handoff redirects (wa.me, t.me) opens an empty about:blank tab that
+ * stays around after the app/composer launches. For iOS and for any
+ * non-http scheme we navigate the current tab instead; desktop browsers
+ * still get a proper new tab for plain web pages. */
+function openExternal(href) {
+  if (!href) return
+  const ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : ''
+  const isIOS =
+    /iP(hone|ad|od)/.test(ua) ||
+    (/Macintosh/.test(ua) && typeof document !== 'undefined' && 'ontouchend' in document)
+  const isScheme = /^(mailto:|tel:|sms:|whatsapp:)/i.test(href)
+
+  if (isIOS || isScheme) {
+    window.location.href = href
+    return
+  }
+  const win = window.open(href, '_blank', 'noopener,noreferrer')
+  if (!win) window.location.href = href
+}
+
 async function copyToClipboard(value) {
   try {
     if (navigator.clipboard?.writeText) {
@@ -208,8 +230,12 @@ export default function ShareModal({
       )
       return
     }
-    // External URL targets - open in a new tab/window.
-    window.open(t.href, '_blank', 'noopener,noreferrer')
+    // External URL targets. iOS Safari leaves an orphaned about:blank tab
+    // behind when window.open('_blank') is used for scheme links (mailto:)
+    // or app-handoff redirects (wa.me -> WhatsApp app). For those cases we
+    // navigate the current tab instead; plain web pages still open a tab.
+    openExternal(t.href)
+    onClose?.()
   }
 
   const handleNativeShare = async () => {

@@ -31,12 +31,31 @@ export default function Search() {
   const q = (searchParams.get('q') || '').trim()
   const [term, setTerm] = useState(searchParams.get('q') || '')
   const inputRef = useRef(null)
+  // Flags user typing so the URL→state sync below never re-triggers a
+  // debounced URL update (which would loop).
+  const typingRef = useRef(false)
 
   // Keep the field in sync when the URL query changes (e.g. the header
   // search drives navigation here).
   useEffect(() => {
     setTerm(searchParams.get('q') || '')
   }, [searchParams])
+
+  // Debounced "search as you type": 350ms after the user stops typing we
+  // push the term into ?q= (replacing history) which refreshes the results.
+  const onTermChange = (value) => {
+    typingRef.current = true
+    setTerm(value)
+  }
+  useEffect(() => {
+    if (!typingRef.current) return undefined
+    const handle = setTimeout(() => {
+      typingRef.current = false
+      const next = term.trim()
+      setSearchParams(next ? { q: next } : {}, { replace: true })
+    }, 350)
+    return () => clearTimeout(handle)
+  }, [term, setSearchParams])
 
   // Focus the field when the page opens without a query.
   useEffect(() => {
@@ -132,7 +151,7 @@ export default function Search() {
               className="search__input"
               placeholder="Search pickles, nuts, mix…"
               value={term}
-              onChange={(e) => setTerm(e.target.value)}
+              onChange={(e) => onTermChange(e.target.value)}
               aria-label="Search products"
             />
             {term && (
@@ -141,7 +160,7 @@ export default function Search() {
                 className="search__clear"
                 aria-label="Clear search"
                 onClick={() => {
-                  setTerm('')
+                  onTermChange('')
                   inputRef.current?.focus()
                 }}
               >

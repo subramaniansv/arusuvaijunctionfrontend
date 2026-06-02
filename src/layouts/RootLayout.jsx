@@ -61,6 +61,10 @@ export default function RootLayout() {
     if (onSearchPage) setQuery(urlParams.get('q') || '')
   }, [onSearchPage, urlParams])
 
+  // Flags a change that came from the user typing (vs. the URL→state sync
+  // above) so the debounced navigation only fires for real keystrokes.
+  const searchTypingRef = useRef(false)
+
   // ---- mobile UI state ----
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
@@ -101,10 +105,31 @@ export default function RootLayout() {
 
   const submitSearch = (e) => {
     e?.preventDefault()
+    searchTypingRef.current = false
     const q = query.trim()
     const target = q ? `/search?q=${encodeURIComponent(q)}` : '/search'
-    navigate(target)
+    navigate(target, { replace: path === '/search' })
   }
+
+  // Update the field and mark the change as user-driven typing.
+  const onSearchChange = (value) => {
+    searchTypingRef.current = true
+    setQuery(value)
+  }
+
+  // Debounced "search as you type": 350ms after the last keystroke we glide
+  // the user to /search?q=... (no Enter needed). We replace history while
+  // already on /search so refining the term doesn't pollute the back stack.
+  useEffect(() => {
+    if (!searchTypingRef.current) return undefined
+    const handle = setTimeout(() => {
+      searchTypingRef.current = false
+      const q = query.trim()
+      const target = q ? `/search?q=${encodeURIComponent(q)}` : '/search'
+      navigate(target, { replace: path === '/search' })
+    }, 350)
+    return () => clearTimeout(handle)
+  }, [query, navigate, path])
 
   const onLogout = () => {
     clear()
@@ -264,7 +289,7 @@ export default function RootLayout() {
                   type="search"
                   placeholder="Search murukku, sweets, mixture..."
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
+                  onChange={(e) => onSearchChange(e.target.value)}
                   aria-label="Search products"
                 />
                 {query && (
@@ -272,7 +297,7 @@ export default function RootLayout() {
                     type="button"
                     className="nav__search-clear"
                     aria-label="Clear search"
-                    onClick={() => setQuery('')}
+                    onClick={() => onSearchChange('')}
                   >
                     <X size={14} aria-hidden="true" />
                   </button>
