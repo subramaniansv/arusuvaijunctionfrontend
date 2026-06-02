@@ -221,8 +221,44 @@ export function productLd(product, pathname) {
     image,
     sku: product.sku || String(id),
     brand: { '@type': 'Brand', name: product.brand || BRAND.name },
+    ...productLdExtras(product),
     offers,
   }
+}
+
+/**
+ * Extra, product-specific Product fields (category, keywords, ingredients,
+ * rating). Kept separate so productLd stays readable. Everything here is
+ * derived from real product data and mirrors what's visible on the page,
+ * which is what Google requires for rich results.
+ */
+function productLdExtras(product) {
+  const extras = {}
+  const cat = categoryLabel(product.category)
+  if (cat) extras.category = cat
+
+  const ing = productIngredients(product)
+  if (ing.length) {
+    extras.additionalProperty = [
+      { '@type': 'PropertyValue', name: 'Ingredients', value: ing.join(', ') },
+    ]
+  }
+
+  const kw = productMeta(product).keywords
+  if (kw.length) extras.keywords = kw.join(', ')
+
+  const ratingValue = Number(product.averageRating)
+  const reviewCount = Number(product.reviewCount)
+  if (ratingValue > 0 && reviewCount > 0) {
+    extras.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: ratingValue.toFixed(1),
+      reviewCount,
+      bestRating: 5,
+      worstRating: 1,
+    }
+  }
+  return extras
 }
 
 export function faqLd(faqs = []) {
@@ -318,4 +354,99 @@ export function productFaqs(product) {
   faqs.push(HOME_FAQS[2], HOME_FAQS[3])
 
   return faqs.filter(Boolean)
+}
+
+// ────────────────────────────────────────────────────────────────────
+// Per-product meta (title / description / keywords)
+// Builds UNIQUE metadata from real product fields so no two product
+// pages share the same generic title or description.
+// ────────────────────────────────────────────────────────────────────
+
+/** Title-case a raw category value (camelCase / kebab / snake) into a label. */
+export function categoryLabel(raw) {
+  if (!raw) return ''
+  return String(raw)
+    .replace(/[_-]+/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ')
+}
+
+/** Split the free-text ingredients column into a clean string[]. */
+function productIngredients(product) {
+  return String(product?.ingredients || '')
+    .split(/\r?\n|[,;•·]/)
+    .map((s) => s.trim().replace(/^[-*\s]+/, ''))
+    .filter(Boolean)
+}
+
+/** Lowest / highest price across variants (falls back to product.price). */
+function productPriceRange(product) {
+  const variants = Array.isArray(product?.variants) ? product.variants : []
+  const prices = variants.map((v) => Number(v.price)).filter((n) => n > 0)
+  if (!prices.length && Number(product?.price) > 0) prices.push(Number(product.price))
+  if (!prices.length) return null
+  return { min: Math.min(...prices), max: Math.max(...prices) }
+}
+
+/** Collapse whitespace and cut to `max` chars on a word boundary, adding an ellipsis. */
+function clampText(str, max = 160) {
+  const s = String(str || '').replace(/\s+/g, ' ').trim()
+  if (s.length <= max) return s
+  const cut = s.slice(0, max - 1)
+  const lastSpace = cut.lastIndexOf(' ')
+  const trimmed = (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).replace(/[\s,.;:–-]+$/, '')
+  return `${trimmed}…`
+}
+
+/**
+ * Build product-specific <title>, meta description and keywords from the
+ * actual product fields (name, category, ingredients, price, rating).
+ * The <Seo> component appends " | Arusuvai Junction" to the title.
+ *
+ * @returns {{ title: string, description: string, keywords: string[] }}
+ */
+export function productMeta(product) {
+  if (!product) return { title: '', description: '', keywords: [] }
+
+  const name = product.name || 'Snack'
+  const cat = categoryLabel(product.category)
+  const hasSugar = Boolean(product.id) && SUGAR_PRODUCT_IDS.has(product.id)
+  const ing = productIngredients(product)
+  const price = productPriceRange(product)
+  const priceStr = price
+    ? `₹${price.min}${price.max > price.min ? `–₹${price.max}` : ''}`
+    : ''
+
+  // ---- title (keep ~60 chars; brand name is appended by <Seo>) ----
+  let title = cat ? `${name} – ${cat}` : `Buy ${name} Online`
+  if (price) title += ` from ₹${price.min}`
+  title = clampText(title, 60)
+
+  // ---- description (~160 chars, assembled from real facts) ----
+  const parts = []
+  const base = String(product.description || '').replace(/\s+/g, ' ').trim()
+  parts.push(base || `Buy ${name}${cat ? `, our ${cat.toLowerCase()},` : ''} online from Arusuvai Junction.`)
+  if (ing.length) parts.push(`Made with ${ing.slice(0, 3).join(', ')}.`)
+  parts.push(hasSugar ? 'No artificial preservatives.' : 'Sugar-free, no preservatives.')
+  if (priceStr) parts.push(`${priceStr}.`)
+  parts.push('Pan-India delivery from Tirunelveli.')
+  const description = clampText(parts.join(' '), 160)
+
+  // ---- keywords (specific to this product) ----
+  const keywords = [
+    `buy ${name.toLowerCase()} online`,
+    name.toLowerCase(),
+    cat && `${name.toLowerCase()} ${cat.toLowerCase()}`,
+    cat && `${cat.toLowerCase()} online india`,
+    !hasSugar && 'sugar free snacks',
+    'protein rich snacks',
+    ...ing.slice(0, 3).map((i) => i.toLowerCase()),
+    'arusuvai junction',
+  ].filter(Boolean)
+
+  return { title, description, keywords: Array.from(new Set(keywords)) }
 }

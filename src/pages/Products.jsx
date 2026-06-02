@@ -34,7 +34,7 @@ import {
 import { useProducts, useCategories } from '../lib/products'
 import { useAddToCart } from '../lib/cart'
 import Seo from '../components/Seo'
-import { breadcrumbLd, BRAND } from '../lib/seo'
+import { breadcrumbLd, BRAND, categoryLabel } from '../lib/seo'
 import { useAuthStore } from '../stores/authStore'
 import noSearchImg from '../assets/empty state/no search.svg'
 import './Products.css'
@@ -187,10 +187,26 @@ export default function Products() {
               ? `${filters.category} - traditional Indian snacks`
               : 'Shop all snacks - traditional, sugar-free, protein-rich'
         }
-        description={`Browse Arusuvai Junction\u2019s full range of traditional Indian snacks: murukku, laddoos, mixture, sweets and more. ${BRAND.tagline}`}
+        description={
+          filters.q
+            ? `Search results for “${filters.q}” at Arusuvai Junction. ${BRAND.tagline}`
+            : filters.category
+              ? `Buy ${categoryLabel(filters.category)} online from Arusuvai Junction — sugar-free, preservative-free traditional Tamil snacks made in Tirunelveli with nuts, seeds and millets. Pan-India delivery.`
+              : `Browse Arusuvai Junction’s full range of traditional Indian snacks: murukku, laddoos, mixture, sweets and more — sugar-free, no preservatives, made in Tirunelveli. ${BRAND.tagline}`
+        }
         path={filters.q ? '/products' : '/products'}
         noindex={Boolean(filters.q)}
-        keywords={BRAND.defaultKeywords}
+        keywords={
+          filters.category
+            ? [
+                `${categoryLabel(filters.category).toLowerCase()} online`,
+                `buy ${categoryLabel(filters.category).toLowerCase()} online india`,
+                `sugar free ${categoryLabel(filters.category).toLowerCase()}`,
+                'traditional tamil snacks',
+                'arusuvai junction',
+              ]
+            : BRAND.defaultKeywords
+        }
         jsonLd={breadcrumbLd([
           { name: 'Home', path: '/' },
           { name: 'Products', path: '/products' },

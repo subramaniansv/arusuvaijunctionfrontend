@@ -17,8 +17,16 @@ export default function About() {
     <div className="staticpage">
       <Seo
         title="About Arusuvai Junction - traditional Tamil snacks, made the healthy way"
-        description="The story behind Arusuvai Junction: family recipes, traditional methods, no white sugar, no preservatives. Healthy Indian snacks made with nuts, seeds and millets."
+        description="The story behind Arusuvai Junction: family recipes from a Tirunelveli home kitchen, small-batch cooking, no white sugar, no preservatives. Healthy Tamil snacks made with nuts, seeds and millets."
         path="/about"
+        keywords={[
+          'about arusuvai junction',
+          'traditional tamil snacks',
+          'homemade snacks tirunelveli',
+          'sugar free indian snacks',
+          'preservative free snacks',
+          'family recipe snacks',
+        ]}
         jsonLd={[
           organizationLd(),
           breadcrumbLd([

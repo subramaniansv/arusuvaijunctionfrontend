@@ -51,7 +51,7 @@ import { useSubmitReview } from '../lib/reviews'
 import { useMyProfile } from '../lib/me'
 import { useAuthStore } from '../stores/authStore'
 import Seo from '../components/Seo'
-import { productLd, breadcrumbLd, faqLd, productFaqs } from '../lib/seo'
+import { productLd, breadcrumbLd, faqLd, productFaqs, productMeta } from '../lib/seo'
 import noReviewImg from '../assets/empty state/no review yet.svg'
 import './ProductDetail.css'
 
@@ -259,11 +259,14 @@ export default function ProductDetail() {
     })
   }
 
+  const meta = productMeta(product)
+
   return (
     <div className="pd">
       <Seo
-        title={`${product.name} - buy online`}
-        description={(product.description || '').slice(0, 158) || `Buy ${product.name} online from Arusuvai Junction.`}
+        title={meta.title}
+        description={meta.description}
+        keywords={meta.keywords}
         path={`/products/${product.id ?? product.productId}`}
         image={product.primaryImageUrl || (Array.isArray(product.images) && (product.images[0]?.imageUrl || product.images[0]?.url))}
         type="product"

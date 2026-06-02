@@ -70,8 +70,15 @@ export default function Contact() {
     <div className="staticpage">
       <Seo
         title="Contact Arusuvai Junction - Tirunelveli, Tamil Nadu"
-        description="Get in touch with Arusuvai Junction for orders, bulk enquiries or feedback. Based in Tirunelveli, Tamil Nadu. We reply within one working day."
+        description="Contact Arusuvai Junction for online orders, bulk and wedding enquiries, or feedback. Call +91 95974 51463 or message us — based in Tirunelveli, Tamil Nadu, we reply within one working day."
         path="/contact"
+        keywords={[
+          'contact arusuvai junction',
+          'bulk snack orders tirunelveli',
+          'wedding snack orders tamil nadu',
+          'arusuvai junction phone number',
+          'order traditional tamil snacks',
+        ]}
         jsonLd={[
           localBusinessLd(),
           breadcrumbLd([
