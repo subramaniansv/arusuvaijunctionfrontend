@@ -100,8 +100,15 @@ export default function Auth() {
       const to = location.state?.from?.pathname || '/'
       navigate(to, { replace: true })
     } catch (e2) {
+      // The backend returns the real reason in `message`. Older builds put
+      // it in `data` (a plain string), so fall back to that before the
+      // generic copy.
+      const resp = e2.response?.data
+      const backendReason =
+        resp?.message ||
+        (typeof resp?.data === 'string' ? resp.data : null)
       setServerErr(
-        e2.response?.data?.message ||
+        backendReason ||
           e2.message ||
           (mode === 'login' ? 'Sign in failed' : 'Registration failed'),
       )
@@ -229,12 +236,9 @@ export default function Auth() {
 
             {mode === 'login' && (
               <div className="auth__row-meta">
-                {/* Routes to the Contact page with a pre-filled subject
-                 * so the user can request a password reset. */}
-                <Link
-                  to="/contact?subject=I%20forgot%20my%20password"
-                  className="auth__forgot"
-                >
+                {/* Self-service password reset: emails a secure,
+                 * single-use link that lands on /reset-password. */}
+                <Link to="/forgot-password" className="auth__forgot">
                   Forgot password?
                 </Link>
               </div>

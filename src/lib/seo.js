@@ -226,13 +226,80 @@ export function productLd(product, pathname) {
 }
 
 export function faqLd(faqs = []) {
+  const list = (faqs || []).filter((f) => f && f.q && f.a)
+  if (!list.length) return null
   return {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqs.map((q) => ({
+    mainEntity: list.map((q) => ({
       '@type': 'Question',
       name: q.q,
       acceptedAnswer: { '@type': 'Answer', text: q.a },
     })),
   }
+}
+
+// ────────────────────────────────────────────────────────────────────
+// FAQ content (single source of truth)
+// The same array feeds both the visible <Faq> accordion and the
+// FAQPage JSON-LD so on-page text and structured data never drift -
+// a hard requirement for Google FAQ rich results.
+// ────────────────────────────────────────────────────────────────────
+
+export const HOME_FAQS = [
+  {
+    q: 'Are Arusuvai Junction snacks really sugar-free?',
+    a: 'Yes. We sweeten our snacks with palm jaggery, dates, or country sugar instead of refined white sugar. Each product page lists the exact ingredients.',
+  },
+  {
+    q: 'What makes your snacks high in protein?',
+    a: 'We use generous amounts of nuts (almonds, cashews, peanuts), seeds (sesame, flax, sunflower) and millets — all naturally protein-rich.',
+  },
+  {
+    q: 'Do you ship pan-India?',
+    a: 'Yes, we ship across India. Orders are dispatched within 1–2 business days from Tirunelveli, Tamil Nadu.',
+  },
+  {
+    q: 'How long do the snacks stay fresh?',
+    a: 'Most products stay fresh for 30–45 days at room temperature in an air-tight container. Specific shelf life is shown on each product page.',
+  },
+  {
+    q: 'Are the snacks made with preservatives?',
+    a: 'Never. Our snacks contain zero artificial preservatives, colours or flavours — just traditional ingredients.',
+  },
+]
+
+/**
+ * Build a sensible set of FAQs for a single product detail page.
+ * Combines a couple of product-specific entries (derived from the
+ * product data when available) with the most relevant store-wide
+ * questions, so every product page has rich, unique FAQ content.
+ */
+export function productFaqs(product) {
+  if (!product) return []
+  const name = product.name || 'this snack'
+  const faqs = []
+
+  if (product.ingredients) {
+    const ing = String(product.ingredients)
+      .split(/\r?\n|[,;•·]/)
+      .map((s) => s.trim().replace(/^[-*\s]+/, ''))
+      .filter(Boolean)
+    if (ing.length) {
+      faqs.push({
+        q: `What is ${name} made of?`,
+        a: `${name} is made with ${ing.join(', ')}. No white sugar, no preservatives.`,
+      })
+    }
+  }
+
+  faqs.push({
+    q: `Is ${name} sugar-free?`,
+    a: 'Yes. Like everything at Arusuvai Junction, it is sweetened naturally with palm jaggery, dates or country sugar instead of refined white sugar.',
+  })
+
+  // Round out with the most relevant store-wide questions (shipping, freshness).
+  faqs.push(HOME_FAQS[2], HOME_FAQS[3])
+
+  return faqs.filter(Boolean)
 }

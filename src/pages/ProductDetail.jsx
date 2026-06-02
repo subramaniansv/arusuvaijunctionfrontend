@@ -43,6 +43,7 @@ import {
   Divider,
   ShareModal,
   WishlistButton,
+  Faq,
 } from '../components'
 import { useProduct, useRelatedProducts } from '../lib/products'
 import { useAddToCart } from '../lib/cart'
@@ -50,7 +51,7 @@ import { useSubmitReview } from '../lib/reviews'
 import { useMyProfile } from '../lib/me'
 import { useAuthStore } from '../stores/authStore'
 import Seo from '../components/Seo'
-import { productLd, breadcrumbLd } from '../lib/seo'
+import { productLd, breadcrumbLd, faqLd, productFaqs } from '../lib/seo'
 import noReviewImg from '../assets/empty state/no review yet.svg'
 import './ProductDetail.css'
 
@@ -208,6 +209,7 @@ export default function ProductDetail() {
   const outOfStock = effectiveStock != null && effectiveStock <= 0
   const lowStock = !outOfStock && effectiveStock != null && effectiveStock <= 5
   const ingredients = parseIngredients(product.ingredients)
+  const faqs = productFaqs(product)
 
   const handleAdd = () => {
     if (outOfStock) return
@@ -272,6 +274,7 @@ export default function ProductDetail() {
             { name: 'Products', path: '/products' },
             { name: product.name, path: `/products/${product.id ?? product.productId}` },
           ]),
+          faqLd(faqs),
         ]}
       />
       <Container size="xl">
@@ -619,6 +622,13 @@ export default function ProductDetail() {
             </div>
           )}
         </section>
+
+        {/* ---------- FAQ ---------- */}
+        {faqs.length > 0 && (
+          <section className="pd__faq" aria-label="Product FAQ">
+            <Faq items={faqs} title="Frequently asked questions" />
+          </section>
+        )}
       </Container>
 
       {/* ---------- sticky mobile action bar (Zepto-style) ---------- */}

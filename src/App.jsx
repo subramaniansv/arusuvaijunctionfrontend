@@ -56,6 +56,8 @@ const Products        = lazy(() => import('./pages/Products'))
 const ProductDetail   = lazy(() => import('./pages/ProductDetail'))
 const Search          = lazy(() => import('./pages/Search'))
 const Auth            = lazy(() => import('./pages/Auth'))
+const ForgotPassword  = lazy(() => import('./pages/ForgotPassword'))
+const ResetPassword   = lazy(() => import('./pages/ResetPassword'))
 const Cart            = lazy(() => import('./pages/Cart'))
 const Checkout        = lazy(() => import('./pages/Checkout'))
 const Orders          = lazy(() => import('./pages/Orders'))
@@ -118,6 +120,8 @@ function App() {
           <Route element={<PublicOnlyRoute />}>
             <Route path="login" element={<Auth />} />
             <Route path="register" element={<Auth />} />
+            <Route path="forgot-password" element={<ForgotPassword />} />
+            <Route path="reset-password" element={<ResetPassword />} />
           </Route>
 
           {/* Protected */}

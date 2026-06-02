@@ -45,6 +45,10 @@
   gap: var(--space-8);
 }
 
+.staticpage__faq {
+  margin-top: var(--space-12);
+}
+
 @media (min-width: 880px) {
   .staticpage__body--split {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);

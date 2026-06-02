@@ -1,15 +1,8 @@
-/**
- * About us - static informational page.
- *
- * Shipped to fix the 404s referenced from the home page footer.
- * Content is intentionally plain text so it's easy to refresh
- * without code changes.
- */
 import { Link } from 'react-router-dom'
 import { Leaf, Heart, Clock, ShieldCheck } from 'lucide-react'
-import { Button } from '../components'
+import { Button, Faq } from '../components'
 import Seo from '../components/Seo'
-import { organizationLd, breadcrumbLd } from '../lib/seo'
+import { organizationLd, breadcrumbLd, faqLd, HOME_FAQS } from '../lib/seo'
 import './StaticPage.css'
 
 const PILLARS = [
@@ -32,6 +25,7 @@ export default function About() {
             { name: 'Home', path: '/' },
             { name: 'About', path: '/about' },
           ]),
+          faqLd(HOME_FAQS),
         ]}
       />
       <header className="staticpage__hero">
@@ -76,6 +70,14 @@ export default function About() {
           </ul>
         </div>
       </div>
+
+      <section className="staticpage__faq">
+        <Faq
+          items={HOME_FAQS}
+          title="Frequently asked questions"
+          subtitle="Everything you need to know about our sugar-free, protein-rich snacks."
+        />
+      </section>
     </div>
   )
 }

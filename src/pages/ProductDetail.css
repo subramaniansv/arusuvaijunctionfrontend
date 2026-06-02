@@ -301,6 +301,7 @@
 /* ---------------- reviews ---------------- */
 .pd__reviews { margin-top: var(--space-12); margin-bottom: var(--space-12); }
 .pd__related  { margin-top: var(--space-12); }
+.pd__faq { margin-top: var(--space-12); margin-bottom: var(--space-12); }
 .pd__section-head {
   display: flex;
   align-items: baseline;

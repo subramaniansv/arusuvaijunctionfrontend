@@ -1,0 +1,111 @@
+/* ------------------------------------------------------------------
+ * Faq accordion styles.
+ * ------------------------------------------------------------------ */
+
+.ui-faq {
+  width: 100%;
+}
+
+.ui-faq__head {
+  text-align: center;
+  margin-bottom: var(--space-6, 1.5rem);
+}
+
+.ui-faq__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-text);
+  margin: 0;
+}
+
+.ui-faq__subtitle {
+  margin: var(--space-2, 0.5rem) auto 0;
+  max-width: 52ch;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.ui-faq__list {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+
+.ui-faq__item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 0.625rem);
+  background: var(--color-bg-surface);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ui-faq__item:hover {
+  border-color: var(--color-border-strong);
+}
+
+.ui-faq__details[open] {
+  background: var(--color-bg-muted);
+}
+
+.ui-faq__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3, 0.75rem);
+  padding: var(--space-4, 1rem);
+  cursor: pointer;
+  list-style: none;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-text);
+}
+
+/* Hide the native disclosure triangle (Safari/Firefox). */
+.ui-faq__summary::-webkit-details-marker {
+  display: none;
+}
+.ui-faq__summary::marker {
+  content: '';
+}
+
+.ui-faq__summary:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: -2px;
+  border-radius: var(--radius-md, 0.625rem);
+}
+
+.ui-faq__question {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.ui-faq__icon {
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  transition: transform 0.2s ease;
+}
+
+.ui-faq__details[open] .ui-faq__icon {
+  transform: rotate(180deg);
+}
+
+.ui-faq__answer {
+  padding: 0 var(--space-4, 1rem) var(--space-4, 1rem);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.ui-faq__answer p {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-faq__icon,
+  .ui-faq__item {
+    transition: none;
+  }
+}
