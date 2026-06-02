@@ -345,7 +345,11 @@ export default function ProductDetail() {
             </div>
 
             <div className="pd__price-row">
-              <PriceTag amount={(effectivePrice ?? 0) * qty} size="lg" />
+              <PriceTag
+                amount={(effectivePrice ?? 0) * qty}
+                mrp={effectivePrice != null ? Math.round(effectivePrice * 1.1) * qty : undefined}
+                size="lg"
+              />
               {qty > 1 && (
                 <span className="pd__price-each">
                   ₹{Number(effectivePrice).toLocaleString('en-IN')} × {qty}
