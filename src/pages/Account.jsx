@@ -9,6 +9,7 @@
  */
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
@@ -170,7 +171,25 @@ export default function Account() {
         </div>
       )}
 
-      {/* ---------- Password card ---------- */}
+      {/* ---------- Password card ----------
+         Google-only accounts have no password (the server sends
+         hasPassword:false), so we hide the change form and explain how to
+         add one instead of showing a form that can never succeed. */}
+      {profile?.hasPassword === false ? (
+        <div className="account-card">
+          <div className="account-card__header account-card__header--simple">
+            <KeyRound size={18} aria-hidden="true" />
+            <h2 className="account-card__name">Password</h2>
+          </div>
+          <p className="account-card__hint">
+            You sign in with <strong>Google</strong>, so there&rsquo;s no
+            password on this account. If you&rsquo;d like to also sign in with
+            an email and password, use{' '}
+            <Link to="/forgot-password">Set a password</Link> &mdash; we&rsquo;ll
+            email you a secure link to create one.
+          </p>
+        </div>
+      ) : (
       <div className="account-card">
         <div className="account-card__header account-card__header--simple">
           <KeyRound size={18} aria-hidden="true" />
@@ -259,6 +278,7 @@ export default function Account() {
           </div>
         </form>
       </div>
+      )}
     </section>
   )
 }
