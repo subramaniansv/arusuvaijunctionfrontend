@@ -167,7 +167,7 @@
 
 .pd__price-row {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   flex-wrap: wrap;
   gap: var(--space-3);
 }
