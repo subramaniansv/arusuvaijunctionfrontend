@@ -3,38 +3,20 @@
  *
  * Cards:
  *   1. Profile     - read-only view of the authenticated caller's profile.
- *   2. Password    - change password form.
+ *   2. Email       - verification prompt when the address isn't verified.
  *
+ * Password changes are handled via the self-service "Forgot password" flow
+ * (/forgot-password), so there's no in-page change-password form here.
  * Saved addresses live on their own page (Addresses.jsx, /addresses).
  */
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import toast from 'react-hot-toast'
 import {
   Mail,
-  Eye, EyeOff, KeyRound, Loader2, MailWarning,
+  Loader2, MailWarning,
 } from 'lucide-react'
 
-import { useMyProfile, useChangePassword, useResendVerification } from '../lib/me'
+import { useMyProfile, useResendVerification } from '../lib/me'
 import './Account.css'
-
-const pwSchema = z
-  .object({
-    oldPassword: z.string().min(1, 'Current password is required'),
-    newPassword: z.string().min(6, 'At least 6 characters'),
-    confirmPassword: z.string().min(1, 'Please confirm the new password'),
-  })
-  .refine((v) => v.newPassword === v.confirmPassword, {
-    path: ['confirmPassword'],
-    message: 'New passwords do not match',
-  })
-  .refine((v) => v.oldPassword !== v.newPassword, {
-    path: ['newPassword'],
-    message: 'New password must be different from the current one',
-  })
 
 function fullName(profile) {
   const fn = (profile?.firstName || '').trim()
@@ -54,11 +36,7 @@ function initials(profile) {
 
 export default function Account() {
   const { data: profile, isLoading, isError, error } = useMyProfile()
-  const changePw = useChangePassword()
   const resendVerify = useResendVerification()
-
-  const [showOld, setShowOld] = useState(false)
-  const [showNew, setShowNew] = useState(false)
 
   const handleResendVerification = async () => {
     try {
@@ -69,33 +47,6 @@ export default function Account() {
         err?.response?.data?.message ||
         err?.message ||
         'Could not send verification email'
-      toast.error(msg)
-    }
-  }
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm({
-    resolver: zodResolver(pwSchema),
-    defaultValues: { oldPassword: '', newPassword: '', confirmPassword: '' },
-  })
-
-  const onSubmit = async (values) => {
-    try {
-      await changePw.mutateAsync({
-        oldPassword: values.oldPassword,
-        newPassword: values.newPassword,
-      })
-      toast.success('Password updated')
-      reset()
-    } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        err?.message ||
-        'Could not update password'
       toast.error(msg)
     }
   }
@@ -169,115 +120,6 @@ export default function Account() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* ---------- Password card ----------
-         Google-only accounts have no password (the server sends
-         hasPassword:false), so we hide the change form and explain how to
-         add one instead of showing a form that can never succeed. */}
-      {profile?.hasPassword === false ? (
-        <div className="account-card">
-          <div className="account-card__header account-card__header--simple">
-            <KeyRound size={18} aria-hidden="true" />
-            <h2 className="account-card__name">Password</h2>
-          </div>
-          <p className="account-card__hint">
-            You sign in with <strong>Google</strong>, so there&rsquo;s no
-            password on this account. If you&rsquo;d like to also sign in with
-            an email and password, use{' '}
-            <Link to="/forgot-password">Set a password</Link> &mdash; we&rsquo;ll
-            email you a secure link to create one.
-          </p>
-        </div>
-      ) : (
-      <div className="account-card">
-        <div className="account-card__header account-card__header--simple">
-          <KeyRound size={18} aria-hidden="true" />
-          <h2 className="account-card__name">Change password</h2>
-        </div>
-
-        <form
-          className="account-form"
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
-        >
-          <div className="form-field">
-            <label htmlFor="oldPassword">Current password <span className="form-req" aria-hidden="true">*</span></label>
-            <div className="form-input-wrap">
-              <input
-                id="oldPassword"
-                type={showOld ? 'text' : 'password'}
-                autoComplete="current-password"
-                {...register('oldPassword')}
-                aria-invalid={!!errors.oldPassword || undefined}
-              />
-              <button
-                type="button"
-                className="form-input-toggle"
-                onClick={() => setShowOld((v) => !v)}
-                aria-label={showOld ? 'Hide password' : 'Show password'}
-              >
-                {showOld ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            {errors.oldPassword && (
-              <p className="form-error">{errors.oldPassword.message}</p>
-            )}
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="newPassword">New password <span className="form-req" aria-hidden="true">*</span></label>
-            <div className="form-input-wrap">
-              <input
-                id="newPassword"
-                type={showNew ? 'text' : 'password'}
-                autoComplete="new-password"
-                {...register('newPassword')}
-                aria-invalid={!!errors.newPassword || undefined}
-              />
-              <button
-                type="button"
-                className="form-input-toggle"
-                onClick={() => setShowNew((v) => !v)}
-                aria-label={showNew ? 'Hide password' : 'Show password'}
-              >
-                {showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
-            {errors.newPassword && (
-              <p className="form-error">{errors.newPassword.message}</p>
-            )}
-            <p className="form-hint">Minimum 6 characters.</p>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="confirmPassword">Confirm new password <span className="form-req" aria-hidden="true">*</span></label>
-            <input
-              id="confirmPassword"
-              type={showNew ? 'text' : 'password'}
-              autoComplete="new-password"
-              {...register('confirmPassword')}
-              aria-invalid={!!errors.confirmPassword || undefined}
-            />
-            {errors.confirmPassword && (
-              <p className="form-error">{errors.confirmPassword.message}</p>
-            )}
-          </div>
-
-          <div className="account-form__actions">
-            <button
-              type="submit"
-              className="btn btn--primary"
-              disabled={isSubmitting || changePw.isPending}
-            >
-              {(isSubmitting || changePw.isPending) && (
-                <Loader2 size={16} className="spin" aria-hidden="true" />
-              )}
-              Update password
-            </button>
-          </div>
-        </form>
-      </div>
       )}
     </section>
   )
