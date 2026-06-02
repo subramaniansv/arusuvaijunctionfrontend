@@ -177,6 +177,34 @@
 
 .auth__alert { margin-bottom: var(--space-2); }
 
+/* Google Identity Services renders its own button inside this box. We just
+   centre it and give it a little breathing room above the email divider. */
+.auth__google {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-2);
+  min-height: 44px;
+}
+
+/* "or continue with email" rule between the Google button and the form. */
+.auth__divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.auth__divider::before,
+.auth__divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
 .auth__form {
   display: flex;
   flex-direction: column;

@@ -14,7 +14,7 @@
  * The backend's `passwordHash` field is the raw password - the server
  * hashes it. Field name is unfortunate but locked by the existing DTO.
  */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Sparkles, Leaf, Shield, Heart } from 'lucide-react'
 
@@ -47,8 +47,95 @@ export default function Auth() {
   const [serverErr, setServerErr] = useState(null)
   const [busy, setBusy] = useState(false)
 
+  // Google Identity Services client id (Vercel/.env: VITE_GOOGLE_CLIENT_ID).
+  // When unset (e.g. local dev without a key) the button is simply hidden and
+  // password auth keeps working.
+  const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const googleBtnRef = useRef(null)
+  // Hold the latest credential handler in a ref so the one-time GIS init
+  // always calls a callback that closes over current state/navigation.
+  const googleCbRef = useRef(null)
+
   const set = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: e.target.value }))
+
+  // Shared success path for both password and Google sign-in.
+  const finishAuth = (data) => {
+    if (!data?.accessToken) throw new Error('auth response missing tokens')
+    setTokens({
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    })
+    const to = location.state?.from?.pathname || '/'
+    navigate(to, { replace: true })
+  }
+
+  // Called by GIS with the Google ID token. We hand it to the backend, which
+  // verifies it and returns OUR access/refresh tokens.
+  const onGoogleCredential = async (resp) => {
+    setServerErr(null)
+    setBusy(true)
+    try {
+      const res = await api.post(
+        '/auth?isGoogle=true',
+        { credential: resp.credential },
+        { _withAuth: false },
+      )
+      finishAuth(res.data?.data)
+    } catch (e2) {
+      const r = e2.response?.data
+      setServerErr(
+        r?.message ||
+          (typeof r?.data === 'string' ? r.data : null) ||
+          e2.message ||
+          'Google sign-in failed',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+  googleCbRef.current = onGoogleCredential
+
+  // Load the GIS script once and render the official Google button.
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID) return undefined
+    const SRC = 'https://accounts.google.com/gsi/client'
+    let cancelled = false
+
+    const init = () => {
+      if (cancelled || !window.google?.accounts?.id || !googleBtnRef.current) return
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (resp) => googleCbRef.current?.(resp),
+      })
+      googleBtnRef.current.innerHTML = ''
+      window.google.accounts.id.renderButton(googleBtnRef.current, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'pill',
+        logo_alignment: 'left',
+        width: 320,
+      })
+    }
+
+    const existing = document.querySelector(`script[src="${SRC}"]`)
+    if (existing) {
+      if (window.google?.accounts?.id) init()
+      else existing.addEventListener('load', init)
+    } else {
+      const s = document.createElement('script')
+      s.src = SRC
+      s.async = true
+      s.defer = true
+      s.onload = init
+      document.head.appendChild(s)
+    }
+    return () => {
+      cancelled = true
+    }
+  }, [GOOGLE_CLIENT_ID])
 
   const validate = () => {
     const e = {}
@@ -92,13 +179,7 @@ export default function Auth() {
         { _withAuth: false },
       )
       const data = res.data?.data
-      if (!data?.accessToken) throw new Error('auth response missing tokens')
-      setTokens({
-        accessToken: data.accessToken,
-        refreshToken: data.refreshToken,
-      })
-      const to = location.state?.from?.pathname || '/'
-      navigate(to, { replace: true })
+      finishAuth(data)
     } catch (e2) {
       // The backend returns the real reason in `message`. Older builds put
       // it in `data` (a plain string), so fall back to that before the
@@ -178,6 +259,19 @@ export default function Auth() {
             >
               {serverErr}
             </Alert>
+          )}
+
+          {GOOGLE_CLIENT_ID && (
+            <>
+              <div
+                className="auth__google"
+                ref={googleBtnRef}
+                aria-label="Continue with Google"
+              />
+              <div className="auth__divider">
+                <span>or continue with email</span>
+              </div>
+            </>
           )}
 
           <form className="auth__form" onSubmit={onSubmit} noValidate>
