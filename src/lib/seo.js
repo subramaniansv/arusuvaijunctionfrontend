@@ -275,9 +275,16 @@ export const HOME_FAQS = [
  * product data when available) with the most relevant store-wide
  * questions, so every product page has rich, unique FAQ content.
  */
+// Product IDs that DO contain sugar. These get an honest FAQ instead of the
+// default "sugar-free" answer used for the rest of the catalogue.
+export const SUGAR_PRODUCT_IDS = new Set([
+  'd901139c-2456-46ea-8fe1-3d2537c9f3be', // Nei Vilanga
+])
+
 export function productFaqs(product) {
   if (!product) return []
   const name = product.name || 'this snack'
+  const hasSugar = Boolean(product.id) && SUGAR_PRODUCT_IDS.has(product.id)
   const faqs = []
 
   if (product.ingredients) {
@@ -288,15 +295,24 @@ export function productFaqs(product) {
     if (ing.length) {
       faqs.push({
         q: `What is ${name} made of?`,
-        a: `${name} is made with ${ing.join(', ')}. No white sugar, no preservatives.`,
+        a: hasSugar
+          ? `${name} is made with ${ing.join(', ')}. No preservatives.`
+          : `${name} is made with ${ing.join(', ')}. No white sugar, no preservatives.`,
       })
     }
   }
 
-  faqs.push({
-    q: `Is ${name} sugar-free?`,
-    a: 'Yes. Like everything at Arusuvai Junction, it is sweetened naturally with palm jaggery, dates or country sugar instead of refined white sugar.',
-  })
+  faqs.push(
+    hasSugar
+      ? {
+          q: `Does ${name} contain sugar?`,
+          a: `Yes. ${name} is one of our few snacks made with sugar. Most Arusuvai Junction products are sweetened naturally with palm jaggery, dates or country sugar — the exact ingredients are listed on this page.`,
+        }
+      : {
+          q: `Is ${name} sugar-free?`,
+          a: 'Yes. Like everything at Arusuvai Junction, it is sweetened naturally with palm jaggery, dates or country sugar instead of refined white sugar.',
+        }
+  )
 
   // Round out with the most relevant store-wide questions (shipping, freshness).
   faqs.push(HOME_FAQS[2], HOME_FAQS[3])
