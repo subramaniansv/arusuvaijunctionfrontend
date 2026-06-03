@@ -196,3 +196,30 @@ export function shortOrderId(uuid) {
   if (!uuid) return ''
   return `#${String(uuid).slice(0, 8).toUpperCase()}`
 }
+
+/* ------------------------------------------------------------------
+ * Download a server-generated PDF invoice for an order.
+ *
+ * The PDF is produced entirely on the backend (GET /api/order/invoice)
+ * from the order as stored in the database; the client only supplies
+ * the order id. We fetch it as a blob through the authenticated `api`
+ * client (so the bearer token is attached) and trigger a browser
+ * download via a temporary object URL.
+ * ------------------------------------------------------------------ */
+export async function downloadInvoice(orderId) {
+  if (!orderId) return
+  const res = await api.get(
+    `/api/order/invoice?orderID=${encodeURIComponent(orderId)}`,
+    { responseType: 'blob' },
+  )
+
+  const blob = new Blob([res.data], { type: 'application/pdf' })
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `invoice-${String(orderId).slice(0, 8)}.pdf`
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  window.URL.revokeObjectURL(url)
+}

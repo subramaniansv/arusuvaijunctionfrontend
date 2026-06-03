@@ -10,9 +10,10 @@
  */
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import {
   ArrowLeft, CheckCircle2, MapPin, Phone, Package, Truck, Home, XCircle, Clock,
-  MessageCircle, ChevronRight, ExternalLink, Loader2,
+  MessageCircle, ChevronRight, ExternalLink, Loader2, Download,
 } from 'lucide-react'
 
 import {
@@ -30,6 +31,7 @@ import {
   ORDER_STATUS_VARIANT,
   formatOrderDate,
   shortOrderId,
+  downloadInvoice,
 } from '../lib/orders'
 import { trackShipment } from '../lib/shipping'
 import './OrderDetail.css'
@@ -58,6 +60,20 @@ export default function OrderDetail() {
   const [tracking, setTracking] = useState(null)
   const [trackingLoading, setTrackingLoading] = useState(false)
   const [trackingError, setTrackingError] = useState(null)
+
+  // Invoice download state
+  const [invoiceLoading, setInvoiceLoading] = useState(false)
+
+  const handleDownloadInvoice = async () => {
+    setInvoiceLoading(true)
+    try {
+      await downloadInvoice(orderId)
+    } catch (e) {
+      toast.error(e?.response?.data?.message || 'Could not download invoice')
+    } finally {
+      setInvoiceLoading(false)
+    }
+  }
 
   const handleTrack = async (waybill) => {
     setTrackingLoading(true)
@@ -348,6 +364,17 @@ export default function OrderDetail() {
               <PriceTag amount={order.totalAmount} size="lg" />
             </div>
           </Card>
+
+          <Button
+            variant="secondary"
+            leftIcon={<Download size={16} />}
+            onClick={handleDownloadInvoice}
+            loading={invoiceLoading}
+            className="orderdetail__invoice-btn"
+            fullWidth
+          >
+            Download invoice
+          </Button>
 
           <Card padding="lg">
             <h2 className="orderdetail__section-title">
