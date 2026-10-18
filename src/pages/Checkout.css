@@ -59,6 +59,57 @@
 }
 .checkout__section-title svg { color: var(--color-primary); flex-shrink: 0; }
 
+/* ================================================================== */
+/* Festive Products Availability Notice                              */
+/* ================================================================== */
+.checkout__festive-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: linear-gradient(135deg, #fef8e8 0%, #fff9ed 100%);
+  border: 1px solid #e9a820;
+  border-left: 4px solid #e9a820;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.checkout__festive-notice-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.checkout__festive-notice-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkout__festive-notice-content strong {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.checkout__festive-notice-content p {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: #6b6b6b;
+  line-height: 1.4;
+}
+
+@media (max-width: 640px) {
+  .checkout__festive-notice {
+    padding: var(--space-3);
+  }
+  
+  .checkout__festive-notice-icon {
+    font-size: 1.25rem;
+  }
+}
+
 /* ---- saved address picker ---- */
 .checkout__saved-addr__select { margin-bottom: var(--space-2); }
 
@@ -300,3 +351,123 @@
   font-weight: var(--font-weight-medium);
 }
 
+
+/* ------------------------------------------------------------------
+ * Loyalty points redemption (checkout summary)
+ * ------------------------------------------------------------------ */
+.checkout__loyalty {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.25rem 0 0.1rem;
+}
+.checkout__loyalty-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.checkout__loyalty-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.checkout__loyalty-balance {
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+}
+.checkout__loyalty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.checkout__loyalty-range {
+  flex: 1;
+  accent-color: #7a3f2f;
+}
+.checkout__loyalty-input {
+  width: 72px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border, #e5e7eb);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: right;
+}
+.checkout__loyalty-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+.checkout__loyalty-max,
+.checkout__loyalty-clear {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #7a3f2f;
+  cursor: pointer;
+}
+.checkout__loyalty-max:disabled {
+  color: var(--color-text-muted, #9ca3af);
+  cursor: not-allowed;
+}
+.checkout__loyalty-clear {
+  color: var(--color-text-muted, #6b7280);
+}
+.checkout__loyalty-discount {
+  color: #166534;
+  font-weight: 600;
+}
+
+
+/* ------------------------------------------------------------------
+ * Freeze layer for totals while a loyalty redeem quote recalculates.
+ * The previous numbers stay mounted (placeholderData: keepPreviousData)
+ * so they never disappear; we just dim + lock them and float a small
+ * loading chip on top until the fresh quote arrives.
+ * ------------------------------------------------------------------ */
+.checkout__totals {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 0.75rem);
+}
+.checkout__totals.is-recalculating {
+  /* keep the old numbers visible but clearly "pending" and non-interactive */
+  pointer-events: none;
+  user-select: none;
+}
+.checkout__totals.is-recalculating > *:not(.checkout__freeze) {
+  opacity: 0.45;
+  filter: blur(0.4px);
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.checkout__freeze {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: var(--radius-md, 10px);
+  background: color-mix(in srgb, var(--color-surface, #fff) 68%, transparent);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 600);
+  color: var(--color-text, #1f2937);
+  animation: checkout-freeze-in 0.12s ease-out;
+}
+@keyframes checkout-freeze-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Respect reduced-motion: drop the spin + blur, keep the dim + label. */
+@media (prefers-reduced-motion: reduce) {
+  .checkout__freeze { -webkit-backdrop-filter: none; backdrop-filter: none; animation: none; }
+  .checkout__spin { animation: none; }
+  .checkout__totals.is-recalculating > *:not(.checkout__freeze) { filter: none; }
+}

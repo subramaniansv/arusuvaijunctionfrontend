@@ -1,0 +1,112 @@
+/* ------------------------------------------------------------------
+ * FestivalShare.css
+ * Full-screen festival message share page.
+ * ------------------------------------------------------------------ */
+
+/* Loading */
+.fs-loading {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: #fdf6df;
+}
+.fs-spinner {
+  width: 2.5rem; height: 2.5rem;
+  border: 3px solid rgba(44, 92, 26, 0.2);
+  border-top-color: #2c5c1a;
+  border-radius: 50%;
+  animation: fs-spin 0.75s linear infinite;
+}
+@keyframes fs-spin { to { transform: rotate(360deg); } }
+
+/* Error */
+.fs-error {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 1rem; padding: 2rem;
+  background: #fdf6df; text-align: center;
+}
+.fs-error h1  { margin: 0; font-size: 2rem; }
+.fs-error p   { color: #6b6b5a; margin: 0; }
+.fs-home-link {
+  color: #2c5c1a; font-weight: 600;
+  text-decoration: none; font-size: 1rem;
+}
+.fs-home-link:hover { text-decoration: underline; }
+
+/* Main */
+.fs-root {
+  position: relative;
+  min-height: 100vh;
+  background: #2c5c1a;  /* fallback when no image */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+
+.fs-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(0,0,0,0.48) 0%,
+    rgba(0,0,0,0.25) 100%
+  );
+  pointer-events: none;
+}
+
+/* Message card */
+.fs-card {
+  position: relative; z-index: 1;
+  max-width: 600px; width: 100%;
+  background: rgba(253, 246, 223, 0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 1.5rem;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex; flex-direction: column; gap: 1.25rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.fs-festival {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #2c5c1a;
+}
+
+.fs-message {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(1.25rem, 3vw, 1.85rem);
+  line-height: 1.5;
+  color: #1a1a1a;
+  white-space: pre-wrap;
+}
+
+.fs-brand {
+  font-size: 0.9rem;
+  color: #4b4a3a;
+}
+.fs-brand strong { color: #2c5c1a; }
+
+.fs-cta {
+  display: inline-block;
+  align-self: center;
+  padding: 0.6rem 1.4rem;
+  background: #2c5c1a; color: #fff;
+  border-radius: 0.5rem;
+  font-weight: 600; font-size: 0.9rem;
+  text-decoration: none;
+  transition: background .2s, transform .15s;
+}
+.fs-cta:hover  { background: #1e4010; transform: translateY(-1px); }
+.fs-cta:active { transform: translateY(0); }
+
+@media (max-width: 480px) {
+  .fs-card { padding: 1.75rem 1.25rem; border-radius: 1rem; }
+}

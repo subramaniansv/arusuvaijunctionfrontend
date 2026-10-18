@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 
 import { useMyProfile, useResendVerification } from '../lib/me'
+import NotificationToggle from '../components/NotificationToggle/NotificationToggle'
 import './Account.css'
 
 function fullName(profile) {
@@ -121,6 +122,18 @@ export default function Account() {
           </div>
         </div>
       )}
+
+      {/* ---------- Push notifications card ---------- */}
+      <div className="account-card">
+        <div className="account-card__header account-card__header--simple">
+          <h2 className="account-card__name">Notifications</h2>
+        </div>
+        <p className="account-card__hint">
+          Turn on browser notifications to get order updates even when the
+          site isn&rsquo;t open. Works on this device while you&rsquo;re online.
+        </p>
+        <NotificationToggle />
+      </div>
     </section>
   )
 }

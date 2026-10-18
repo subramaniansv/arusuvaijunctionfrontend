@@ -297,7 +297,7 @@ export default function ProductDetail() {
               <img
                 src={images[activeImg] || PLACEHOLDER}
                 alt={product.name}
-                fetchpriority="high"
+                fetchPriority="high"
                 decoding="async"
                 onError={(e) => { e.currentTarget.src = PLACEHOLDER }}
               />

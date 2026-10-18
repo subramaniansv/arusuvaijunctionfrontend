@@ -57,7 +57,7 @@ export default function Faq({
                 />
               </summary>
               <div className="ui-faq__answer">
-                <p>{item.a}</p>
+                {typeof item.a === 'string' ? <p>{item.a}</p> : item.a}
               </div>
             </details>
           </li>

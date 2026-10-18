@@ -278,12 +278,32 @@
 }
 
 /* ---------------- 4-up product grid -------------------------- */
+/* Base: 2 columns on mobile. Uses auto-fit so that when the
+ * curated Featured list resolves to FEWER than the full count
+ * (a product renamed / out of stock / missing from catalogue),
+ * the remaining cards stay centered as a group instead of
+ * hugging the left edge. `justify-content: center` centers the
+ * whole track row; max card width keeps 4-up looking right. */
 .home-grid-4 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
+  justify-content: center;
 }
-@media (min-width: 768px)  { .home-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-6); } }
+@media (min-width: 768px) {
+  .home-grid-4 {
+    grid-template-columns: repeat(4, minmax(min(16rem, 100%), 1fr));
+    gap: var(--space-6);
+  }
+  /* When the catalogue returns fewer than 4 featured products,
+   * switch to centered auto-sized columns so the cards sit in
+   * the middle of the row rather than flush-left. */
+  .home-grid-4:has(> :nth-child(1):last-child),
+  .home-grid-4:has(> :nth-child(2):last-child),
+  .home-grid-4:has(> :nth-child(3):last-child) {
+    grid-template-columns: repeat(auto-fit, minmax(0, 16rem));
+  }
+}
 
 /* "View All" link centered below the featured product grid. */
 .home-featured__more {

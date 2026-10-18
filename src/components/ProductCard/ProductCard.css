@@ -218,6 +218,44 @@
   }
 }
 
+/* Contact us button - shown instead of wishlist for enquiry-only products */
+.ui-product__contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  height: 34px;
+  min-height: 34px;
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-full, 9999px);
+  background: var(--brand-green, #2c5c1a);
+  color: #fff;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-semibold, 600);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 140ms ease, transform 100ms ease;
+  line-height: 1;
+}
+.ui-product__contact-btn:hover {
+  background: var(--brand-green-dark, #1e4012);
+}
+.ui-product__contact-btn:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 639px) {
+  .ui-product__contact-btn {
+    height: 32px;
+    min-height: 32px;
+    font-size: 0.65rem;
+    padding-inline: var(--space-2);
+  }
+  .ui-product__contact-btn svg {
+    display: none;
+  }
+}
+
 /* Compact variant for recommendation strips */
 .ui-product--compact .ui-product__body { padding: var(--space-3); gap: var(--space-2); }
 .ui-product--compact .ui-product__name { font-size: var(--text-sm); }

@@ -18,6 +18,83 @@
   overflow-x: clip;
 }
 
+/* ================================================================== */
+/* Festive Banner - shown when festive category is selected          */
+/* Postcard  : /public/festive-banner-desktop.png                   */
+/* Diwali txt: /public/festive-diwali-text.png  ← drop in /public   */
+/* ================================================================== */
+
+/* Wrapper holds both the postcard img and the floating text overlay */
+.products__festive-banner-wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-6);
+
+  /* Mobile: bleed through parent's 16px padding → edge-to-edge */
+  width: calc(100% + 68px);               /* compensate for -34px on each side */
+  margin-top: calc(-1 * var(--space-6));  /* cancel page block-start padding   */
+  margin-inline: -34px;
+  border-radius: 0;
+}
+
+/* Full-width postcard image */
+.products__festive-banner-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  object-position: center;
+  max-height: 220px;                       /* mobile cap */
+}
+
+/* Small "Happy Diwali" text image — floats over bottom-right of postcard */
+.products__festive-diwali-text {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  width: clamp(72px, 20%, 130px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+@media (min-width: 768px) {
+  /* Desktop: restore normal spacing & rounded corners */
+  .products__festive-banner-wrap {
+    width: 100%;
+    margin-top: 0;
+    margin-inline: 0;
+    border-radius: var(--radius-lg, 16px);
+  }
+
+  .products__festive-banner-img {
+    max-height: 320px;
+  }
+
+  .products__festive-diwali-text {
+    bottom: 20px;
+    right: 28px;
+    width: clamp(100px, 14%, 180px);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Locked category row — shown when Festive is active                */
+/* ------------------------------------------------------------------ */
+.products__cat--locked {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none; /* prevent hover/click reaching the label */
+  user-select: none;
+}
+
+.products__cat--locked input[type='checkbox'] {
+  cursor: not-allowed;
+}
+
 /* Drop the Container's own side padding on this page; the .products
  * wrapper already supplies the 16px gutter, giving cards more width. */
 .products .ui-container {

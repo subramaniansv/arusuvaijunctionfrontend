@@ -177,6 +177,9 @@ export default function Products() {
     })
   }
 
+  // Check if "festive" is in the selected categories
+  const isFestiveCategory = filters.categories.includes('festive')
+
   return (
     <div className="products">
       <Seo
@@ -212,6 +215,24 @@ export default function Products() {
           { name: 'Products', path: '/products' },
         ])}
       />
+
+      {/* Festive Banner - shown when festive category is selected.
+          Postcard image: /festive-banner-desktop.png
+          Happy Diwali text image: /festive-diwali-text.png  ← drop in /public */}
+      {isFestiveCategory && (
+        <div className="products__festive-banner-wrap">
+          {/* Postcard banner image */}
+          <img
+            src="/festive-banner-desktop.png"
+            alt="Festive season special sweets"
+            className="products__festive-banner-img"
+            loading="eager"
+            decoding="async"
+          />
+
+        </div>
+      )}
+
       <Container size="xl">
         <div className="products__layout">
           {/* sidebar */}
@@ -237,10 +258,14 @@ export default function Products() {
 
             <FilterGroup title="Category">
               <div className="products__cats">
-                <label className="products__cat">
+                <label
+                  className={`products__cat${isFestiveCategory ? ' products__cat--locked' : ''}`}
+                  title={isFestiveCategory ? 'Deselect Festive to choose another category' : undefined}
+                >
                   <input
                     type="checkbox"
                     checked={filters.categories.length === 0}
+                    disabled={isFestiveCategory}
                     onChange={() => update({ categories: [] })}
                   />
                   <span>All categories</span>
@@ -251,16 +276,30 @@ export default function Products() {
                   categories.map((c) => {
                     const value = c.toLowerCase()
                     const checked = filters.categories.includes(value)
+                    const isFestive = value === 'festive'
+                    // When festive is active, every other category is locked out
+                    const isLocked = isFestiveCategory && !isFestive
                     return (
-                      <label className="products__cat" key={c}>
+                      <label
+                        className={`products__cat${isLocked ? ' products__cat--locked' : ''}`}
+                        key={c}
+                        title={isLocked ? 'Deselect Festive to choose another category' : undefined}
+                      >
                         <input
                           type="checkbox"
                           checked={checked}
+                          disabled={isLocked}
                           onChange={(e) => {
-                            const set = new Set(filters.categories)
-                            if (e.target.checked) set.add(value)
-                            else set.delete(value)
-                            update({ categories: Array.from(set) })
+                            if (isFestive) {
+                              // Festive is exclusive — selecting it clears everything
+                              // else; deselecting it clears itself.
+                              update({ categories: e.target.checked ? ['festive'] : [] })
+                            } else {
+                              const set = new Set(filters.categories)
+                              if (e.target.checked) set.add(value)
+                              else set.delete(value)
+                              update({ categories: Array.from(set) })
+                            }
                           }}
                         />
                         <span>{c}</span>
@@ -396,7 +435,8 @@ export default function Products() {
                     <ProductCard
                       key={p.productId || p.id}
                       product={{ ...p, productId: p.productId || p.id }}
-                      onAddToCart={handleAddToCart}
+                      onAddToCart={isFestiveCategory ? undefined : handleAddToCart}
+                      contactUsHref={isFestiveCategory ? '/contact' : null}
                     />
                   ))}
                 </div>
