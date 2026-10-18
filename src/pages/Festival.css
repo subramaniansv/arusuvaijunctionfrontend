@@ -474,10 +474,13 @@
   .fc-panel { border-radius: 16px; }
   .fc-actions { flex-direction: column; }
   .fc-primary { min-width: 0; }
-  .pc__stamp { width: 62px; height: 64px; }
-  .pc__logo { width: 120px; height: 90px; }
+  /* Stamp + logo: much smaller on mobile — no border overflow, no middle gap */
+  .pc__postage { gap: 4px; align-self: flex-end; }
+  .pc__stamp { width: 28px; height: 32px; }
+  .pc__logo  { width: 48px; height: 36px; }
   .pc__message { font-size: 14px; line-height: 1.5; }
-  /* smaller perforations on compact screens */
+  /* Hide the live-preview panel on mobile — compose panel is enough */
+  .fc-workspace .fc-panel:last-child { display: none; }
 }
 
 /* ── Mobile postcard: stack vertically ─────────────────────────────

@@ -579,16 +579,19 @@ export default function RootLayout() {
 
       {/* ── Global floating "Happy Diwali" text image ──
           Fixed to the bottom-right corner on every page.
-          Clicking navigates to the festival postcard page.
+          Hidden on the /festival route (create + view modes) so it
+          doesn't overlap the postcard studio or shared-card view.
           Replace /public/festive-diwali-text.png with your image. */}
-      <Link to="/festival" className="global-diwali-float" aria-label="Go to Festival Postcard">
-        <img
-          src="/festive-diwali-text.png"
-          alt="Happy Diwali"
-          loading="lazy"
-          decoding="async"
-        />
-      </Link>
+      {!path.startsWith('/festival') && (
+        <Link to="/festival" className="global-diwali-float" aria-label="Go to Festival Postcard">
+          <img
+            src="/festive-diwali-text.png"
+            alt="Happy Diwali"
+            loading="lazy"
+            decoding="async"
+          />
+        </Link>
+      )}
     </>
   )
 }
