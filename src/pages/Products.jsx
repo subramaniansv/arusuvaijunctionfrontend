@@ -431,12 +431,20 @@ export default function Products() {
             {!isLoading && !isError && products.length > 0 && (
               <>
                 <div className="products__grid">
-                  {products.map((p) => (
+                  {products
+                    // When no category filter (or a non-festive filter) is active,
+                    // hide festive products from the general listing.
+                    // They are only shown when the user explicitly selects "Festive".
+                    .filter((p) =>
+                      isFestiveCategory
+                        ? true
+                        : (p.category || '').toLowerCase() !== 'festive',
+                    )
+                    .map((p) => (
                     <ProductCard
                       key={p.productId || p.id}
                       product={{ ...p, productId: p.productId || p.id }}
-                      onAddToCart={isFestiveCategory ? undefined : handleAddToCart}
-                      contactUsHref={isFestiveCategory ? '/contact' : null}
+                      onAddToCart={handleAddToCart}
                     />
                   ))}
                 </div>

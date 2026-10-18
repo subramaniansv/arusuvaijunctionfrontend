@@ -36,7 +36,7 @@
   width: calc(100% + 68px);               /* compensate for -34px on each side */
   margin-top: calc(-1 * var(--space-6));  /* cancel page block-start padding   */
   margin-inline: -34px;
-  border-radius: 0;
+  border-radius: 8px;
 }
 
 /* Full-width postcard image */
@@ -47,6 +47,7 @@
   object-fit: cover;
   object-position: center;
   max-height: 220px;                       /* mobile cap */
+  border-radius: 8px;                      /* applied directly on img for mobile */
 }
 
 /* Small "Happy Diwali" text image — floats over bottom-right of postcard */
