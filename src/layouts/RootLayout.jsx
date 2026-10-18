@@ -159,6 +159,22 @@ export default function RootLayout() {
   }
 
   const isAdmin = user?.roles?.includes('admin')
+
+  // Festive mascot (bottom-right). Behaviour depends on where the user is:
+  //  • Not already viewing the festive catalogue → take them there
+  //    (/products?category=festive).
+  //  • Already on /products with the festive category selected → send them
+  //    to the postcard studio (/festival).
+  const onMascotClick = (e) => {
+    e.preventDefault()
+    const onFestiveCatalogue =
+      path === '/products' &&
+      urlParams.getAll('category')
+        .flatMap((v) => v.split(','))
+        .map((v) => v.trim().toLowerCase())
+        .includes('festive')
+    navigate(onFestiveCatalogue ? '/festival' : '/products?category=festive')
+  }
   const needsVerify = isAuthed && profile && profile.emailVerified === false
 
   const handleResendVerify = async (closeDrawer) => {
@@ -583,14 +599,19 @@ export default function RootLayout() {
           doesn't overlap the postcard studio or shared-card view.
           Replace /public/festive-diwali-text.png with your image. */}
       {!path.startsWith('/festival') && (
-        <Link to="/festival" className="global-diwali-float" aria-label="Go to Festival Postcard">
+        <a
+          href="/products?category=festive"
+          onClick={onMascotClick}
+          className="global-diwali-float"
+          aria-label="Festive specials"
+        >
           <img
             src="/festive-diwali-text.png"
             alt="Happy Diwali"
             loading="lazy"
             decoding="async"
           />
-        </Link>
+        </a>
       )}
     </>
   )
