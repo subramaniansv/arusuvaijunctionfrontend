@@ -234,11 +234,14 @@
   font-weight: var(--font-weight-semibold, 600);
   text-decoration: none;
   white-space: nowrap;
-  transition: background 140ms ease, transform 100ms ease;
+  border: 1.5px solid transparent;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease, transform 100ms ease;
   line-height: 1;
 }
 .ui-product__contact-btn:hover {
-  background: var(--brand-green-dark, #1e4012);
+  background: #ffffff;
+  border: 1.5px solid var(--brand-green, #2c5c1a);
+  color: var(--brand-green, #2c5c1a);
 }
 .ui-product__contact-btn:active {
   transform: scale(0.95);

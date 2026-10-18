@@ -56,9 +56,9 @@ const Products        = lazy(() => import('./pages/Products'))
 const ProductDetail   = lazy(() => import('./pages/ProductDetail'))
 const Search          = lazy(() => import('./pages/Search'))
 const Auth            = lazy(() => import('./pages/Auth'))
-const ForgotPassword  = lazy(() => import('./pages/ForgotPassword'))
+// const ForgotPassword  = lazy(() => import('./pages/ForgotPassword')) // disabled — Google-only customer auth
 const AdminLogin      = lazy(() => import('./pages/AdminLogin'))
-const ResetPassword   = lazy(() => import('./pages/ResetPassword'))
+// const ResetPassword   = lazy(() => import('./pages/ResetPassword'))   // disabled — Google-only customer auth
 const Cart            = lazy(() => import('./pages/Cart'))
 const Checkout        = lazy(() => import('./pages/Checkout'))
 const Orders          = lazy(() => import('./pages/Orders'))
@@ -121,14 +121,16 @@ function App() {
           <Route path="policy/privacy" element={<PrivacyPolicy />} />
           <Route path="policy/returns" element={<ReturnPolicy />} />
 
-          {/* Public-only (hidden once logged in). The public page is
-           * Google sign-in only; /admin/login is email + password. */}
+          {/* Public-only (hidden once logged in).
+           * Customer login: Google sign-in only.
+           * Admin login:    email + password at /admin/login. */}
           <Route element={<PublicOnlyRoute />}>
             <Route path="login" element={<Auth />} />
-            {/* Dedicated email/password login for admins/staff. */}
+            {/* Dedicated email/password login for admins/staff only. */}
             <Route path="admin/login" element={<AdminLogin />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
-            <Route path="reset-password" element={<ResetPassword />} />
+            {/* Forgot-password and reset-password disabled — customers use Google auth */}
+            {/* <Route path="forgot-password" element={<ForgotPassword />} /> */}
+            {/* <Route path="reset-password" element={<ResetPassword />} /> */}
           </Route>
 
           {/* Protected */}
