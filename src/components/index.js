@@ -41,3 +41,9 @@ export { default as ShareModal } from './ShareModal/ShareModal.jsx'
 export { default as ConfirmModal } from './ConfirmModal/ConfirmModal.jsx'
 export { default as SiteFooter } from './SiteFooter/SiteFooter.jsx'
 export { default as Faq } from './Faq/Faq.jsx'
+
+// QR
+export { default as QrCode } from './QrCode/QrCode.jsx'
+
+// Tour
+export { LoyaltyTour } from './LoyaltyTour/LoyaltyTour.jsx'

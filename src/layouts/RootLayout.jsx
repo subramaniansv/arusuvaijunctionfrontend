@@ -24,11 +24,13 @@ import {
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Arusuvaijunction from '../assets/ArusuvaiJunction.png'
+import { disablePush } from '../lib/push'
 import { useAuthStore } from '../stores/authStore'
 import { useCartItemCount } from '../lib/cart'
 import { useMyProfile, useResendVerification } from '../lib/me'
 import Avatar from '../components/Avatar/Avatar.jsx'
 import SiteFooter from '../components/SiteFooter/SiteFooter.jsx'
+// import { useActiveFestival } from '../lib/banner' // temporarily disabled (festival route commented out)
 import './RootLayout.css'
 
 export default function RootLayout() {
@@ -44,18 +46,34 @@ export default function RootLayout() {
   const location = useLocation()
 
   const path = location.pathname
-  const isAuth = path === '/login' || path === '/register'
+  const isAuth = path === '/login' || path === '/admin/login'
   const isBare = path === '/' || isAuth
   const isSearchPage = path === '/search'
 
   // Global page heading shown on every page except Home / auth.
-  const pageTitle = getPageTitle(path)
+  // (festival heading is derived below, once urlParams + festival data are available)
 
   // ---- search state ----
   // The header field mirrors the URL query whenever we're on a page
   // that reads it (the dedicated search page or the catalogue).
   const onSearchPage = path === '/search' || path === '/products'
   const [urlParams] = useSearchParams()
+
+  // The /festival route shows a dynamic heading driven by the live festival
+  // name (e.g. "Diwali Post Card"). On the shared-message view page
+  // (/festival?msg=<slug>) we show NO heading at all — the recipient just
+  // sees the post card their friend sent them.
+  // ---- temporarily disabled: festival route is commented out in App.jsx ----
+  // const isFestivalRoute = path === '/festival'
+  // const isSharedPostcard = isFestivalRoute && !!urlParams.get('msg')
+  // const { data: festivalData } = useActiveFestival()
+  // const festivalName = festivalData?.festival?.name
+  // const pageTitle = isSharedPostcard
+  //   ? null
+  //   : isFestivalRoute
+  //     ? `${festivalName || 'Festival'} Post Card`
+  //     : getPageTitle(path)
+  const pageTitle = getPageTitle(path)
   const [query, setQuery] = useState(onSearchPage ? (urlParams.get('q') || '') : '')
   useEffect(() => {
     if (onSearchPage) setQuery(urlParams.get('q') || '')
@@ -132,6 +150,9 @@ export default function RootLayout() {
   }, [query, navigate, path])
 
   const onLogout = () => {
+    // Forget this device's push subscription so a logged-out browser
+    // never receives notifications (best-effort, fire-and-forget).
+    disablePush().catch(() => {})
     clear()
     setDrawerOpen(false)
     navigate('/login', { replace: true })
@@ -555,6 +576,19 @@ export default function RootLayout() {
       </main>
 
       {!isAuth && <SiteFooter />}
+
+      {/* ── Global floating "Happy Diwali" text image ──
+          Fixed to the bottom-right corner on every page.
+          Clicking navigates to the festival postcard page.
+          Replace /public/festive-diwali-text.png with your image. */}
+      <Link to="/festival" className="global-diwali-float" aria-label="Go to Festival Postcard">
+        <img
+          src="/festive-diwali-text.png"
+          alt="Happy Diwali"
+          loading="lazy"
+          decoding="async"
+        />
+      </Link>
     </>
   )
 }

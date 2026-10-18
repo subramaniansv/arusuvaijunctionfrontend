@@ -58,7 +58,7 @@ const CATEGORIES = [
   { name: 'Ladoo',     tamil: 'லட்டு',        image: ladooCat },
   { name: 'Nuts',      tamil: 'நட்ஸ்',         image: nutsCat },
   { name: 'Kulambu Mix', tamil: 'குழம்பு மிக்ஸ்',  image: readyMixCat },
-  { name: 'Pickles',   tamil: 'ஊறுகாய்',      image: pickleCat },
+  { name: 'Pickle',   tamil: 'ஊறுகாய்',      image: pickleCat },
 ]
 
 const FEATURES = [

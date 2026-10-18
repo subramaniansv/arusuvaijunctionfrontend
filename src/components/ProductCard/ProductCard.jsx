@@ -9,7 +9,10 @@
  *
  * Props:
  *   product (required)
- *   onAddToCart(productId)  - if omitted, the button is hidden
+ *   onAddToCart(productId)  - if omitted, the cart button is hidden
+ *   contactUsHref (string)  - when provided, replaces the cart area
+ *                             with a "Contact us" link (e.g. for festive
+ *                             products that require enquiry-first ordering)
  *   compact (boolean)       - smaller variant for related/recs strips
  *
  * Whole card is a Link to /products/:id. Add-to-cart button stops
@@ -17,7 +20,7 @@
  * ------------------------------------------------------------------ */
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Share2 } from 'lucide-react'
+import { Share2, Phone } from 'lucide-react'
 import clsx from 'clsx'
 import Card from '../Card/Card.jsx'
 import Badge from '../Badge/Badge.jsx'
@@ -34,6 +37,7 @@ export default function ProductCard({
   product,
   compact = false,
   className,
+  contactUsHref = null,
 }) {
   if (!product) return null
   const {
@@ -128,10 +132,23 @@ export default function ProductCard({
             mrp={price ? Math.round(price * 1.1) : undefined}
             size={compact ? 'sm' : 'md'}
           />
-          <WishlistButton
-            product={product}
-            className="ui-product__wish-footer"
-          />
+          {contactUsHref ? (
+            /* Festive / enquiry-only products: Contact us CTA */
+            <a
+              href={contactUsHref}
+              className="ui-product__contact-btn"
+              onClick={(e) => e.stopPropagation()}
+              aria-label={`Contact us about ${name}`}
+            >
+              <Phone size={13} aria-hidden="true" />
+              <span>Contact us</span>
+            </a>
+          ) : (
+            <WishlistButton
+              product={product}
+              className="ui-product__wish-footer"
+            />
+          )}
         </div>
       </div>
 

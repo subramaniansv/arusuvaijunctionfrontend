@@ -42,7 +42,9 @@ export function AdminRoute() {
   const user = useAuthStore((s) => s.user)
   const location = useLocation()
   if (!accessToken) {
-    return <Navigate to="/login" replace state={{ from: location }} />
+    // The public /login shows Google sign-in only; send would-be admins
+    // to the dedicated email/password page instead.
+    return <Navigate to="/admin/login" replace state={{ from: location }} />
   }
   const isAdmin = (user?.roles || []).includes('admin')
   if (!isAdmin) {

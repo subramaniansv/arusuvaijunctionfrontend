@@ -6,15 +6,18 @@
  * only has to handle layout + navigation.
  */
 import { NavLink, Outlet, Navigate, useLocation } from 'react-router-dom'
-import { Box, Package, ShoppingBag, Users, Inbox } from 'lucide-react'
+import { Box, Package, ShoppingBag, Users, Inbox, Image, QrCode } from 'lucide-react'
 import { Container } from '../../components'
 import './admin.css'
+import './AdminBanner.css'
 
 const TABS = [
   { to: 'products', label: 'Products', icon: Package },
   { to: 'orders',   label: 'Orders',   icon: ShoppingBag },
   { to: 'users',    label: 'Users',    icon: Users },
   { to: 'messages', label: 'Messages', icon: Inbox },
+  { to: 'banner',   label: 'Festival', icon: Image },
+  { to: 'loyalty',  label: 'Loyalty',  icon: QrCode },
 ]
 
 export default function AdminLayout() {

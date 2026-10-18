@@ -1,0 +1,798 @@
+/* ==================================================================
+ * Loyalty / Rewards dashboard — customer-facing redesign.
+ *
+ * Palette (NO red): cream/white surfaces, deep forest green + warm
+ * golden-yellow accents. Tokens from css/theme.css are reused; local
+ * fallbacks keep it resilient if a token is missing.
+ * ================================================================== */
+.loyalty {
+  --lx-green:        var(--brand-green, #2c5c1a);
+  --lx-green-dark:   var(--brand-green-dark, #1e4010);
+  --lx-green-soft:   var(--brand-green-light, #e4f0de);
+  --lx-gold:         var(--brand-yellow, #e9a820);
+  --lx-gold-dark:    var(--brand-yellow-dark, #b87d10);
+  --lx-gold-soft:    var(--brand-yellow-light, #fef8e8);
+  --lx-cream:        var(--brand-cream, #fdf6df);
+  --lx-surface:      var(--color-bg-surface, #ffffff);
+  --lx-border:       var(--color-border, rgba(0, 0, 0, 0.08));
+  --lx-text:         var(--color-text, #1a1a1a);
+  --lx-muted:        var(--color-text-muted, #6b6b6b);
+
+  padding: 8px 0 56px;
+  color: var(--lx-text);
+}
+
+/* ---------- page header ---------- */
+.loyalty__head {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--lx-border);
+}
+.loyalty__title-row { display: flex; align-items: center; gap: 12px; }
+.loyalty__title-row svg {
+  color: var(--lx-gold);
+  background: var(--lx-green);
+  padding: 8px;
+  border-radius: 12px;
+  box-sizing: content-box;
+}
+.loyalty__title {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.85rem;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--lx-green-dark);
+}
+.loyalty__subtitle {
+  color: var(--lx-muted);
+  margin: 8px 0 0;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 62ch;
+}
+
+.loyalty__banner { padding: 10px 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.9rem; }
+.loyalty__banner.is-wait { background: var(--lx-gold-soft); color: var(--lx-gold-dark); }
+
+/* ==================================================================
+ * Two-column shell: main column + highlighted Share & Earn aside.
+ * Single column under 960px.
+ * ================================================================== */
+.loyalty__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+  align-items: start;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.loyalty__col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+@media (max-width: 960px) {
+  .loyalty__layout { grid-template-columns: 1fr; }
+}
+
+/* ---------- generic card ---------- */
+.lx-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--lx-surface);
+  border: 1px solid var(--lx-border);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.lx-card:hover {
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08), 0 2px 4px rgba(16, 24, 40, 0.04);
+}
+.lx-card__head {
+  display: flex; align-items: flex-start; gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--lx-border);
+}
+.lx-card__head svg {
+  color: var(--lx-green);
+  flex-shrink: 0;
+  background: var(--lx-green-soft);
+  padding: 7px;
+  border-radius: 10px;
+  box-sizing: content-box;
+}
+.lx-card__title {
+  font-size: 1.08rem; font-weight: 700; margin: 0;
+  color: var(--lx-green-dark);
+  letter-spacing: -0.01em;
+}
+.lx-card__hint { margin: 3px 0 0; font-size: 0.84rem; color: var(--lx-muted); line-height: 1.4; }
+
+/* ==================================================================
+ * 1. Welcome + summary
+ * ================================================================== */
+.loyalty-welcome-wrapper {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.loyalty-welcome__hello { 
+  font-size: 0.9rem; 
+  color: var(--lx-muted); 
+  margin: 0 0 4px; 
+}
+.loyalty-welcome__name {
+  font-family: var(--font-display, Georgia, serif);
+  font-size: 1.6rem; 
+  font-weight: 700; 
+  margin: 0 0 20px;
+  letter-spacing: -0.01em;
+  color: var(--lx-green-dark);
+}
+
+.loyalty-welcome {
+  background: linear-gradient(115deg, #FFF3B0 0%, #F9D66B 22%, #E9B52E 48%, #D89A16 72%, #FFE58A 100%);
+  color: var(--lx-text);
+  border: 2px solid var(--lx-gold-dark);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(233, 168, 32, 0.3);
+}
+.loyalty-welcome__grid {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.loyalty-stat {
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: center;
+}
+.loyalty-stat__value { 
+  font-size: 3.5rem; 
+  font-weight: 800; 
+  line-height: 1.1; 
+  color: var(--lx-green);
+}
+.loyalty-stat__value--large {
+  font-size: 4rem;
+}
+.loyalty-stat__label {
+  font-size: 0.9rem; 
+  text-transform: none; 
+  letter-spacing: 0;
+  color: var(--lx-green-dark);
+  margin-top: 8px; 
+  display: block;
+  font-weight: 600;
+}
+
+/* ==================================================================
+ * 2. Use your points (redeem)
+ * ================================================================== */
+.loyalty-redeem__rate {
+  display: inline-flex; align-items: center; gap: 6px;
+  align-self: flex-start;
+  width: fit-content;
+  background: var(--lx-gold-soft);
+  color: var(--lx-gold-dark);
+  border: 1px solid var(--lx-gold);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.85rem; font-weight: 700;
+  margin-bottom: 14px;
+}
+.loyalty-redeem__btn {
+  width: 100%;
+  padding: 13px 16px;
+  border: none;
+  border-radius: 12px;
+  background: var(--lx-green, #2c5c1a);
+  color: #fff !important;
+  font: inherit; font-weight: 700; font-size: 0.95rem;
+  cursor: pointer;
+  transition: background var(--duration-fast, 150ms) ease;
+}
+.loyalty-redeem__btn:hover:not(:disabled) { background: var(--lx-green-dark, #1e4010); }
+.loyalty-redeem__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.loyalty-redeem__btn--gold {
+  background: var(--lx-gold, #e9a820);
+  color: #fff !important;
+}
+.loyalty-redeem__btn--gold:hover:not(:disabled) { 
+  background: var(--lx-gold-dark, #b87d10); 
+}
+.loyalty-redeem__empty { color: var(--lx-muted); font-size: 0.9rem; margin: 0; }
+
+/* push the redeem CTA to the bottom so stacked cards align neatly */
+.loyalty-redeem__empty { margin-top: auto; }
+
+/* ---- card balance summary + trigger ---- */
+.loyalty-redeem__balance {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(255,255,255,0.5) 0%, transparent 60%),
+    var(--lx-green-soft);
+  border: 1px solid rgba(44, 92, 26, 0.12);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 2px 0 16px;
+}
+.loyalty-redeem__balance-label {
+  font-size: 0.85rem; color: var(--lx-green-dark); font-weight: 600;
+}
+.loyalty-redeem__balance-value {
+  font-size: 1.35rem; font-weight: 800; color: var(--lx-green-dark);
+}
+.loyalty-redeem__balance-value small {
+  font-size: 0.8rem; font-weight: 600; color: var(--lx-muted);
+}
+
+/* ---- Razorpay-style redeem modal ---- */
+.loyalty-redeem__overlay {
+  /* The modal is portaled to <body>, OUTSIDE the .loyalty scope, so the
+     --lx-* brand tokens must be re-declared here or every var() resolves
+     empty and the green header / button become invisible. */
+  --lx-green:        var(--brand-green, #2c5c1a);
+  --lx-green-dark:   var(--brand-green-dark, #1e4010);
+  --lx-green-soft:   var(--brand-green-light, #e4f0de);
+  --lx-gold:         var(--brand-yellow, #e9a820);
+  --lx-gold-dark:    var(--brand-yellow-dark, #b87d10);
+  --lx-gold-soft:    var(--brand-yellow-light, #fef8e8);
+  --lx-muted:        var(--color-text-muted, #6b6b6b);
+  --lx-border:       var(--color-border, rgba(0, 0, 0, 0.08));
+  position: fixed; inset: 0; z-index: 1100;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  animation: lxActFade 120ms ease-out;
+}
+.loyalty-redeem__modal {
+  width: 100%; max-width: 420px;
+  max-height: 92vh;
+  display: flex; flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.30);
+  overflow: hidden;
+  animation: lxActPop 160ms ease-out;
+}
+.loyalty-redeem__modal-head {
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 16px 18px 18px;
+  /* Brand green gradient — matches the hero/points card across the page */
+  background: linear-gradient(135deg, var(--lx-green), var(--lx-green-dark));
+  color: #fff;
+}
+.loyalty-redeem__modal-topbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.loyalty-redeem__modal-brand { display: flex; align-items: center; gap: 10px; }
+.loyalty-redeem__modal-brand svg { color: var(--lx-gold); }
+.loyalty-redeem__modal-title { margin: 0; font-size: 1.05rem; font-weight: 800; color: #fff; }
+.loyalty-redeem__modal-close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex-shrink: 0;
+  border: none; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff; cursor: pointer;
+  transition: background 120ms ease;
+}
+.loyalty-redeem__modal-close:hover { background: rgba(255, 255, 255, 0.28); }
+
+/* Razorpay-style hero: the big live redeem amount inside the popup */
+.loyalty-redeem__hero {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.loyalty-redeem__hero-amt {
+  font-size: 2.1rem; font-weight: 800; line-height: 1.1;
+  color: #fff; letter-spacing: -0.5px;
+}
+.loyalty-redeem__hero-meta {
+  font-size: 0.8rem; font-weight: 600; color: var(--lx-gold-soft); opacity: 0.95;
+}
+
+.loyalty-redeem__modal-body {
+  padding: 18px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.loyalty-redeem__available {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  font-size: 0.9rem; color: var(--lx-muted);
+}
+.loyalty-redeem__available strong { font-size: 1.05rem; color: var(--lx-green-dark); }
+
+.loyalty-redeem__tabs {
+  display: flex; gap: 6px;
+  background: var(--color-bg-muted, #f0efe9);
+  border-radius: 10px; padding: 4px;
+}
+.loyalty-redeem__tab {
+  flex: 1; border: none; background: transparent;
+  padding: 8px 10px; border-radius: 8px;
+  font: inherit; font-weight: 600; font-size: 0.85rem;
+  color: var(--lx-muted); cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.loyalty-redeem__tab.is-active { background: #fff; color: var(--lx-green-dark); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+.loyalty-redeem__field { display: flex; flex-direction: column; gap: 6px; }
+.loyalty-redeem__field-label { font-size: 0.82rem; font-weight: 600; color: var(--lx-muted); }
+.loyalty-redeem__field-box {
+  display: flex; align-items: center; gap: 8px;
+  border: 1.5px solid var(--lx-border);
+  border-radius: 12px; padding: 10px 14px;
+  transition: border-color 120ms ease;
+}
+.loyalty-redeem__field-box:focus-within { border-color: var(--lx-green); }
+.loyalty-redeem__field-input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font: inherit; font-size: 1.5rem; font-weight: 800; color: var(--lx-green-dark);
+  min-width: 0;
+}
+.loyalty-redeem__field-input::-webkit-outer-spin-button,
+.loyalty-redeem__field-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.loyalty-redeem__field-unit { font-size: 1rem; font-weight: 700; color: var(--lx-muted); }
+.loyalty-redeem__field-unit--pre { font-size: 1.5rem; color: var(--lx-green-dark); }
+
+.loyalty-redeem__quick { display: flex; gap: 8px; }
+.loyalty-redeem__chip {
+  flex: 1; border: 1px solid var(--lx-border);
+  background: #fff; border-radius: 999px;
+  padding: 7px 10px; font: inherit; font-weight: 700; font-size: 0.82rem;
+  color: var(--lx-green-dark); cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.loyalty-redeem__chip:hover { background: var(--lx-green); color: #fff; }
+
+.loyalty-redeem__summary {
+  background: var(--lx-green-soft);
+  border-radius: 12px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.loyalty-redeem__summary-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  font-size: 0.9rem; color: var(--lx-green-dark);
+}
+.loyalty-redeem__summary-row--hl strong { font-size: 1.25rem; font-weight: 800; }
+.loyalty-redeem__summary-row--muted { color: var(--lx-muted); font-size: 0.82rem; }
+
+.loyalty-redeem__modal-foot {
+  padding: 14px 18px 18px;
+  border-top: 1px solid var(--lx-border);
+}
+@media (max-width: 480px) {
+  .loyalty-redeem__overlay { align-items: flex-end; padding: 0; }
+  .loyalty-redeem__modal { max-width: 100%; max-height: 94vh; border-radius: 16px 16px 0 0; }
+}
+
+/* ==================================================================
+ * 3. Share & Earn (the hero of this page)
+ * ================================================================== */
+.loyalty-share {
+  background:
+    radial-gradient(130% 130% at 100% 0%, var(--lx-gold-soft) 0%, var(--lx-surface) 46%);
+  border: 1px solid var(--lx-gold);
+  position: relative;
+  overflow: hidden;
+}
+.loyalty-share__badge {
+  position: absolute; top: 18px; right: 18px;
+  background: linear-gradient(135deg, var(--lx-gold), var(--lx-gold-dark));
+  color: #fff;
+  font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 11px; border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(184, 125, 16, 0.3);
+}
+.loyalty-share .lx-card__title { color: var(--lx-green-dark); }
+.loyalty-share__pitch {
+  font-size: 0.92rem; color: var(--lx-text); line-height: 1.5;
+  margin: 0 0 16px; max-width: 46ch;
+}
+.loyalty-share__pitch strong { color: var(--lx-green-dark); }
+
+/* referral link box */
+.loyalty-share__linkbox {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--lx-surface);
+  border: 1px solid var(--lx-border);
+  border-radius: 12px;
+  padding: 6px 6px 6px 12px;
+  margin-bottom: 12px;
+}
+.loyalty-share__link-ic { color: var(--lx-green); display: inline-flex; flex-shrink: 0; }
+.loyalty-share__link-input {
+  flex: 1; min-width: 0;
+  border: none; background: transparent;
+  font: inherit; font-size: 0.85rem; color: var(--lx-text);
+}
+.loyalty-share__link-input:focus { outline: none; }
+.loyalty-share__copy {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: none; border-radius: 9px;
+  background: var(--lx-green); color: #fff;
+  padding: 8px 14px; font: inherit; font-weight: 700; font-size: 0.85rem;
+  cursor: pointer; flex-shrink: 0;
+  transition: background var(--duration-fast, 150ms) ease;
+}
+.loyalty-share__copy:hover { background: var(--lx-green-dark); }
+.loyalty-share__copy.is-done { background: var(--lx-gold-dark); }
+
+/* share action buttons */
+.loyalty-share__actions {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+}
+.loyalty-share__btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--lx-border);
+  background: var(--lx-surface);
+  border-radius: 999px;
+  padding: 9px 16px;
+  font: inherit; font-weight: 600; font-size: 0.85rem;
+  color: var(--lx-text); cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+.loyalty-share__btn:hover { border-color: var(--lx-green); background: var(--lx-green-soft); }
+.loyalty-share__btn--primary {
+  background: var(--lx-green); color: #fff; border-color: var(--lx-green);
+}
+.loyalty-share__btn--primary:hover { background: var(--lx-green-dark); border-color: var(--lx-green-dark); }
+.loyalty-share__btn--wa { color: #1b7a43; }
+.loyalty-share__btn--wa:hover { background: #e7f6ec; border-color: #1b7a43; }
+.loyalty-share__btn--ig { color: #b8338a; }
+.loyalty-share__btn--ig:hover { background: #fce7f4; border-color: #b8338a; }
+
+/* referral stats */
+.loyalty-share__stats {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06); padding-top: 16px;
+}
+.loyalty-share__stat {
+  text-align: center;
+  background: var(--lx-green-soft);
+  border-radius: 12px;
+  padding: 12px 8px;
+}
+.loyalty-share__stat-value {
+  font-size: 1.4rem; font-weight: 800; color: var(--lx-green-dark); line-height: 1.1;
+}
+.loyalty-share__stat-label {
+  font-size: 0.72rem; color: var(--lx-green-dark); opacity: 0.8;
+  text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px; display: block;
+}
+.loyalty-share__loading { color: var(--lx-muted); font-size: 0.9rem; margin: 0; }
+
+/* ==================================================================
+ * 4. Visit calendar
+ * ================================================================== */
+.loyalty-cal__toggle {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--lx-green-dark);
+  cursor: pointer;
+}
+.loyalty-cal__toggle:hover { background: var(--lx-green-soft); }
+
+.loyalty-cal__head {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+}
+.loyalty-cal__title { text-align: center; display: flex; flex-direction: column; line-height: 1.2; }
+.loyalty-cal__title span { font-weight: 700; font-size: 1rem; color: var(--lx-green-dark); }
+.loyalty-cal__title small { color: var(--lx-muted); font-size: .75rem; }
+.loyalty-cal__nav {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px;
+  border: 1px solid var(--lx-border); background: var(--lx-surface);
+  cursor: pointer; color: var(--lx-green-dark);
+}
+.loyalty-cal__nav:hover:not(:disabled) { background: var(--lx-green-soft); border-color: var(--lx-green); }
+.loyalty-cal__nav:disabled { opacity: .4; cursor: not-allowed; }
+
+.loyalty-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.loyalty-cal__grid--dow { margin-bottom: 5px; }
+.loyalty-cal__dow {
+  text-align: center; font-size: .7rem; font-weight: 700;
+  color: var(--lx-muted); padding: 4px 0;
+}
+.loyalty-cal__cell {
+  position: relative; aspect-ratio: 1 / 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 10px; font-size: .85rem; color: var(--lx-text);
+  background: var(--color-bg-muted, #f5f5f0);
+}
+.loyalty-cal__cell.is-empty { background: transparent; }
+.loyalty-cal__num { line-height: 1; }
+.loyalty-cal__mark { position: absolute; bottom: 3px; }
+.loyalty-cal__cell.is-visited { background: var(--lx-green-soft); color: var(--lx-green-dark); font-weight: 700; }
+.loyalty-cal__cell.is-visited .loyalty-cal__mark { color: var(--lx-green); }
+.loyalty-cal__cell.is-pending { background: var(--lx-gold-soft); color: var(--lx-gold-dark); font-weight: 700; }
+.loyalty-cal__cell.is-pending .loyalty-cal__mark { color: var(--lx-gold-dark); }
+.loyalty-cal__cell.is-today { outline: 2px solid var(--lx-gold); outline-offset: -2px; }
+
+.loyalty-cal__legend {
+  display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06); font-size: .75rem; color: var(--lx-muted);
+}
+.loyalty-cal__legend span { display: inline-flex; align-items: center; gap: 6px; }
+.loyalty-cal__legend .dot { width: 12px; height: 12px; border-radius: 4px; display: inline-block; }
+.dot--visited { background: var(--lx-green-soft); border: 1px solid var(--lx-green); }
+.dot--pending { background: var(--lx-gold-soft); border: 1px solid var(--lx-gold-dark); }
+.dot--today { background: #fff; border: 2px solid var(--lx-gold); }
+
+/* ==================================================================
+ * 5. Recent activity
+ * ================================================================== */
+.loyalty-activity__list { display: flex; flex-direction: column; gap: 2px; }
+.loyalty-activity__row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid var(--lx-border);
+}
+.loyalty-activity__row:last-child { border-bottom: none; }
+.loyalty-activity__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  background: var(--lx-green-soft); color: var(--lx-green-dark);
+}
+.loyalty-activity__icon--gold { background: var(--lx-gold-soft); color: var(--lx-gold-dark); }
+.loyalty-activity__icon--spend { background: var(--color-bg-muted, #f0efe9); color: var(--lx-muted); }
+.loyalty-activity__body { flex: 1; min-width: 0; }
+.loyalty-activity__label { font-weight: 600; font-size: 0.92rem; }
+.loyalty-activity__date { font-size: 0.78rem; color: var(--lx-muted); margin-top: 2px; }
+.loyalty-activity__pts { font-weight: 800; font-size: 0.95rem; white-space: nowrap; }
+.loyalty-activity__pts--earn { color: var(--lx-green); }
+.loyalty-activity__pts--spend { color: var(--lx-gold-dark); }
+.loyalty-activity__empty { color: var(--lx-muted); font-size: 0.9rem; margin: 0; }
+
+/* ---- internal scroll area: ~10 rows tall, scrolls if full ---- */
+.loyalty-activity__scroll {
+  max-height: 540px;            /* ~10 rows (each ~54px) before scrolling */
+  overflow-y: auto;
+  overscroll-behavior: contain; /* don't scroll the page when the list ends */
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -4px;               /* let rows use the card's inner width */
+  padding: 0 4px;
+}
+/* Slim, on-brand scrollbar */
+.loyalty-activity__scroll { scrollbar-width: thin; scrollbar-color: var(--lx-green-soft) transparent; }
+.loyalty-activity__scroll::-webkit-scrollbar { width: 8px; }
+.loyalty-activity__scroll::-webkit-scrollbar-track { background: transparent; }
+.loyalty-activity__scroll::-webkit-scrollbar-thumb {
+  background: var(--lx-green-soft);
+  border-radius: 8px;
+}
+.loyalty-activity__scroll::-webkit-scrollbar-thumb:hover { background: var(--lx-green); }
+
+/* ---- "Show all" button ---- */
+.loyalty-activity__more {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 100%;
+  margin-top: 14px;
+  padding: 11px 16px;
+  border: 1px solid var(--lx-green);
+  border-radius: 10px;
+  background: var(--lx-green-soft);
+  color: var(--lx-green-dark);
+  font-weight: 700; font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.loyalty-activity__more:hover { background: var(--lx-green); color: #fff; }
+
+/* ---- full-page "All activity" modal ---- */
+.loyalty-activity__overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+  animation: lxActFade 120ms ease-out;
+}
+.loyalty-activity__sheet {
+  width: 100%; max-width: 560px;
+  max-height: 86vh;
+  display: flex; flex-direction: column;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+  animation: lxActPop 160ms ease-out;
+}
+.loyalty-activity__sheet-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--lx-border);
+  background: #ffffff;
+}
+.loyalty-activity__close {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  border: none; border-radius: 10px;
+  background: var(--color-bg-muted, #f0efe9);
+  color: var(--lx-muted);
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+.loyalty-activity__close:hover { background: var(--lx-green-soft); color: var(--lx-green-dark); }
+.loyalty-activity__sheet-body {
+  overflow-y: auto;
+  padding: 6px 20px 20px;
+  background: #ffffff;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--lx-green-soft) transparent;
+}
+.loyalty-activity__sheet-body::-webkit-scrollbar { width: 8px; }
+.loyalty-activity__sheet-body::-webkit-scrollbar-thumb { background: var(--lx-green-soft); border-radius: 8px; }
+
+@keyframes lxActFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lxActPop {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (max-width: 560px) {
+  .loyalty-activity__overlay { align-items: flex-end; padding: 0; }
+  .loyalty-activity__sheet { max-width: 100%; max-height: 92vh; border-radius: 16px 16px 0 0; }
+}
+
+/* ------------------------------------------------------------------
+ * Mobile spacing: give calendar & recent activity breathing room.
+ * ------------------------------------------------------------------ */
+@media (max-width: 600px) {
+  .loyalty__layout { gap: 2px; }
+  .loyalty__col { gap: 2px; }
+  .loyalty-cal__grid { gap: 4px; }
+  .loyalty-cal__cell { font-size: .8rem; border-radius: 8px; }
+  .loyalty-cal__legend { gap: 10px; margin-top: 12px; padding-top: 12px; }
+  /* Recent activity: keep room below so it isn't flush to the page edge. */
+  .loyalty-activity__scroll { max-height: 55vh; }
+  /* Reduced side padding so cards reclaim horizontal space on mobile. */
+  .loyalty { padding-left: 4px; padding-right: 4px; }
+  /* Flat, borderless sections on mobile with a tight 2px gap between them. */
+  .loyalty .lx-card {
+    border: none;
+    box-shadow: none;
+    border-radius: 14px;
+    margin-bottom: 2px;
+    padding: 16px 14px;
+  }
+  .loyalty .lx-card:hover { box-shadow: none; }
+  .loyalty-welcome { box-shadow: 0 6px 18px rgba(30, 64, 16, 0.18); }
+  .loyalty .lx-card__head { padding-bottom: 12px; margin-bottom: 14px; }
+  .loyalty__head { padding-bottom: 16px; margin-bottom: 18px; }
+  .loyalty__title { font-size: 1.5rem; }
+}
+
+/* ================================================================== */
+/* FAQ Section                                                        */
+/* ================================================================== */
+.loyalty-faq {
+  margin-top: var(--space-6);
+}
+
+.loyalty-faq__items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.loyalty-faq__item {
+  border: 1px solid var(--lx-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.loyalty-faq__item:hover {
+  border-color: var(--lx-green);
+}
+
+.loyalty-faq__item[open] {
+  border-color: var(--lx-green);
+  background: var(--lx-green-soft);
+}
+
+.loyalty-faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  cursor: pointer;
+  list-style: none;
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--text-base);
+  color: var(--lx-text);
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.loyalty-faq__question::-webkit-details-marker {
+  display: none;
+}
+
+.loyalty-faq__question:hover {
+  background: var(--lx-green-soft);
+}
+
+.loyalty-faq__icon {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+  color: var(--lx-green);
+}
+
+.loyalty-faq__item[open] .loyalty-faq__icon {
+  transform: rotate(90deg);
+}
+
+.loyalty-faq__answer {
+  padding: 0 var(--space-4) var(--space-4);
+  color: var(--lx-text);
+  line-height: 1.6;
+  animation: loyalty-faq-expand 0.3s ease-out;
+}
+
+@keyframes loyalty-faq-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loyalty-faq__answer p {
+  margin: 0 0 var(--space-3);
+}
+
+.loyalty-faq__answer p:last-child {
+  margin-bottom: 0;
+}
+
+.loyalty-faq__answer ul,
+.loyalty-faq__answer ol {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-5);
+}
+
+.loyalty-faq__answer li {
+  margin-bottom: var(--space-2);
+}
+
+.loyalty-faq__answer li:last-child {
+  margin-bottom: 0;
+}
+
+.loyalty-faq__answer strong {
+  color: var(--lx-green-dark);
+}
+
+@media (max-width: 640px) {
+  .loyalty-faq__question {
+    padding: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .loyalty-faq__answer {
+    padding: 0 var(--space-3) var(--space-3);
+    font-size: var(--text-sm);
+  }
+}

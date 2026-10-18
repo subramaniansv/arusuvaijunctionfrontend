@@ -5,8 +5,8 @@
  *   /                          home
  *   /products                  catalog list
  *   /products/:productId       product detail
- *   /login                     login form        (PublicOnlyRoute - redirects if logged in)
- *   /register                  register form     (PublicOnlyRoute)
+ *   /login                     Google sign-in    (PublicOnlyRoute - redirects if logged in)
+ *   /admin/login               admin email+password (PublicOnlyRoute)
  *
  * Protected (requires access token):
  *   /cart                      current user's cart
@@ -57,6 +57,7 @@ const ProductDetail   = lazy(() => import('./pages/ProductDetail'))
 const Search          = lazy(() => import('./pages/Search'))
 const Auth            = lazy(() => import('./pages/Auth'))
 const ForgotPassword  = lazy(() => import('./pages/ForgotPassword'))
+const AdminLogin      = lazy(() => import('./pages/AdminLogin'))
 const ResetPassword   = lazy(() => import('./pages/ResetPassword'))
 const Cart            = lazy(() => import('./pages/Cart'))
 const Checkout        = lazy(() => import('./pages/Checkout'))
@@ -65,6 +66,7 @@ const OrderDetail     = lazy(() => import('./pages/OrderDetail'))
 const Account         = lazy(() => import('./pages/Account'))
 const Addresses       = lazy(() => import('./pages/Addresses'))
 const Wishlist        = lazy(() => import('./pages/Wishlist'))
+// const Loyalty         = lazy(() => import('./pages/Loyalty')) // temporarily disabled
 const About           = lazy(() => import('./pages/About'))
 const Contact         = lazy(() => import('./pages/Contact'))
 const PrivacyPolicy   = lazy(() => import('./pages/PrivacyPolicy'))
@@ -76,6 +78,9 @@ const AdminProductEdit  = lazy(() => import('./pages/admin/AdminProductEdit'))
 const AdminOrders       = lazy(() => import('./pages/admin/AdminOrders'))
 const AdminUsers        = lazy(() => import('./pages/admin/AdminUsers'))
 const AdminMessages     = lazy(() => import('./pages/admin/AdminMessages'))
+const AdminBanner       = lazy(() => import('./pages/admin/AdminBanner'))
+// const AdminLoyalty      = lazy(() => import('./pages/admin/AdminLoyalty')) // temporarily disabled
+const Festival          = lazy(() => import('./pages/Festival'))
 const NotFound          = lazy(() => import('./pages/NotFound'))
 
 /* Tiny placeholder while a route chunk is being fetched. Keep it
@@ -106,6 +111,8 @@ function App() {
           <Route element={<RootLayout />}>
           {/* Public */}
           <Route index element={<Home />} />
+          {/* Festival postcard studio — shares the common navbar/footer */}
+          <Route path="festival" element={<Festival />} />
           <Route path="products" element={<Products />} />
           <Route path="products/:productId" element={<ProductDetail />} />
           <Route path="search" element={<Search />} />
@@ -114,12 +121,12 @@ function App() {
           <Route path="policy/privacy" element={<PrivacyPolicy />} />
           <Route path="policy/returns" element={<ReturnPolicy />} />
 
-          {/* Public-only (hidden once logged in). Login + register
-           * share the same Auth component; mode is derived from the
-           * route path. */}
+          {/* Public-only (hidden once logged in). The public page is
+           * Google sign-in only; /admin/login is email + password. */}
           <Route element={<PublicOnlyRoute />}>
             <Route path="login" element={<Auth />} />
-            <Route path="register" element={<Auth />} />
+            {/* Dedicated email/password login for admins/staff. */}
+            <Route path="admin/login" element={<AdminLogin />} />
             <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="reset-password" element={<ResetPassword />} />
           </Route>
@@ -135,6 +142,7 @@ function App() {
               <Route path="orders" element={<Orders />} />
               <Route path="orders/:orderId" element={<OrderDetail />} />
               <Route path="wishlist" element={<Wishlist />} />
+              {/* <Route path="loyalty" element={<Loyalty />} /> */} {/* temporarily disabled */}
               <Route path="account" element={<Account />} />
               <Route path="addresses" element={<Addresses />} />
             </Route>
@@ -149,6 +157,8 @@ function App() {
               <Route path="orders" element={<AdminOrders />} />
               <Route path="users" element={<AdminUsers />} />
               <Route path="messages" element={<AdminMessages />} />
+              <Route path="banner"   element={<AdminBanner />} />
+              {/* <Route path="loyalty"  element={<AdminLoyalty />} /> */} {/* temporarily disabled */}
             </Route>
           </Route>
 

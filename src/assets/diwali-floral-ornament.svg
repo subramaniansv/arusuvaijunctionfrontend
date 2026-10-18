@@ -1,0 +1,55 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none"
+xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .gold { fill:#B88720; }
+      .gold-stroke {
+        stroke:#B88720;
+        stroke-width:5;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+      }
+    </style>
+  </defs>
+
+  <!-- Four elegant petals -->
+  <path class="gold" d="
+    M128 128
+    C112 116 105 97 111 79
+    C115 66 124 54 128 47
+    C132 54 141 66 145 79
+    C151 97 144 116 128 128Z"/>
+
+  <path class="gold" d="
+    M128 128
+    C140 112 159 105 177 111
+    C190 115 202 124 209 128
+    C202 132 190 141 177 145
+    C159 151 140 144 128 128Z"/>
+
+  <path class="gold" d="
+    M128 128
+    C144 140 151 159 145 177
+    C141 190 132 202 128 209
+    C124 202 115 190 111 177
+    C105 159 112 140 128 128Z"/>
+
+  <path class="gold" d="
+    M128 128
+    C116 144 97 151 79 145
+    C66 141 54 132 47 128
+    C54 124 66 115 79 111
+    C97 105 116 112 128 128Z"/>
+
+  <!-- Fine ornamental inner diamonds -->
+  <path class="gold-stroke" d="M128 105 L139 128 L128 151 L117 128 Z"/>
+
+  <!-- Center jewel -->
+  <circle class="gold" cx="128" cy="128" r="7"/>
+
+  <!-- Small four-point accents -->
+  <path class="gold" d="M128 22 L134 34 L128 40 L122 34 Z"/>
+  <path class="gold" d="M234 128 L222 134 L216 128 L222 122 Z"/>
+  <path class="gold" d="M128 234 L122 222 L128 216 L134 222 Z"/>
+  <path class="gold" d="M22 128 L34 122 L40 128 L34 134 Z"/>
+</svg>

@@ -1,0 +1,596 @@
+/* ══════════════════════════════════════════════════════════════
+   Festival.css  —  /festival  (postcard studio + view mode)
+   Renders INSIDE RootLayout — uses the shared app navbar/footer.
+   NO custom top bar, NO extra top padding (RootLayout spaces it).
+   Brand palette mirrors the Arusuvai Junction postcard generator.
+══════════════════════════════════════════════════════════════ */
+
+/* "Happy {Festival}" greeting font. Drop the font file into
+   public/fonts/ (see public/fonts/README.md). Falls back to a
+   script/cursive face until the file is present. */
+@font-face {
+  font-family: 'Amsterdam Four';
+  src: url('/fonts/AmsterdamFour.woff2') format('woff2'),
+       url('/fonts/AmsterdamFour.woff')  format('woff'),
+       url('/fonts/AmsterdamFour.ttf')   format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.fc-app,
+.fc-empty,
+.fv-root {
+  --green:    #075238;
+  --green-2:  #0b6848;
+  --gold:     #b98118;
+  --gold-soft:#d7ad57;
+  --cream:    #f7f0df;
+  --paper:    #fffaf0;
+  --ink:      #173b2e;
+  --muted:    #7a776e;
+  --line:     #ded4bd;
+  --shadow:   0 22px 70px rgba(24,50,39,.15);
+  color: var(--ink);
+}
+.fc-app *, .fc-app *::before, .fc-app *::after { box-sizing: border-box; }
+.fc-app button, .fc-app input, .fc-app textarea { font: inherit; }
+
+/* ── App container — tight x-axis margins, no top gap ───────────── */
+.fc-app { max-width: 1280px; margin: 0 auto; padding: 0 2px 40px; }
+
+/* ── Workspace grid ────────────────────────────────────────────── */
+.fc-workspace {
+  display: grid;
+  grid-template-columns: minmax(340px, .78fr) minmax(520px, 1.22fr);
+  gap: 18px; align-items: start;
+}
+.fc-panel {
+  background: rgba(255,250,240,.9);
+  border: 1px solid rgba(7,82,56,.12);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.fc-panel-head {
+  padding: 18px 18px 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+.fc-panel-head > div:first-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.fc-panel-title { font-weight: 800; font-size: 16px; text-align: center; }
+.fc-panel-sub { font-size: 12px; color: #888274; margin-top: 4px; text-align: center; }
+.fc-eyebrow {
+  font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--gold); font-weight: 800;
+}
+.fc-step-num { letter-spacing: .08em; }
+
+/* ── Stamp picker grid — 5 per row ─────────────────────────────── */
+.fc-templates {
+  padding: 4px 14px 14px;
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 9px;
+}
+.fc-template {
+  border: 1px solid #ddd3bc; border-radius: 10px;
+  background: #fffdf7; padding: 4px; cursor: pointer;
+  transition: .18s; text-align: center; position: relative;
+}
+.fc-template:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(40,50,40,.09); }
+.fc-template.is-active {
+  border: 2px solid var(--gold); padding: 3px;
+  box-shadow: 0 0 0 3px rgba(185,129,24,.12);
+}
+.fc-template img {
+  width: 100%; aspect-ratio: 1 / 1; object-fit: contain;
+  border-radius: 7px; display: block; background: #fff;
+}
+.fc-skel-tpl {
+  aspect-ratio: 1 / 1; border-radius: 9px;
+  background: linear-gradient(90deg, #e8e0c8 25%, #f5efdc 50%, #e8e0c8 75%);
+  background-size: 200%;
+  animation: fc-shimmer 1.2s infinite;
+}
+@keyframes fc-shimmer { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+.fc-no-images {
+  padding: 0 18px 14px; color: var(--muted); font-size: 13px;
+}
+
+/* ── Form ──────────────────────────────────────────────────────── */
+.fc-form { padding: 4px 18px 20px; }
+.fc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fc-field { margin-top: 15px; }
+.fc-field label {
+  display: flex; align-items: center; gap: 0;
+  font-size: 12px; font-weight: 800; letter-spacing: .06em;
+  margin-bottom: 7px; color: #385347;
+}
+/* push the char-counter to the far right while keeping the * tight to text */
+.fc-field label .fc-count { margin-left: auto; }
+.fc-count { font-weight: 700; font-size: 11px; color: #9a927f; letter-spacing: 0; }
+.fc-count.is-max { color: #b98118; }
+.fc-field input, .fc-field textarea {
+  width: 100%; border: 1px solid #d7cfbb; background: #fffdf8;
+  border-radius: 12px; padding: 12px 13px; outline: none;
+  color: var(--ink); transition: .15s;
+}
+.fc-field input:focus, .fc-field textarea:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(185,129,24,.1);
+}
+.fc-field textarea {
+  min-height: 110px;
+  max-height: 110px;
+  resize: none;
+  overflow-y: auto;
+  line-height: 1.6;
+}
+
+/* ── Actions ───────────────────────────────────────────────────── */
+.fc-actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+.fc-primary, .fc-secondary {
+  border: 0; border-radius: 13px; padding: 13px 16px;
+  font-weight: 800; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.fc-primary {
+  flex: 1; min-width: 180px; background: var(--green); color: #fff;
+  box-shadow: 0 10px 22px rgba(7,82,56,.2);
+}
+.fc-primary:hover:not(:disabled) { background: #06452f; }
+.fc-primary:disabled { opacity: .55; cursor: not-allowed; box-shadow: none; }
+.fc-secondary { background: #efe6d2; color: var(--green); }
+
+@keyframes fc-rotate { to { transform: rotate(360deg); } }
+.fc-spin { animation: fc-rotate .9s linear infinite; }
+
+/* ── Result box ────────────────────────────────────────────────── */
+.fc-result {
+  margin-top: 20px;
+  display: flex; flex-direction: column; gap: 10px;
+  background: #f0f7ed; border: 1.5px solid var(--green);
+  border-radius: 13px; padding: 14px 16px;
+}
+.fc-result__label { margin: 0; font-weight: 800; font-size: 14px; color: var(--ink); }
+.fc-result__url {
+  display: flex; align-items: center; gap: 8px;
+  background: #fff; border: 1px solid rgba(7,82,56,.2);
+  border-radius: 9px; padding: 8px 10px;
+}
+.fc-result__url span {
+  flex: 1; font-size: 12px; color: var(--green); font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fc-copy-btn {
+  display: inline-flex; align-items: center;
+  background: none; border: 1px solid rgba(7,82,56,.2);
+  border-radius: 7px; color: var(--green); padding: 5px 7px;
+  cursor: pointer; flex-shrink: 0; transition: background .15s;
+}
+.fc-copy-btn:hover { background: rgba(7,82,56,.08); }
+.fc-result__actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.fc-wa-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid #c7e0bd; background: #eaf6e4; color: #1f7a33;
+  border-radius: 9px; padding: 8px 12px; font-weight: 700; font-size: 13px;
+  cursor: pointer; transition: .15s;
+}
+.fc-wa-btn:hover { background: #ddf0d4; }
+.fc-open-btn {
+  display: inline-flex; align-items: center;
+  padding: 8px 14px; background: var(--green); color: #fff;
+  border-radius: 9px; font-size: 13px; font-weight: 700; text-decoration: none;
+  transition: background .15s;
+}
+.fc-open-btn:hover { background: #06452f; }
+.fc-reset-btn {
+  background: none; border: none; color: #5a7a3a;
+  font-size: 13px; cursor: pointer; text-decoration: underline;
+}
+
+/* required-field asterisk — flush against the label text */
+.fc-req { color: #d6453c; font-weight: 800; margin-left: 0; line-height: 1; }
+
+/* ── Ready-to-share MODAL ──────────────────────────────────────── */
+.fc-modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(20, 28, 20, .55);
+  display: grid; place-items: center; padding: 20px;
+  animation: fc-fade .18s ease;
+}
+@keyframes fc-fade { from { opacity: 0 } to { opacity: 1 } }
+.fc-modal {
+  position: relative;
+  width: min(100%, 440px);
+  background: #fff; border-radius: 18px;
+  padding: 26px 24px 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.28);
+  display: flex; flex-direction: column; gap: 12px;
+  animation: fc-pop .2s cubic-bezier(.2,.8,.3,1.2);
+}
+@keyframes fc-pop { from { opacity: 0; transform: translateY(12px) scale(.96) } to { opacity: 1; transform: none } }
+.fc-modal-close {
+  position: absolute; top: 10px; right: 12px;
+  border: 0; background: none; cursor: pointer;
+  font-size: 26px; line-height: 1; color: #8a8a8a;
+}
+.fc-modal-close:hover { color: var(--ink); }
+.fc-modal__title { margin: 0; font-weight: 800; font-size: 18px; color: var(--ink); }
+.fc-modal__sub { margin: 0 0 4px; font-size: 13px; color: #6b6b6b; }
+.fc-modal__actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 2px; }
+
+/* Shared-Button tweaks inside the share modal */
+.fc-modal__copy { flex-shrink: 0; }   /* keep Copy from being squeezed by the URL text */
+.fc-modal__again { align-self: flex-start; }  /* "Create another" hugs the left edge */
+
+/* ── Preview panel ─────────────────────────────────────────────── */
+.fc-preview-wrap { padding: 18px 18px 22px; }
+/* .fc-preview-stage {
+  border-radius: 16px;
+  background: #075238;
+  display: grid; place-items: center; padding: 24px 16px;
+  position: relative; overflow: hidden;
+} */
+
+
+/* ══════════════════════════════════════════════════════════════
+   THE POST CARD — authentic Indian divided-back card
+══════════════════════════════════════════════════════════════ */
+.pc {
+  --pc-paper: #fbf4e4;
+
+  position: relative; z-index: 1;
+  width: min(100%, 700px); aspect-ratio: 1.6 / 1;
+  padding: 14px;
+  border: 12px dashed var(--green);
+  border-radius: 7px;
+  box-shadow: 0 24px 56px rgba(34,48,39,.26);
+  display: flex; flex-direction: column;
+  font-family: Georgia, "Times New Roman", serif;
+  background: var(--pc-paper);
+}
+.pc--lg { width: min(94vw, 840px); animation: pc-rise .5s cubic-bezier(.22,1,.36,1); }
+@keyframes pc-rise {
+  from { opacity: 0; transform: translateY(18px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+.pc--lg .pc__stamp { width: 128px; height: 152px; padding-right: 12px; }
+.pc--lg .pc__logo  { width: 200px; height: 150px; }
+
+/* body = the cream paper interior sitting inside the scalloped border.
+   Fills the full card height (header strip removed). */
+.pc__body {
+  flex: 1 1 auto; display: flex; min-height: 0;
+  background: var(--pc-paper);
+  border-radius: 2px;
+  overflow: hidden;   /* clip inner content, NOT the scalloped edges */
+}
+
+/* LEFT half — greeting pinned to the TOP, message flows beneath.
+   Content starts at the top where the empty space used to be. */
+.pc__left {
+  flex: 1 1 56%;
+  padding: 16px 20px;
+  overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  text-align: center;
+}
+.pc__greeting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  line-height: 1;
+}
+.pc__greeting-happy {
+  display: block;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  font-size: clamp(12px, 1.2vw, 16px);
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--green);
+  margin-bottom: 6px;
+}
+.pc__greeting-festival {
+  display: block;
+  width: 100%;
+  font-family: 'Amsterdam Four', 'Brush Script MT', 'Segoe Script', cursive;
+  font-size: clamp(35px, 4vw, 57px);
+  letter-spacing: .02em;
+  font-weight: 400;
+  color: #AB771C;
+  line-height: 1.02;
+}
+.pc__message {
+  margin: 0; width: 100%;
+  font-size: clamp(15px, 1.7vw, 21px);
+  line-height: 1.5;
+  color: #2a3d33; white-space: pre-wrap; word-break: break-word;
+}
+
+/* vertical divider — floral centered in the split between message and address */
+.pc__divider {
+  flex: 0 0 46px;
+  margin: 24px 0;
+  position: relative;
+  align-self: stretch;
+}
+.pc__divider::before,
+.pc__divider::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 1.5px;
+  transform: translateX(-50%);
+  background: var(--green);
+}
+.pc__divider::before {
+  top: 0;
+  bottom: calc(50% + 24px);
+}
+.pc__divider::after {
+  top: calc(50% + 24px);
+  bottom: 0;
+}
+.pc__divider-floral {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  background: var(--pc-paper, var(--paper));
+  padding: 4px;
+  z-index: 1;
+}
+
+/* RIGHT half — postage (logo + stamp) + address */
+.pc__right {
+  flex: 1 1 44%;
+  padding: 14px 16px 14px 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  position: relative;
+}
+
+/* postage row: brand logo first, then the stamp, pinned top-right */
+.pc__postage {
+  align-self: flex-end;
+  display: flex; align-items: flex-start; gap: 8px;
+}
+
+/* brand logo before the stamp — wide + tall to fill the empty space,
+   transparent-safe (no white box) */
+.pc__logo {
+  width: 150px; height: 110px; object-fit: contain;
+  border-radius: 7px;
+  background: transparent;       /* keep uploaded transparency intact */
+  padding: 2px;
+}
+
+/* stamp, FULL image visible */
+.pc__stamp {
+  flex: 0 0 auto;
+  width: 92px; height: 110px;
+  background: #fff;
+  /* padding: 4px; */
+  /* border: 1px solid #e8dcc0; */
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  /* perforated postage edge */
+  /* outline: 2px dashed #c6a862; */
+  outline-offset: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.pc__stamp img {
+  width: 100%; height: 100%;
+  object-fit: contain;           /* show the WHOLE stamp, never crop */
+  display: block; border-radius: 2px;
+}
+.pc__stamp-skel {
+  width: 100%; height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg,#e8e0c8 25%,#f5efdc 50%,#e8e0c8 75%);
+  background-size: 200%; animation: fc-shimmer 1.2s infinite;
+}
+.pc__stamp-empty {
+  font-family: Inter, sans-serif; font-size: 9px; letter-spacing: .16em;
+  color: #b19a63; font-weight: 700;
+}
+
+/* address block (TO) — no ruler lines */
+.pc__address { display: flex; flex-direction: column; }
+.pc__addr-label {
+  font-family: Inter, sans-serif; font-size: 10px; letter-spacing: .16em;
+  color: #9a8142; font-weight: 800; margin-bottom: 2px;
+}
+.pc__to {
+  margin: 0; font-size: clamp(14px, 1.7vw, 20px);
+  font-weight: 700; color: var(--green);
+}
+
+/* FROM — block element pinned to the bottom:
+   label → sender name → web address, each on its own line */
+.pc__from {
+  margin-top: auto;
+  display: flex; flex-direction: column;
+}
+.pc__from-name {
+  margin: 0; font-size: clamp(14px, 1.6vw, 19px);
+  font-weight: 700; color: var(--green);
+}
+.pc__web {
+  margin-top: 4px;
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: Inter, sans-serif; font-size: clamp(10px, 1.1vw, 13px);
+  letter-spacing: .04em; color: var(--gold); font-weight: 700;
+}
+/* small floral ornament flanking the web address — before & after */
+.pc__web-floral {
+  width: 16px; height: 16px;
+  object-fit: contain; flex: 0 0 auto;
+}
+
+.pc-ghost { opacity: .4; font-style: italic; }
+
+/* Decorative ornament band framing the whole workspace (before + after text) */
+.fc-ornament-band {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+  margin: 10px 0;
+}
+.pc__rule--wide { max-width: 520px; }
+.pc__rule--wide::before,
+.pc__rule--wide::after { max-width: 220px; }
+
+/* ── Empty state ───────────────────────────────────────────────── */
+.fc-empty {
+  min-height: 60vh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 3rem 1.5rem; text-align: center;
+}
+.fc-empty h1 {
+  margin: 0; font-family: Georgia, serif;
+  font-size: clamp(1.4rem, 4vw, 2rem); color: var(--green);
+}
+.fc-empty p { margin: 0; color: #6b6b5a; font-size: 1rem; }
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 1050px) {
+  .fc-workspace { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .fc-app { padding: 0 2px 32px; }
+  .fc-templates { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .fc-preview-wrap { padding: 12px; }
+  .fc-preview-stage { padding: 12px; border-radius: 14px; }
+  .fc-workspace { gap: 14px; }
+  .fc-panel { border-radius: 16px; }
+  .fc-actions { flex-direction: column; }
+  .fc-primary { min-width: 0; }
+  .pc__stamp { width: 62px; height: 64px; }
+  .pc__logo { width: 120px; height: 90px; }
+  .pc__message { font-size: 14px; line-height: 1.5; }
+  /* smaller perforations on compact screens */
+}
+
+/* ── Mobile postcard: stack vertically ─────────────────────────────
+   Hard to read side-by-side on narrow screens, so switch to a
+   single vertical column:
+     1. Postage (brand logo + stamp)  ← top
+     2. TO + FROM address             ← below the stamp
+     3. Greeting + MESSAGE            ← bottom
+   The vertical divider is hidden and replaced by a horizontal rule. */
+@media (max-width: 600px) {
+  .pc {
+    aspect-ratio: auto;          /* let height grow to fit stacked content */
+    min-height: 0;
+    padding: 10px;
+    border-width: 8px;
+  }
+  .pc--lg { width: min(96vw, 520px); }
+
+  .pc__body {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  /* right half (postage + TO + FROM) comes FIRST */
+  .pc__right {
+    order: 1;
+    flex: 0 0 auto;
+    padding: 8px 12px 12px;
+    gap: 12px;
+  }
+  /* keep logo + stamp centered as a header row */
+  .pc__postage {
+    align-self: center;
+    justify-content: center;
+  }
+  /* FROM no longer needs to be pushed to the bottom of a tall column */
+  .pc__from { margin-top: 10px; }
+
+  /* horizontal divider replaces the vertical one between header & message */
+  .pc__divider {
+    order: 2;
+    flex: 0 0 auto;
+    width: 100%;
+    height: 34px;
+    margin: 2px 0;
+    align-self: center;
+  }
+  .pc__divider::before,
+  .pc__divider::after {
+    left: 0; right: 0;
+    width: auto; height: 1.5px;
+    top: 50%; bottom: auto;
+    transform: translateY(-50%);
+  }
+  .pc__divider::before {
+    right: calc(50% + 24px);
+    left: 0;
+  }
+  .pc__divider::after {
+    left: calc(50% + 24px);
+    right: 0;
+    top: 50%; bottom: auto;
+  }
+
+  /* greeting + message LAST, at the bottom */
+  .pc__left {
+    order: 3;
+    flex: 0 0 auto;
+    overflow: visible;
+    padding: 4px 14px 12px;
+  }
+  .pc__message { font-size: 15px; }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   VIEW MODE  — shared post card  /festival?msg=<slug>
+══════════════════════════════════════════════════════════════ */
+.fv-loading {
+  min-height: 60vh; display: flex; align-items: center; justify-content: center;
+}
+.fv-spinner {
+  width: 2.5rem; height: 2.5rem;
+  border: 3px solid rgba(7,82,56,.2); border-top-color: #075238;
+  border-radius: 50%; animation: fc-rotate .75s linear infinite;
+}
+.fv-error {
+  min-height: 60vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1rem; padding: 2rem;
+  text-align: center;
+}
+.fv-error h1 { margin: 0; font-size: 2rem; color: #075238; }
+.fv-error p { color: #6b6b5a; margin: 0; }
+.fv-create-link {
+  color: #075238; font-weight: 700; text-decoration: none; font-size: 1rem;
+  padding: .6rem 1.25rem; border: 1.5px solid #075238; border-radius: 9px;
+  transition: background .15s;
+}
+.fv-create-link:hover { background: rgba(7,82,56,.06); }
+
+.fv-root {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1.2rem; padding: 8px 14px 40px;
+}
+.fv-stage {
+  display: flex; flex-direction: column; align-items: center; gap: 1.1rem;
+  width: 100%;
+}
+.fv-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.fv-make-link {
+  display: inline-flex; align-items: center;
+  padding: .55rem 1.2rem; background: #075238; color: #fff;
+  font-size: .9rem; font-weight: 700; border-radius: 999px;
+  text-decoration: none; box-shadow: 0 8px 22px rgba(7,82,56,.25);
+  transition: background .15s, transform .1s;
+}
+.fv-make-link:hover { background: #06452f; transform: translateY(-1px); }

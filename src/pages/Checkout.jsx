@@ -36,6 +36,7 @@ import { useCart } from "../lib/cart";
 import { useAddresses } from "../lib/addresses";
 import { useMyProfile } from "../lib/me";
 import { useRazorpayCheckout } from "../lib/payment";
+import { useRedeemQuote, useLoyaltySettings } from "../lib/loyalty";
 import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR, checkPincodeServiceability, fetchShippingRate } from "../lib/shipping";
 import "./Checkout.css";
 
@@ -124,6 +125,7 @@ export default function Checkout() {
 
   const [selectedSavedId, setSelectedSavedId] = useState("");
   const [paying, setPaying] = useState(false);
+  const [redeemPoints, setRedeemPoints] = useState(0);
 
   /* -----------------------------------------------------------------
    * Buy-Now mode: when arriving with router state.buyNow, this checkout
@@ -146,11 +148,20 @@ export default function Checkout() {
           price: Number(buyNow.snapshot?.price) || 0,
           quantity: qty,
           subtotal: (Number(buyNow.snapshot?.price) || 0) * qty,
+          category: buyNow.snapshot?.category || null,
         },
       ];
     }
     return cart?.cartItems || [];
   }, [buyNow, cart]);
+
+  // Check if cart contains any festive products
+  const hasFestiveProducts = useMemo(() => {
+    return items.some(item => 
+      item.category?.toLowerCase() === 'festive' || 
+      item.productName?.toLowerCase().includes('festive')
+    );
+  }, [items]);
 
   const subtotal = buyNow
     ? items[0].subtotal
@@ -262,7 +273,24 @@ export default function Checkout() {
 
   const shippingKnown = qualifiesFreeShipping || (hasValidPincode && !shippingLoading);
   const shippingZoneLabel = getZoneLabel(pincode);
-  const total = subtotal + shippingFee;
+  const grossTotal = subtotal + shippingFee;
+
+  // Loyalty points redemption (server clamps to balance + order total).
+  const { data: loyaltySettings } = useLoyaltySettings();
+  const { data: redeemQuote, isFetching: quoteFetching } = useRedeemQuote({
+    points: redeemPoints,
+    total: grossTotal,
+    enabled: grossTotal > 0,
+  });
+  // True only when we are recalculating a quote AND already have a prior
+  // value to keep on screen (thanks to placeholderData: keepPreviousData).
+  // Drives the freeze overlay so numbers never vanish mid-calculation.
+  const recalculating = quoteFetching && redeemQuote != null;
+  const pointsToUse = redeemQuote?.pointsToUse ?? 0;
+  const pointsBalance = redeemQuote?.balance ?? 0;
+  const maxUsablePoints = redeemQuote?.maxUsablePoints ?? 0;
+  const pointDiscount = Number(redeemQuote?.discount ?? 0);
+  const total = Math.max(0, grossTotal - pointDiscount);
 
   const [pinStatus, setPinStatus] = useState("idle"); // idle | loading | found | invalid | error
   const lastLookupRef = useRef("");
@@ -320,6 +348,7 @@ export default function Checkout() {
       shippingAddress: buildShippingAddress(values),
       phone: values.phone,
       shippingFee,
+      redeemPoints: pointsToUse,
     };
     if (buyNow) {
       payload.item = {
@@ -500,6 +529,17 @@ export default function Checkout() {
           <Card padding="lg" className="checkout__summary-card">
             <h2 className="checkout__section-title">Order summary</h2>
 
+            {/* Festive Products Availability Notice */}
+            {hasFestiveProducts && (
+              <div className="checkout__festive-notice">
+                <div className="checkout__festive-notice-icon">🎉</div>
+                <div className="checkout__festive-notice-content">
+                  <strong>Festive Special Items</strong>
+                  <p>Available by November 5th only</p>
+                </div>
+              </div>
+            )}
+
             <ul className="checkout__lines">
               {items.map((it) => (
                 <li
@@ -543,6 +583,16 @@ export default function Checkout() {
             </ul>
 
             <Divider />
+            <div
+              className={`checkout__totals${recalculating ? " is-recalculating" : ""}`}
+              aria-busy={recalculating}
+            >
+              {recalculating && (
+                <div className="checkout__freeze" role="status" aria-live="polite">
+                  <Loader2 size={18} className="checkout__spin" aria-hidden="true" />
+                  <span>Updating total…</span>
+                </div>
+              )}
             <div className="checkout__sum-line">
               <span>Subtotal</span>
               <PriceTag amount={subtotal} size="md" />
@@ -587,10 +637,78 @@ export default function Checkout() {
                 Sorry, we don't deliver to this pincode yet.
               </p>
             )}
+            {pointsBalance > 0 && (
+              <>
+                <Divider />
+                <div className="checkout__loyalty">
+                  <div className="checkout__loyalty-head">
+                    <span className="checkout__loyalty-title">Use loyalty points</span>
+                    <span className="checkout__loyalty-balance">
+                      {pointsBalance} pts available
+                      {loyaltySettings?.pointValueInr
+                        ? ` · 1 pt = ₹${Number(loyaltySettings.pointValueInr)}`
+                        : ''}
+                    </span>
+                  </div>
+                  <div className="checkout__loyalty-row">
+                    <input
+                      type="range"
+                      min={0}
+                      max={maxUsablePoints}
+                      step={1}
+                      value={Math.min(redeemPoints, maxUsablePoints)}
+                      onChange={(e) => setRedeemPoints(Number(e.target.value))}
+                      aria-label="Points to redeem"
+                      className="checkout__loyalty-range"
+                      disabled={maxUsablePoints === 0}
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      max={maxUsablePoints}
+                      value={redeemPoints}
+                      onChange={(e) =>
+                        setRedeemPoints(
+                          Math.max(0, Math.min(Number(e.target.value) || 0, maxUsablePoints)),
+                        )
+                      }
+                      aria-label="Points to redeem"
+                      className="checkout__loyalty-input"
+                    />
+                  </div>
+                  <div className="checkout__loyalty-actions">
+                    <button
+                      type="button"
+                      className="checkout__loyalty-max"
+                      onClick={() => setRedeemPoints(maxUsablePoints)}
+                      disabled={maxUsablePoints === 0}
+                    >
+                      Use max ({maxUsablePoints})
+                    </button>
+                    {redeemPoints > 0 && (
+                      <button
+                        type="button"
+                        className="checkout__loyalty-clear"
+                        onClick={() => setRedeemPoints(0)}
+                      >
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {pointDiscount > 0 && (
+                  <div className="checkout__sum-line checkout__loyalty-discount">
+                    <span>Points discount ({pointsToUse} pts)</span>
+                    <span>- ₹{pointDiscount.toLocaleString('en-IN')}</span>
+                  </div>
+                )}
+              </>
+            )}
             <Divider />
             <div className="checkout__sum-line checkout__sum-line--strong">
               <span>Total</span>
               <PriceTag amount={total} size="lg" />
+            </div>
             </div>
 
             <Button
