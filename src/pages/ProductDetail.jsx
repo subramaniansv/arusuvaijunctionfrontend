@@ -451,7 +451,7 @@ export default function ProductDetail() {
             </div>
 
             <ul className="pd__perks">
-              <li><Truck size={16} /> Freshly packed &amp; shipped within 24 hours</li>
+              <li><Truck size={16} /> Freshly packed &amp; shipped within 4-5 Days</li>
               <li><ShieldCheck size={16} /> Quality assured · No preservatives</li>
               <li><Leaf size={16} /> Made with traditional Tamil recipes</li>
             </ul>

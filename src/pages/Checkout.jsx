@@ -36,7 +36,7 @@ import { useCart } from "../lib/cart";
 import { useAddresses } from "../lib/addresses";
 import { useMyProfile } from "../lib/me";
 import { useRazorpayCheckout } from "../lib/payment";
-import { useRedeemQuote, useLoyaltySettings } from "../lib/loyalty";
+// import { useRedeemQuote, useLoyaltySettings } from "../lib/loyalty"; // Loyalty points — disabled
 import { calcShippingByGrams, variantGrams, getZoneLabel, FREE_ABOVE_INR, checkPincodeServiceability, fetchShippingRate } from "../lib/shipping";
 import "./Checkout.css";
 
@@ -125,7 +125,7 @@ export default function Checkout() {
 
   const [selectedSavedId, setSelectedSavedId] = useState("");
   const [paying, setPaying] = useState(false);
-  const [redeemPoints, setRedeemPoints] = useState(0);
+  // const [redeemPoints, setRedeemPoints] = useState(0); // Loyalty — disabled
 
   /* -----------------------------------------------------------------
    * Buy-Now mode: when arriving with router state.buyNow, this checkout
@@ -275,21 +275,20 @@ export default function Checkout() {
   const shippingZoneLabel = getZoneLabel(pincode);
   const grossTotal = subtotal + shippingFee;
 
-  // Loyalty points redemption (server clamps to balance + order total).
-  const { data: loyaltySettings } = useLoyaltySettings();
-  const { data: redeemQuote, isFetching: quoteFetching } = useRedeemQuote({
-    points: redeemPoints,
-    total: grossTotal,
-    enabled: grossTotal > 0,
-  });
-  // True only when we are recalculating a quote AND already have a prior
-  // value to keep on screen (thanks to placeholderData: keepPreviousData).
-  // Drives the freeze overlay so numbers never vanish mid-calculation.
-  const recalculating = quoteFetching && redeemQuote != null;
-  const pointsToUse = redeemQuote?.pointsToUse ?? 0;
-  const pointsBalance = redeemQuote?.balance ?? 0;
-  const maxUsablePoints = redeemQuote?.maxUsablePoints ?? 0;
-  const pointDiscount = Number(redeemQuote?.discount ?? 0);
+  // /* Loyalty points redemption — disabled
+  // const { data: loyaltySettings } = useLoyaltySettings();
+  // const { data: redeemQuote, isFetching: quoteFetching } = useRedeemQuote({
+  //   points: redeemPoints,
+  //   total: grossTotal,
+  //   enabled: grossTotal > 0,
+  // });
+  // const recalculating = quoteFetching && redeemQuote != null;
+  // const pointsToUse = redeemQuote?.pointsToUse ?? 0;
+  // const pointsBalance = redeemQuote?.balance ?? 0;
+  // const maxUsablePoints = redeemQuote?.maxUsablePoints ?? 0;
+  // const pointDiscount = Number(redeemQuote?.discount ?? 0);
+  // */
+  const pointDiscount = 0;
   const total = Math.max(0, grossTotal - pointDiscount);
 
   const [pinStatus, setPinStatus] = useState("idle"); // idle | loading | found | invalid | error
@@ -348,7 +347,7 @@ export default function Checkout() {
       shippingAddress: buildShippingAddress(values),
       phone: values.phone,
       shippingFee,
-      redeemPoints: pointsToUse,
+      redeemPoints: 0, // Loyalty — disabled
     };
     if (buyNow) {
       payload.item = {
@@ -584,15 +583,17 @@ export default function Checkout() {
 
             <Divider />
             <div
-              className={`checkout__totals${recalculating ? " is-recalculating" : ""}`}
-              aria-busy={recalculating}
+              className="checkout__totals"
+              aria-busy={false}
             >
+              {/* Loyalty recalculating overlay — disabled
               {recalculating && (
                 <div className="checkout__freeze" role="status" aria-live="polite">
                   <Loader2 size={18} className="checkout__spin" aria-hidden="true" />
                   <span>Updating total…</span>
                 </div>
               )}
+              */}
             <div className="checkout__sum-line">
               <span>Subtotal</span>
               <PriceTag amount={subtotal} size="md" />
@@ -637,6 +638,7 @@ export default function Checkout() {
                 Sorry, we don't deliver to this pincode yet.
               </p>
             )}
+            {/* Loyalty points redemption box — disabled
             {pointsBalance > 0 && (
               <>
                 <Divider />
@@ -704,6 +706,7 @@ export default function Checkout() {
                 )}
               </>
             )}
+            */}
             <Divider />
             <div className="checkout__sum-line checkout__sum-line--strong">
               <span>Total</span>

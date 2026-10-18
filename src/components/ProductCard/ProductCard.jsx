@@ -86,7 +86,7 @@ export default function ProductCard({
           onError={(e) => { e.currentTarget.src = PLACEHOLDER }}
         />
         <div className="ui-product__media-badges">
-          {category && !contactUsHref && <Badge variant="neutral" className="ui-product__cat-badge">{category}</Badge>}
+          {category && !contactUsHref && category.toLowerCase() !== 'festive' && <Badge variant="neutral" className="ui-product__cat-badge">{category}</Badge>}
           {!category && isOrganic && <Badge variant="success">Organic</Badge>}
           {!category && isVeg && <Badge variant="primary">Veg</Badge>}
         </div>
