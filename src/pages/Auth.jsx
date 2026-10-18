@@ -1,18 +1,11 @@
 /**
- * Auth - one page for both sign-in and sign-up.
+ * Auth — customer login page.
  *
- * The mode (`login` | `register`) lives in URL state so that:
- *   - `/login` and `/register` both render this component (existing
- *     redirects like ProtectedRoute -> `/login` keep working)
- *   - browser back/forward navigates between the two modes
- *   - Toggling via the in-page link uses `navigate(..., { replace })`
- *     to swap modes without polluting history.
+ * Google sign-in only. Email / password and register flows are removed
+ * for customers; admin staff use /admin/login (email + password).
  *
- * Backend contract (matches AuthController + UserConverterUtil):
- *   POST /auth?isLogin=true   { email, passwordHash }
- *   POST /auth?isLogin=false  { email, passwordHash, firstName, lastName }
- * The backend's `passwordHash` field is the raw password - the server
- * hashes it. Field name is unfortunate but locked by the existing DTO.
+ * Backend contract:
+ *   POST /auth?isGoogle=true  { credential }  → { accessToken, refreshToken }
  */
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -20,58 +13,34 @@ import { Sparkles, Leaf, Shield, Heart } from 'lucide-react'
 
 import { api } from '../lib/api'
 import { useAuthStore } from '../stores/authStore'
-import {
-  Button,
-  Input,
-  PasswordInput,
-  Alert,
-} from '../components'
+import { Alert } from '../components'
 import './Auth.css'
 
 export default function Auth() {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const location  = useLocation()
+  const navigate  = useNavigate()
   const setTokens = useAuthStore((s) => s.setTokens)
 
-  const isRegister = location.pathname === '/register'
-  const mode = isRegister ? 'register' : 'login'
-
-  const [form, setForm] = useState({
-    email: '',
-    password: '',
-    confirm: '',
-    firstName: '',
-    lastName: '',
-  })
-  const [errors, setErrors] = useState({})
   const [serverErr, setServerErr] = useState(null)
-  const [busy, setBusy] = useState(false)
+  const [busy,      setBusy]      = useState(false)
 
   // Google Identity Services client id (Vercel/.env: VITE_GOOGLE_CLIENT_ID).
-  // When unset (e.g. local dev without a key) the button is simply hidden and
-  // password auth keeps working.
   const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID
   const googleBtnRef = useRef(null)
-  // Hold the latest credential handler in a ref so the one-time GIS init
-  // always calls a callback that closes over current state/navigation.
-  const googleCbRef = useRef(null)
+  const googleCbRef  = useRef(null)
 
-  const set = (field) => (e) =>
-    setForm((f) => ({ ...f, [field]: e.target.value }))
-
-  // Shared success path for both password and Google sign-in.
+  // Shared success handler — store tokens and go to the intended page.
   const finishAuth = (data) => {
     if (!data?.accessToken) throw new Error('auth response missing tokens')
     setTokens({
-      accessToken: data.accessToken,
+      accessToken:  data.accessToken,
       refreshToken: data.refreshToken,
     })
     const to = location.state?.from?.pathname || '/'
     navigate(to, { replace: true })
   }
 
-  // Called by GIS with the Google ID token. We hand it to the backend, which
-  // verifies it and returns OUR access/refresh tokens.
+  // Called by GIS with the Google ID token.
   const onGoogleCredential = async (resp) => {
     setServerErr(null)
     setBusy(true)
@@ -110,13 +79,13 @@ export default function Auth() {
       })
       googleBtnRef.current.innerHTML = ''
       window.google.accounts.id.renderButton(googleBtnRef.current, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large',
-        text: 'continue_with',
-        shape: 'pill',
+        type:           'standard',
+        theme:          'outline',
+        size:           'large',
+        text:           'continue_with',
+        shape:          'pill',
         logo_alignment: 'left',
-        width: 320,
+        width:           320,
       })
     }
 
@@ -125,91 +94,15 @@ export default function Auth() {
       if (window.google?.accounts?.id) init()
       else existing.addEventListener('load', init)
     } else {
-      const s = document.createElement('script')
-      s.src = SRC
-      s.async = true
-      s.defer = true
-      s.onload = init
+      const s    = document.createElement('script')
+      s.src      = SRC
+      s.async    = true
+      s.defer    = true
+      s.onload   = init
       document.head.appendChild(s)
     }
-    return () => {
-      cancelled = true
-    }
+    return () => { cancelled = true }
   }, [GOOGLE_CLIENT_ID])
-
-  const validate = () => {
-    const e = {}
-    if (!form.email.trim()) e.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      e.email = 'Enter a valid email'
-    if (mode === 'register') {
-      if (!form.password) e.password = 'Password is required'
-      else if (form.password.length < 6)
-        e.password = 'Password must be at least 6 characters'
-      if (!form.firstName.trim()) e.firstName = 'First name is required'
-      else if (form.firstName.trim().length < 3)
-        e.firstName = 'First name must be at least 3 characters'
-      if (!form.lastName.trim()) e.lastName = 'Last name is required'
-      if (form.confirm !== form.password)
-        e.confirm = 'Passwords do not match'
-    }
-    setErrors(e)
-    return Object.keys(e).length === 0
-  }
-
-  const onSubmit = async (ev) => {
-    ev.preventDefault()
-    setServerErr(null)
-    if (!validate()) return
-    setBusy(true)
-    try {
-      const body =
-        mode === 'register'
-          ? {
-              email: form.email,
-              passwordHash: form.password,
-              firstName: form.firstName,
-              lastName: form.lastName,
-            }
-          : { email: form.email, passwordHash: form.password }
-
-      const res = await api.post(
-        `/auth?isLogin=${mode === 'login'}`,
-        body,
-        { _withAuth: false },
-      )
-      const data = res.data?.data
-      finishAuth(data)
-    } catch (e2) {
-      // The backend returns the real reason in `message`. Older builds put
-      // it in `data` (a plain string), so fall back to that before the
-      // generic copy.
-      const resp = e2.response?.data
-      const backendReason =
-        resp?.message ||
-        (typeof resp?.data === 'string' ? resp.data : null)
-      setServerErr(
-        backendReason ||
-          e2.message ||
-          (mode === 'login' ? 'Sign in failed' : 'Registration failed'),
-      )
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  const swap = (e) => {
-    e.preventDefault()
-    // Replace, not push -- the user is just flipping a tab, not
-    // navigating into deeper state. Carry `from` so the post-auth
-    // redirect target survives the mode switch.
-    navigate(isRegister ? '/login' : '/register', {
-      replace: true,
-      state: location.state,
-    })
-    setErrors({})
-    setServerErr(null)
-  }
 
   return (
     <div className="auth">
@@ -235,126 +128,47 @@ export default function Auth() {
         <div className="auth__blob auth__blob--green" />
       </aside>
 
-      {/* ---------- form side ---------- */}
+      {/* ---------- sign-in side ---------- */}
       <main className="auth__panel">
         <div className="auth__form-wrap">
           <div className="auth__eyebrow">
             <Sparkles size={14} />
-            {mode === 'login' ? 'Welcome back' : 'Join Arusuvai'}
+            Welcome back
           </div>
-          <h1 className="auth__title">
-            {mode === 'login' ? 'Sign in to your account' : 'Create your account'}
-          </h1>
+
+          <h1 className="auth__title">Sign in to your account</h1>
           <p className="auth__sub">
-            {mode === 'login'
-              ? 'Enter your credentials to continue.'
-              : 'A few quick details and you are set.'}
+            Use your Google account to continue — no password needed.
           </p>
 
           {serverErr && (
-            <Alert
-              variant="danger"
-              title={mode === 'login' ? "Couldn't sign in" : "Couldn't register"}
-              className="auth__alert"
-            >
+            <Alert variant="danger" title="Couldn't sign in" className="auth__alert">
               {serverErr}
             </Alert>
           )}
 
-          {GOOGLE_CLIENT_ID && (
-            <>
-              <div
-                className="auth__google"
-                ref={googleBtnRef}
-                aria-label="Continue with Google"
-              />
-              <div className="auth__divider">
-                <span>or continue with email</span>
-              </div>
-            </>
+          {/* Google Identity Services button */}
+          {GOOGLE_CLIENT_ID ? (
+            <div
+              className="auth__google"
+              ref={googleBtnRef}
+              aria-label="Continue with Google"
+            />
+          ) : (
+            <p className="auth__sub" style={{ color: 'var(--color-danger)' }}>
+              Google sign-in is not configured. Please contact support.
+            </p>
           )}
 
-          <form className="auth__form" onSubmit={onSubmit} noValidate>
-            {mode === 'register' && (
-              <div className="auth__row">
-                <Input
-                  label="First name"
-                  type="text"
-                  autoComplete="given-name"
-                  value={form.firstName}
-                  onChange={set('firstName')}
-                  error={errors.firstName}
-                  required
-                />
-                <Input
-                  label="Last name"
-                  type="text"
-                  autoComplete="family-name"
-                  value={form.lastName}
-                  onChange={set('lastName')}
-                  error={errors.lastName}
-                  required
-                />
-              </div>
-            )}
+          {busy && (
+            <p className="auth__sub" style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+              Signing you in…
+            </p>
+          )}
 
-            <Input
-              label="Email"
-              type="email"
-              autoComplete="email"
-              value={form.email}
-              onChange={set('email')}
-              error={errors.email}
-              required
-            />
-
-            <PasswordInput
-              label="Password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-              value={form.password}
-              onChange={set('password')}
-              error={errors.password}
-              required
-            />
-
-            {mode === 'register' && (
-              <PasswordInput
-                label="Confirm password"
-                autoComplete="new-password"
-                value={form.confirm}
-                onChange={set('confirm')}
-                error={errors.confirm}
-                required
-              />
-            )}
-
-            {mode === 'login' && (
-              <div className="auth__row-meta">
-                {/* Self-service password reset: emails a secure,
-                 * single-use link that lands on /reset-password. */}
-                <Link to="/forgot-password" className="auth__forgot">
-                  Forgot password?
-                </Link>
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              size="lg"
-              fullWidth
-              loading={busy}
-            >
-              {mode === 'login' ? 'Sign in' : 'Create account'}
-            </Button>
-          </form>
-
-          <p className="auth__swap">
-            {mode === 'login'
-              ? "Don't have an account?"
-              : 'Already have an account?'}{' '}
-            <a href={mode === 'login' ? '/register' : '/login'} onClick={swap}>
-              {mode === 'login' ? 'Create one' : 'Sign in'}
-            </a>
+          <p className="auth__swap" style={{ marginTop: 'var(--space-6)' }}>
+            <Shield size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+            We never store your password. Authentication is handled securely by Google.
           </p>
         </div>
       </main>
